@@ -1,0 +1,329 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		62378A64116E77D7007F72C7 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A63116E77D7007F72C7 /* timing.c */; };
+		62378A89116E7F3C007F72C7 /* formatting.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A88116E7F3C007F72C7 /* formatting.c */; };
+		62378A8C116E7F53007F72C7 /* extraction.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A8B116E7F53007F72C7 /* extraction.c */; };
+		62378A8F116E7F73007F72C7 /* comm_in.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A8E116E7F73007F72C7 /* comm_in.c */; };
+		62378A92116E7F7C007F72C7 /* comm_out.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A91116E7F7C007F72C7 /* comm_out.c */; };
+		62378ACF116E86E9007F72C7 /* charbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378ACB116E86E9007F72C7 /* charbuffer.c */; };
+		62378AD0116E86E9007F72C7 /* rbst.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378ACD116E86E9007F72C7 /* rbst.c */; };
+		62378B13116E92A3007F72C7 /* regex_wrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B12116E92A3007F72C7 /* regex_wrapper.c */; };
+		62378B1B116F557A007F72C7 /* regex_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B1A116F557A007F72C7 /* regex_list.c */; };
+		62378B1E116F5642007F72C7 /* comm_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B1D116F5642007F72C7 /* comm_manager.c */; };
+		62378B6F116F618F007F72C7 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B6E116F618F007F72C7 /* client.c */; };
+		62378B72116F6196007F72C7 /* commands.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B71116F6196007F72C7 /* commands.c */; };
+		62378B75116F619E007F72C7 /* rgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B74116F619E007F72C7 /* rgets.c */; };
+		62378BBC116F7E89007F72C7 /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378BBB116F7E89007F72C7 /* queue.c */; };
+		62378D12116FC094007F72C7 /* allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378D11116FC094007F72C7 /* allocator.c */; };
+		8DD76FAC0486AB0100D96B5E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.c */; settings = {ATTRIBUTES = (); }; };
+		8DD76FB00486AB0100D96B5E /* libdigifi.new.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76FAF0486AB0100D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				8DD76FB00486AB0100D96B5E /* libdigifi.new.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		08FB7796FE84155DC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		62378A62116E77D7007F72C7 /* timing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timing.h; sourceTree = "<group>"; };
+		62378A63116E77D7007F72C7 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timing.c; sourceTree = "<group>"; };
+		62378A87116E7F3C007F72C7 /* formatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = formatting.h; sourceTree = "<group>"; };
+		62378A88116E7F3C007F72C7 /* formatting.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = formatting.c; sourceTree = "<group>"; };
+		62378A8A116E7F53007F72C7 /* extraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = extraction.h; sourceTree = "<group>"; };
+		62378A8B116E7F53007F72C7 /* extraction.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = extraction.c; sourceTree = "<group>"; };
+		62378A8D116E7F73007F72C7 /* comm_in.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comm_in.h; sourceTree = "<group>"; };
+		62378A8E116E7F73007F72C7 /* comm_in.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = comm_in.c; sourceTree = "<group>"; };
+		62378A90116E7F7C007F72C7 /* comm_out.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comm_out.h; sourceTree = "<group>"; };
+		62378A91116E7F7C007F72C7 /* comm_out.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = comm_out.c; sourceTree = "<group>"; };
+		62378ACB116E86E9007F72C7 /* charbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = charbuffer.c; sourceTree = "<group>"; };
+		62378ACC116E86E9007F72C7 /* charbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = charbuffer.h; sourceTree = "<group>"; };
+		62378ACD116E86E9007F72C7 /* rbst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rbst.c; sourceTree = "<group>"; };
+		62378ACE116E86E9007F72C7 /* rbst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rbst.h; sourceTree = "<group>"; };
+		62378B11116E92A3007F72C7 /* regex_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regex_wrapper.h; sourceTree = "<group>"; };
+		62378B12116E92A3007F72C7 /* regex_wrapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regex_wrapper.c; sourceTree = "<group>"; };
+		62378B19116F557A007F72C7 /* regex_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regex_list.h; sourceTree = "<group>"; };
+		62378B1A116F557A007F72C7 /* regex_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regex_list.c; sourceTree = "<group>"; };
+		62378B1C116F5642007F72C7 /* comm_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comm_manager.h; sourceTree = "<group>"; };
+		62378B1D116F5642007F72C7 /* comm_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = comm_manager.c; sourceTree = "<group>"; };
+		62378B6D116F618F007F72C7 /* client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = client.h; sourceTree = "<group>"; };
+		62378B6E116F618F007F72C7 /* client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = client.c; sourceTree = "<group>"; };
+		62378B70116F6196007F72C7 /* commands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commands.h; sourceTree = "<group>"; };
+		62378B71116F6196007F72C7 /* commands.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = commands.c; sourceTree = "<group>"; };
+		62378B73116F619E007F72C7 /* rgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgets.h; sourceTree = "<group>"; };
+		62378B74116F619E007F72C7 /* rgets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rgets.c; sourceTree = "<group>"; };
+		62378B76116F61AB007F72C7 /* DigiFi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DigiFi.h; sourceTree = "<group>"; };
+		62378B77116F629C007F72C7 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		62378BBA116F7E89007F72C7 /* queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = queue.h; sourceTree = "<group>"; };
+		62378BBB116F7E89007F72C7 /* queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = queue.c; sourceTree = "<group>"; };
+		62378D10116FC025007F72C7 /* allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allocator.h; sourceTree = "<group>"; };
+		62378D11116FC094007F72C7 /* allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = allocator.c; sourceTree = "<group>"; };
+		8DD76FB20486AB0100D96B5E /* libdigifi.new */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libdigifi.new; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = libdigifi.new.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76FAD0486AB0100D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* libdigifi.new */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6A0FF2B0290797F04C91782 /* Documentation */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = libdigifi.new;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				62378B15116E92F2007F72C7 /* API */,
+				62378BB7116F7D87007F72C7 /* Discovery */,
+				62378B16116E92F8007F72C7 /* Comms */,
+				62378B14116E92EC007F72C7 /* Utility */,
+				08FB7796FE84155DC02AAC07 /* main.c */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76FB20486AB0100D96B5E /* libdigifi.new */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		62378B14116E92EC007F72C7 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				62378ACB116E86E9007F72C7 /* charbuffer.c */,
+				62378ACC116E86E9007F72C7 /* charbuffer.h */,
+				62378A8A116E7F53007F72C7 /* extraction.h */,
+				62378A8B116E7F53007F72C7 /* extraction.c */,
+				62378A87116E7F3C007F72C7 /* formatting.h */,
+				62378A88116E7F3C007F72C7 /* formatting.c */,
+				62378ACD116E86E9007F72C7 /* rbst.c */,
+				62378ACE116E86E9007F72C7 /* rbst.h */,
+				62378B11116E92A3007F72C7 /* regex_wrapper.h */,
+				62378B12116E92A3007F72C7 /* regex_wrapper.c */,
+				62378A62116E77D7007F72C7 /* timing.h */,
+				62378A63116E77D7007F72C7 /* timing.c */,
+				62378BBA116F7E89007F72C7 /* queue.h */,
+				62378BBB116F7E89007F72C7 /* queue.c */,
+				62378D10116FC025007F72C7 /* allocator.h */,
+				62378D11116FC094007F72C7 /* allocator.c */,
+			);
+			name = Utility;
+			sourceTree = "<group>";
+		};
+		62378B15116E92F2007F72C7 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				62378B76116F61AB007F72C7 /* DigiFi.h */,
+				62378B6D116F618F007F72C7 /* client.h */,
+				62378B6E116F618F007F72C7 /* client.c */,
+				62378B70116F6196007F72C7 /* commands.h */,
+				62378B71116F6196007F72C7 /* commands.c */,
+				62378B73116F619E007F72C7 /* rgets.h */,
+				62378B74116F619E007F72C7 /* rgets.c */,
+				62378B19116F557A007F72C7 /* regex_list.h */,
+				62378B1A116F557A007F72C7 /* regex_list.c */,
+				62378B77116F629C007F72C7 /* types.h */,
+			);
+			name = API;
+			sourceTree = "<group>";
+		};
+		62378B16116E92F8007F72C7 /* Comms */ = {
+			isa = PBXGroup;
+			children = (
+				62378B1C116F5642007F72C7 /* comm_manager.h */,
+				62378B1D116F5642007F72C7 /* comm_manager.c */,
+				62378A8D116E7F73007F72C7 /* comm_in.h */,
+				62378A8E116E7F73007F72C7 /* comm_in.c */,
+				62378A90116E7F7C007F72C7 /* comm_out.h */,
+				62378A91116E7F7C007F72C7 /* comm_out.c */,
+			);
+			name = Comms;
+			sourceTree = "<group>";
+		};
+		62378BB7116F7D87007F72C7 /* Discovery */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Discovery;
+			sourceTree = "<group>";
+		};
+		C6A0FF2B0290797F04C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76FA90486AB0100D96B5E /* libdigifi.new */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "libdigifi.new" */;
+			buildPhases = (
+				8DD76FAB0486AB0100D96B5E /* Sources */,
+				8DD76FAD0486AB0100D96B5E /* Frameworks */,
+				8DD76FAF0486AB0100D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libdigifi.new;
+			productInstallPath = "$(HOME)/bin";
+			productName = libdigifi.new;
+			productReference = 8DD76FB20486AB0100D96B5E /* libdigifi.new */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "libdigifi.new" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* libdigifi.new */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DD76FA90486AB0100D96B5E /* libdigifi.new */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76FAB0486AB0100D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DD76FAC0486AB0100D96B5E /* main.c in Sources */,
+				62378A64116E77D7007F72C7 /* timing.c in Sources */,
+				62378A89116E7F3C007F72C7 /* formatting.c in Sources */,
+				62378A8C116E7F53007F72C7 /* extraction.c in Sources */,
+				62378A8F116E7F73007F72C7 /* comm_in.c in Sources */,
+				62378A92116E7F7C007F72C7 /* comm_out.c in Sources */,
+				62378ACF116E86E9007F72C7 /* charbuffer.c in Sources */,
+				62378AD0116E86E9007F72C7 /* rbst.c in Sources */,
+				62378B13116E92A3007F72C7 /* regex_wrapper.c in Sources */,
+				62378B1B116F557A007F72C7 /* regex_list.c in Sources */,
+				62378B1E116F5642007F72C7 /* comm_manager.c in Sources */,
+				62378B6F116F618F007F72C7 /* client.c in Sources */,
+				62378B72116F6196007F72C7 /* commands.c in Sources */,
+				62378B75116F619E007F72C7 /* rgets.c in Sources */,
+				62378BBC116F7E89007F72C7 /* queue.c in Sources */,
+				62378D12116FC094007F72C7 /* allocator.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB928608733DD80010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = libdigifi.new;
+			};
+			name = Debug;
+		};
+		1DEB928708733DD80010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = libdigifi.new;
+			};
+			name = Release;
+		};
+		1DEB928A08733DD80010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		1DEB928B08733DD80010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "libdigifi.new" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB928608733DD80010E9CD /* Debug */,
+				1DEB928708733DD80010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "libdigifi.new" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB928A08733DD80010E9CD /* Debug */,
+				1DEB928B08733DD80010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

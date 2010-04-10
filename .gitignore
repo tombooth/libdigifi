@@ -1,0 +1,19 @@
+# xcode noise
+build/*
+*.pbxuser
+*.mode1v3
+*.perspectivev3
+
+# old skool
+.svn
+
+# osx noise
+.DS_Store
+profile
+
+# bin
+bin/*.o
+bin/*.a
+bin/*.dylib
+bin/client
+bin/symbols
