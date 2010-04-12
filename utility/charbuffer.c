@@ -77,13 +77,15 @@ char* cbuf_extract(cbuf *buffer, int offset, int length) {
 	
 	memcpy(ret, buffer->data + offset, length);
 	
-	//if (length+offset < buffer->length) {
-		memmove(buffer->data + offset, buffer->data + offset + length, buffer->length - (offset + length));
+	/*	memmove(buffer->data + offset, buffer->data + offset + length, buffer->length - (offset + length));
 		buffer->length -= length;
 		
-		memset(buffer->data + buffer->length, 0, buffer->size - buffer->length);
-		
-	//}
+		memset(buffer->data + buffer->length, 0, buffer->size - buffer->length);*/
+	
+	memmove(buffer->data, buffer->data + offset + length, buffer->length - (offset + length));
+	buffer->length -= (offset + length);
+	
+	memset(buffer->data + buffer->length, 0, buffer->size - buffer->length);
 	
 	ret[length] = '\0';
 	

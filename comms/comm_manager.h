@@ -24,6 +24,7 @@
 
 typedef struct {
 	char *label;
+	int connected;
 	
 	out_socket *sockets;
 	int num_sockets;

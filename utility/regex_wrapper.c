@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "debugging.h"
+
 #define LAST_ERROR_LENGTH 50
 static char last_error[LAST_ERROR_LENGTH];
 
@@ -21,28 +23,43 @@ void regex_init() {
 }
 
 
+char *regex_get_error() {
+	return last_error;
+}
+
 
 regex_t* regex_get_compiled(char *name) {
 	regex_t *rx_compiled;
-	int err;
 	char *regex;
 	
+	DFDEBUG("Getting compiled regex named %s", name);
+	
 	if (rbst_get(name, (void**)&rx_compiled) < 0) {
-		if ((rx_compiled = malloc(sizeof(regex_t))) == NULL) { return NULL;}
 		
 		regex = regex_list_get(name);
-		if (regex== NULL) { free(rx_compiled);  return NULL; }
+		if (regex== NULL) { return NULL; }
 		
-		
-		err = regcomp(rx_compiled, regex, REG_EXTENDED);
-		if (err!=0) { 
-			regerror(err, rx_compiled, last_error, LAST_ERROR_LENGTH); 
-			free(rx_compiled); 
-			return NULL;
-		}
+		rx_compiled = regex_compile(regex);
+		if (rx_compiled == NULL) return NULL;
 		
 		rbst_add(name, rx_compiled);
 		
+	}
+	
+	return rx_compiled;
+}
+
+regex_t* regex_compile(char *pattern) {
+	regex_t *rx_compiled;
+	int err;
+	
+	if ((rx_compiled = malloc(sizeof(regex_t))) == NULL) { return NULL;}
+	
+	err = regcomp(rx_compiled, pattern, REG_EXTENDED);
+	if (err!=0) { 
+		regerror(err, rx_compiled, last_error, LAST_ERROR_LENGTH); 
+		free(rx_compiled); 
+		return NULL;
 	}
 	
 	return rx_compiled;

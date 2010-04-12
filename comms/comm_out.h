@@ -52,6 +52,8 @@ typedef struct __out_request out_request;
 
 void comm_out_push_request(out_request *request);
 
+void comm_out_clear_requests_for(out_socket *fds, int num_fds);
+
 
 
 void* comm_out_thread_start(void *args);

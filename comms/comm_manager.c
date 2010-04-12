@@ -22,6 +22,8 @@
 #include <net/if.h>
 #include <unistd.h>
 
+#include "debugging.h"
+
 
 static int connect_to_socket(char *ipadress, int port);
 static int listen_on_socket(int port);
@@ -61,6 +63,7 @@ connection *comm_connect(char *ipaddress, int connections) {
 	conn = (connection *) malloc(sizeof(connection));
 	
 	conn->label = strdup(ipaddress);
+	conn->connected = 0;
 	conn->sockets = (out_socket *) malloc(connections * sizeof(out_socket));
 	conn->num_sockets = connections;
 	
@@ -71,18 +74,22 @@ connection *comm_connect(char *ipaddress, int connections) {
 		conn->sockets[i].backlog = 0;
 	}
 	
-	// randomise a listen port for rgets
-	port = randomise_port();
+	conn->connected = 1;
 	
 	// setup the rget connection
 	conn->rget_settings.buffer = cbuf_new();
 	conn->rget_settings.client_fd = -1;
-	conn->rget_settings.server_fd = listen_on_socket(port);
+	
+	conn->rget_settings.server_fd = -1;
+	while( conn->rget_settings.server_fd < 0 ) {
+		port = randomise_port();
+		conn->rget_settings.server_fd = listen_on_socket(port);
+	}
 	
 	comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetRegisterClient \"%d\" \"%s\"]", port, get_local_ip());
 	
 	// wait to accept the rget connection
-	while (conn->rget_settings.client_fd == -1) { conn->rget_settings.client_fd = accept(conn->rget_settings.server_fd, NULL, 0); }
+	while (conn->rget_settings.client_fd < 0) { conn->rget_settings.client_fd = accept(conn->rget_settings.server_fd, NULL, 0); }
 	
 	// add this connect to the inbound subsystem
 	comm_in_add(&(conn->rget_settings));
@@ -97,6 +104,8 @@ int comm_send(connection *conn, int rget, char *tag, int count, void (*callback)
 	va_list arg_ptr;
 	out_request *req;
 	int fd_id;
+	
+	if (!conn->connected) return -1;
 	
 	va_start(arg_ptr, message);
 	vasprintf(&buffer, message, arg_ptr);
@@ -148,6 +157,9 @@ int comm_send_via_socket(out_socket *socket, char *tag, int count, void (*callba
 void comm_disconnect(connection *conn) {
 	int i;
 	
+	conn->connected = 0;
+	
+	comm_out_clear_requests_for(conn->sockets, conn->num_sockets);
 	comm_in_remove(&(conn->rget_settings));
 	
 	close(conn->rget_settings.client_fd);
@@ -158,6 +170,9 @@ void comm_disconnect(connection *conn) {
 	}
 	
 	free(conn->sockets);
+	cbuf_free(conn->rget_settings.buffer);
+	free(conn->label);
+	
 	free(conn);
 }
 
@@ -243,11 +258,10 @@ static int listen_on_socket(int port) {
 
 static int randomise_port() {
 	int r;
-	time_t t1;
+	struct timeval tv;
+ 	gettimeofday(&tv, NULL);
 	
-	time(&t1);
-	
-	srand48((long)t1);
+	srand48((long)tv.tv_usec);
 	r = (int)(((double)lrand48()/(double)RAND_MAX) * 1000);
 	
 	return RGET_PORT_BASE + r;

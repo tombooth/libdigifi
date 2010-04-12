@@ -7,22 +7,70 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		62378A64116E77D7007F72C7 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A63116E77D7007F72C7 /* timing.c */; };
-		62378A89116E7F3C007F72C7 /* formatting.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A88116E7F3C007F72C7 /* formatting.c */; };
-		62378A8C116E7F53007F72C7 /* extraction.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A8B116E7F53007F72C7 /* extraction.c */; };
-		62378A8F116E7F73007F72C7 /* comm_in.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A8E116E7F73007F72C7 /* comm_in.c */; };
-		62378A92116E7F7C007F72C7 /* comm_out.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378A91116E7F7C007F72C7 /* comm_out.c */; };
-		62378ACF116E86E9007F72C7 /* charbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378ACB116E86E9007F72C7 /* charbuffer.c */; };
-		62378AD0116E86E9007F72C7 /* rbst.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378ACD116E86E9007F72C7 /* rbst.c */; };
-		62378B13116E92A3007F72C7 /* regex_wrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B12116E92A3007F72C7 /* regex_wrapper.c */; };
-		62378B1B116F557A007F72C7 /* regex_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B1A116F557A007F72C7 /* regex_list.c */; };
-		62378B1E116F5642007F72C7 /* comm_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B1D116F5642007F72C7 /* comm_manager.c */; };
-		62378B6F116F618F007F72C7 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B6E116F618F007F72C7 /* client.c */; };
-		62378B72116F6196007F72C7 /* commands.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B71116F6196007F72C7 /* commands.c */; };
-		62378B75116F619E007F72C7 /* rgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378B74116F619E007F72C7 /* rgets.c */; };
-		62378BBC116F7E89007F72C7 /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378BBB116F7E89007F72C7 /* queue.c */; };
-		62378D12116FC094007F72C7 /* allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 62378D11116FC094007F72C7 /* allocator.c */; };
-		8DD76FAC0486AB0100D96B5E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* main.c */; settings = {ATTRIBUTES = (); }; };
+		620C16F81170E37E009F0434 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16EE1170E37E009F0434 /* client.c */; };
+		620C16F91170E37E009F0434 /* commands.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16F01170E37E009F0434 /* commands.c */; };
+		620C16FA1170E37E009F0434 /* regex_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16F31170E37E009F0434 /* regex_list.c */; };
+		620C16FB1170E37E009F0434 /* rgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16F51170E37E009F0434 /* rgets.c */; };
+		620C17001170E389009F0434 /* discover.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16FC1170E389009F0434 /* discover.c */; };
+		620C17011170E389009F0434 /* searchpacket.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16FE1170E389009F0434 /* searchpacket.c */; };
+		620C17081170E394009F0434 /* comm_in.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17021170E394009F0434 /* comm_in.c */; };
+		620C17091170E394009F0434 /* comm_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17041170E394009F0434 /* comm_manager.c */; };
+		620C170A1170E394009F0434 /* comm_out.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17061170E394009F0434 /* comm_out.c */; };
+		620C171B1170E3A4009F0434 /* allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170B1170E3A4009F0434 /* allocator.c */; };
+		620C171C1170E3A4009F0434 /* charbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170D1170E3A4009F0434 /* charbuffer.c */; };
+		620C171D1170E3A4009F0434 /* extraction.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170F1170E3A4009F0434 /* extraction.c */; };
+		620C171E1170E3A4009F0434 /* formatting.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17111170E3A4009F0434 /* formatting.c */; };
+		620C171F1170E3A4009F0434 /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17131170E3A4009F0434 /* queue.c */; };
+		620C17201170E3A4009F0434 /* rbst.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17151170E3A4009F0434 /* rbst.c */; };
+		620C17211170E3A4009F0434 /* regex_wrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17171170E3A4009F0434 /* regex_wrapper.c */; };
+		620C17221170E3A4009F0434 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17191170E3A4009F0434 /* timing.c */; };
+		620C17251170E3C4009F0434 /* libpcre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 620C17241170E3C4009F0434 /* libpcre.a */; };
+		620C17271170E3C4009F0434 /* libpcreposix.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 620C17261170E3C4009F0434 /* libpcreposix.a */; };
+		620C17991170E55E009F0434 /* allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170B1170E3A4009F0434 /* allocator.c */; };
+		620C179A1170E55E009F0434 /* allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C170C1170E3A4009F0434 /* allocator.h */; };
+		620C179B1170E55E009F0434 /* charbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170D1170E3A4009F0434 /* charbuffer.c */; };
+		620C179C1170E55E009F0434 /* charbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C170E1170E3A4009F0434 /* charbuffer.h */; };
+		620C179D1170E55E009F0434 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16EE1170E37E009F0434 /* client.c */; };
+		620C179E1170E55E009F0434 /* client.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16EF1170E37E009F0434 /* client.h */; };
+		620C179F1170E55E009F0434 /* comm_in.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17021170E394009F0434 /* comm_in.c */; };
+		620C17A01170E55E009F0434 /* comm_in.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17031170E394009F0434 /* comm_in.h */; };
+		620C17A11170E55E009F0434 /* comm_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17041170E394009F0434 /* comm_manager.c */; };
+		620C17A21170E55E009F0434 /* comm_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17051170E394009F0434 /* comm_manager.h */; };
+		620C17A31170E55E009F0434 /* comm_out.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17061170E394009F0434 /* comm_out.c */; };
+		620C17A41170E55E009F0434 /* comm_out.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17071170E394009F0434 /* comm_out.h */; };
+		620C17A51170E55E009F0434 /* commands.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16F01170E37E009F0434 /* commands.c */; };
+		620C17A61170E55E009F0434 /* commands.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F11170E37E009F0434 /* commands.h */; };
+		620C17A71170E55E009F0434 /* DigiFi.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F21170E37E009F0434 /* DigiFi.h */; };
+		620C17A81170E55E009F0434 /* discover.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16FC1170E389009F0434 /* discover.c */; };
+		620C17A91170E55E009F0434 /* discover.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16FD1170E389009F0434 /* discover.h */; };
+		620C17AA1170E55E009F0434 /* extraction.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170F1170E3A4009F0434 /* extraction.c */; };
+		620C17AB1170E55E009F0434 /* extraction.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17101170E3A4009F0434 /* extraction.h */; };
+		620C17AC1170E55E009F0434 /* formatting.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17111170E3A4009F0434 /* formatting.c */; };
+		620C17AD1170E55E009F0434 /* formatting.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17121170E3A4009F0434 /* formatting.h */; };
+		620C17AE1170E55E009F0434 /* libpcre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 620C17241170E3C4009F0434 /* libpcre.a */; };
+		620C17AF1170E55E009F0434 /* libpcreposix.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 620C17261170E3C4009F0434 /* libpcreposix.a */; };
+		620C17B01170E55E009F0434 /* pcre.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17281170E3D2009F0434 /* pcre.h */; };
+		620C17B11170E55E009F0434 /* pcreposix.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17291170E3D2009F0434 /* pcreposix.h */; };
+		620C17B21170E55E009F0434 /* queue.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17131170E3A4009F0434 /* queue.c */; };
+		620C17B31170E55E009F0434 /* queue.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17141170E3A4009F0434 /* queue.h */; };
+		620C17B41170E55E009F0434 /* rbst.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17151170E3A4009F0434 /* rbst.c */; };
+		620C17B51170E55E009F0434 /* rbst.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17161170E3A4009F0434 /* rbst.h */; };
+		620C17B61170E55E009F0434 /* regex_list.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16F31170E37E009F0434 /* regex_list.c */; };
+		620C17B71170E55E009F0434 /* regex_list.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F41170E37E009F0434 /* regex_list.h */; };
+		620C17B81170E55E009F0434 /* regex_wrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17171170E3A4009F0434 /* regex_wrapper.c */; };
+		620C17B91170E55E009F0434 /* regex_wrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17181170E3A4009F0434 /* regex_wrapper.h */; };
+		620C17BA1170E55E009F0434 /* rgets.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16F51170E37E009F0434 /* rgets.c */; };
+		620C17BB1170E55E009F0434 /* rgets.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F61170E37E009F0434 /* rgets.h */; };
+		620C17BC1170E55E009F0434 /* searchpacket.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16FE1170E389009F0434 /* searchpacket.c */; };
+		620C17BD1170E55E009F0434 /* searchpacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16FF1170E389009F0434 /* searchpacket.h */; };
+		620C17BE1170E55E009F0434 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17191170E3A4009F0434 /* timing.c */; };
+		620C17BF1170E55E009F0434 /* timing.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C171A1170E3A4009F0434 /* timing.h */; };
+		620C17C01170E55E009F0434 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F71170E37E009F0434 /* types.h */; };
+		6233C0731170E0CA009C37D5 /* entrypoint.c in Sources */ = {isa = PBXBuildFile; fileRef = 6233C0721170E0CA009C37D5 /* entrypoint.c */; };
+		62B3C1271170E92D0091F925 /* debugging.h in Headers */ = {isa = PBXBuildFile; fileRef = 62B3C1261170E92D0091F925 /* debugging.h */; };
+		62B3C1C31170F9CF0091F925 /* tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 62B3C1C11170F9CF0091F925 /* tests.h */; };
+		62B3C1C41170F9CF0091F925 /* tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 62B3C1C21170F9CF0091F925 /* tests.c */; };
+		62B3C1DD1170FAF10091F925 /* tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 62B3C1C21170F9CF0091F925 /* tests.c */; };
 		8DD76FB00486AB0100D96B5E /* libdigifi.new.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */; };
 /* End PBXBuildFile section */
 
@@ -40,48 +88,72 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		08FB7796FE84155DC02AAC07 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		62378A62116E77D7007F72C7 /* timing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timing.h; sourceTree = "<group>"; };
-		62378A63116E77D7007F72C7 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = timing.c; sourceTree = "<group>"; };
-		62378A87116E7F3C007F72C7 /* formatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = formatting.h; sourceTree = "<group>"; };
-		62378A88116E7F3C007F72C7 /* formatting.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = formatting.c; sourceTree = "<group>"; };
-		62378A8A116E7F53007F72C7 /* extraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = extraction.h; sourceTree = "<group>"; };
-		62378A8B116E7F53007F72C7 /* extraction.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = extraction.c; sourceTree = "<group>"; };
-		62378A8D116E7F73007F72C7 /* comm_in.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comm_in.h; sourceTree = "<group>"; };
-		62378A8E116E7F73007F72C7 /* comm_in.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = comm_in.c; sourceTree = "<group>"; };
-		62378A90116E7F7C007F72C7 /* comm_out.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comm_out.h; sourceTree = "<group>"; };
-		62378A91116E7F7C007F72C7 /* comm_out.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = comm_out.c; sourceTree = "<group>"; };
-		62378ACB116E86E9007F72C7 /* charbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = charbuffer.c; sourceTree = "<group>"; };
-		62378ACC116E86E9007F72C7 /* charbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = charbuffer.h; sourceTree = "<group>"; };
-		62378ACD116E86E9007F72C7 /* rbst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rbst.c; sourceTree = "<group>"; };
-		62378ACE116E86E9007F72C7 /* rbst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rbst.h; sourceTree = "<group>"; };
-		62378B11116E92A3007F72C7 /* regex_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regex_wrapper.h; sourceTree = "<group>"; };
-		62378B12116E92A3007F72C7 /* regex_wrapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regex_wrapper.c; sourceTree = "<group>"; };
-		62378B19116F557A007F72C7 /* regex_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regex_list.h; sourceTree = "<group>"; };
-		62378B1A116F557A007F72C7 /* regex_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = regex_list.c; sourceTree = "<group>"; };
-		62378B1C116F5642007F72C7 /* comm_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = comm_manager.h; sourceTree = "<group>"; };
-		62378B1D116F5642007F72C7 /* comm_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = comm_manager.c; sourceTree = "<group>"; };
-		62378B6D116F618F007F72C7 /* client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = client.h; sourceTree = "<group>"; };
-		62378B6E116F618F007F72C7 /* client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = client.c; sourceTree = "<group>"; };
-		62378B70116F6196007F72C7 /* commands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = commands.h; sourceTree = "<group>"; };
-		62378B71116F6196007F72C7 /* commands.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = commands.c; sourceTree = "<group>"; };
-		62378B73116F619E007F72C7 /* rgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rgets.h; sourceTree = "<group>"; };
-		62378B74116F619E007F72C7 /* rgets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rgets.c; sourceTree = "<group>"; };
-		62378B76116F61AB007F72C7 /* DigiFi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DigiFi.h; sourceTree = "<group>"; };
-		62378B77116F629C007F72C7 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
-		62378BBA116F7E89007F72C7 /* queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = queue.h; sourceTree = "<group>"; };
-		62378BBB116F7E89007F72C7 /* queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = queue.c; sourceTree = "<group>"; };
-		62378D10116FC025007F72C7 /* allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = allocator.h; sourceTree = "<group>"; };
-		62378D11116FC094007F72C7 /* allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = allocator.c; sourceTree = "<group>"; };
+		620C16EE1170E37E009F0434 /* client.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = client.c; path = api/client.c; sourceTree = "<group>"; };
+		620C16EF1170E37E009F0434 /* client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = client.h; path = api/client.h; sourceTree = "<group>"; };
+		620C16F01170E37E009F0434 /* commands.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = commands.c; path = api/commands.c; sourceTree = "<group>"; };
+		620C16F11170E37E009F0434 /* commands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = commands.h; path = api/commands.h; sourceTree = "<group>"; };
+		620C16F21170E37E009F0434 /* DigiFi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DigiFi.h; path = api/DigiFi.h; sourceTree = "<group>"; };
+		620C16F31170E37E009F0434 /* regex_list.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regex_list.c; path = api/regex_list.c; sourceTree = "<group>"; };
+		620C16F41170E37E009F0434 /* regex_list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = regex_list.h; path = api/regex_list.h; sourceTree = "<group>"; };
+		620C16F51170E37E009F0434 /* rgets.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rgets.c; path = api/rgets.c; sourceTree = "<group>"; };
+		620C16F61170E37E009F0434 /* rgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rgets.h; path = api/rgets.h; sourceTree = "<group>"; };
+		620C16F71170E37E009F0434 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = types.h; path = api/types.h; sourceTree = "<group>"; };
+		620C16FC1170E389009F0434 /* discover.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = discover.c; path = discovery/discover.c; sourceTree = "<group>"; };
+		620C16FD1170E389009F0434 /* discover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = discover.h; path = discovery/discover.h; sourceTree = "<group>"; };
+		620C16FE1170E389009F0434 /* searchpacket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = searchpacket.c; path = discovery/searchpacket.c; sourceTree = "<group>"; };
+		620C16FF1170E389009F0434 /* searchpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = searchpacket.h; path = discovery/searchpacket.h; sourceTree = "<group>"; };
+		620C17021170E394009F0434 /* comm_in.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = comm_in.c; path = comms/comm_in.c; sourceTree = "<group>"; };
+		620C17031170E394009F0434 /* comm_in.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = comm_in.h; path = comms/comm_in.h; sourceTree = "<group>"; };
+		620C17041170E394009F0434 /* comm_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = comm_manager.c; path = comms/comm_manager.c; sourceTree = "<group>"; };
+		620C17051170E394009F0434 /* comm_manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = comm_manager.h; path = comms/comm_manager.h; sourceTree = "<group>"; };
+		620C17061170E394009F0434 /* comm_out.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = comm_out.c; path = comms/comm_out.c; sourceTree = "<group>"; };
+		620C17071170E394009F0434 /* comm_out.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = comm_out.h; path = comms/comm_out.h; sourceTree = "<group>"; };
+		620C170B1170E3A4009F0434 /* allocator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = allocator.c; path = utility/allocator.c; sourceTree = "<group>"; };
+		620C170C1170E3A4009F0434 /* allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = allocator.h; path = utility/allocator.h; sourceTree = "<group>"; };
+		620C170D1170E3A4009F0434 /* charbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = charbuffer.c; path = utility/charbuffer.c; sourceTree = "<group>"; };
+		620C170E1170E3A4009F0434 /* charbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = charbuffer.h; path = utility/charbuffer.h; sourceTree = "<group>"; };
+		620C170F1170E3A4009F0434 /* extraction.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = extraction.c; path = utility/extraction.c; sourceTree = "<group>"; };
+		620C17101170E3A4009F0434 /* extraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = extraction.h; path = utility/extraction.h; sourceTree = "<group>"; };
+		620C17111170E3A4009F0434 /* formatting.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = formatting.c; path = utility/formatting.c; sourceTree = "<group>"; };
+		620C17121170E3A4009F0434 /* formatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = formatting.h; path = utility/formatting.h; sourceTree = "<group>"; };
+		620C17131170E3A4009F0434 /* queue.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = queue.c; path = utility/queue.c; sourceTree = "<group>"; };
+		620C17141170E3A4009F0434 /* queue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = queue.h; path = utility/queue.h; sourceTree = "<group>"; };
+		620C17151170E3A4009F0434 /* rbst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = rbst.c; path = utility/rbst.c; sourceTree = "<group>"; };
+		620C17161170E3A4009F0434 /* rbst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rbst.h; path = utility/rbst.h; sourceTree = "<group>"; };
+		620C17171170E3A4009F0434 /* regex_wrapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = regex_wrapper.c; path = utility/regex_wrapper.c; sourceTree = "<group>"; };
+		620C17181170E3A4009F0434 /* regex_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = regex_wrapper.h; path = utility/regex_wrapper.h; sourceTree = "<group>"; };
+		620C17191170E3A4009F0434 /* timing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = timing.c; path = utility/timing.c; sourceTree = "<group>"; };
+		620C171A1170E3A4009F0434 /* timing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = timing.h; path = utility/timing.h; sourceTree = "<group>"; };
+		620C17241170E3C4009F0434 /* libpcre.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpcre.a; path = pcre/libpcre.a; sourceTree = "<group>"; };
+		620C17261170E3C4009F0434 /* libpcreposix.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpcreposix.a; path = pcre/libpcreposix.a; sourceTree = "<group>"; };
+		620C17281170E3D2009F0434 /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = pcre/pcre.h; sourceTree = "<group>"; };
+		620C17291170E3D2009F0434 /* pcreposix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcreposix.h; path = pcre/pcreposix.h; sourceTree = "<group>"; };
+		620C173E1170E455009F0434 /* DigiFi-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DigiFi-Info.plist"; sourceTree = "<group>"; };
+		620C17941170E52B009F0434 /* DigiFi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DigiFi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6233C0721170E0CA009C37D5 /* entrypoint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = entrypoint.c; sourceTree = "<group>"; };
+		62B3C1261170E92D0091F925 /* debugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debugging.h; sourceTree = "<group>"; };
+		62B3C1C11170F9CF0091F925 /* tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
+		62B3C1C21170F9CF0091F925 /* tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tests.c; sourceTree = "<group>"; };
 		8DD76FB20486AB0100D96B5E /* libdigifi.new */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libdigifi.new; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = libdigifi.new.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		620C17921170E52B009F0434 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				620C17AE1170E55E009F0434 /* libpcre.a in Frameworks */,
+				620C17AF1170E55E009F0434 /* libpcreposix.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DD76FAD0486AB0100D96B5E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				620C17251170E3C4009F0434 /* libpcre.a in Frameworks */,
+				620C17271170E3C4009F0434 /* libpcreposix.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +166,7 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				C6A0FF2B0290797F04C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				620C173E1170E455009F0434 /* DigiFi-Info.plist */,
 			);
 			name = libdigifi.new;
 			sourceTree = "<group>";
@@ -101,11 +174,12 @@
 		08FB7795FE84155DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				62B3C1C01170F9BE0091F925 /* Interface */,
+				620C17231170E3B2009F0434 /* PCRE */,
 				62378B15116E92F2007F72C7 /* API */,
 				62378BB7116F7D87007F72C7 /* Discovery */,
 				62378B16116E92F8007F72C7 /* Comms */,
 				62378B14116E92EC007F72C7 /* Utility */,
-				08FB7796FE84155DC02AAC07 /* main.c */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -114,29 +188,42 @@
 			isa = PBXGroup;
 			children = (
 				8DD76FB20486AB0100D96B5E /* libdigifi.new */,
+				620C17941170E52B009F0434 /* DigiFi.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		620C17231170E3B2009F0434 /* PCRE */ = {
+			isa = PBXGroup;
+			children = (
+				620C17281170E3D2009F0434 /* pcre.h */,
+				620C17291170E3D2009F0434 /* pcreposix.h */,
+				620C17241170E3C4009F0434 /* libpcre.a */,
+				620C17261170E3C4009F0434 /* libpcreposix.a */,
+			);
+			name = PCRE;
 			sourceTree = "<group>";
 		};
 		62378B14116E92EC007F72C7 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				62378ACB116E86E9007F72C7 /* charbuffer.c */,
-				62378ACC116E86E9007F72C7 /* charbuffer.h */,
-				62378A8A116E7F53007F72C7 /* extraction.h */,
-				62378A8B116E7F53007F72C7 /* extraction.c */,
-				62378A87116E7F3C007F72C7 /* formatting.h */,
-				62378A88116E7F3C007F72C7 /* formatting.c */,
-				62378ACD116E86E9007F72C7 /* rbst.c */,
-				62378ACE116E86E9007F72C7 /* rbst.h */,
-				62378B11116E92A3007F72C7 /* regex_wrapper.h */,
-				62378B12116E92A3007F72C7 /* regex_wrapper.c */,
-				62378A62116E77D7007F72C7 /* timing.h */,
-				62378A63116E77D7007F72C7 /* timing.c */,
-				62378BBA116F7E89007F72C7 /* queue.h */,
-				62378BBB116F7E89007F72C7 /* queue.c */,
-				62378D10116FC025007F72C7 /* allocator.h */,
-				62378D11116FC094007F72C7 /* allocator.c */,
+				620C170B1170E3A4009F0434 /* allocator.c */,
+				620C170C1170E3A4009F0434 /* allocator.h */,
+				620C170D1170E3A4009F0434 /* charbuffer.c */,
+				620C170E1170E3A4009F0434 /* charbuffer.h */,
+				620C170F1170E3A4009F0434 /* extraction.c */,
+				620C17101170E3A4009F0434 /* extraction.h */,
+				620C17111170E3A4009F0434 /* formatting.c */,
+				620C17121170E3A4009F0434 /* formatting.h */,
+				620C17131170E3A4009F0434 /* queue.c */,
+				620C17141170E3A4009F0434 /* queue.h */,
+				620C17151170E3A4009F0434 /* rbst.c */,
+				620C17161170E3A4009F0434 /* rbst.h */,
+				620C17171170E3A4009F0434 /* regex_wrapper.c */,
+				620C17181170E3A4009F0434 /* regex_wrapper.h */,
+				620C17191170E3A4009F0434 /* timing.c */,
+				620C171A1170E3A4009F0434 /* timing.h */,
+				62B3C1261170E92D0091F925 /* debugging.h */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -144,16 +231,16 @@
 		62378B15116E92F2007F72C7 /* API */ = {
 			isa = PBXGroup;
 			children = (
-				62378B76116F61AB007F72C7 /* DigiFi.h */,
-				62378B6D116F618F007F72C7 /* client.h */,
-				62378B6E116F618F007F72C7 /* client.c */,
-				62378B70116F6196007F72C7 /* commands.h */,
-				62378B71116F6196007F72C7 /* commands.c */,
-				62378B73116F619E007F72C7 /* rgets.h */,
-				62378B74116F619E007F72C7 /* rgets.c */,
-				62378B19116F557A007F72C7 /* regex_list.h */,
-				62378B1A116F557A007F72C7 /* regex_list.c */,
-				62378B77116F629C007F72C7 /* types.h */,
+				620C16EE1170E37E009F0434 /* client.c */,
+				620C16EF1170E37E009F0434 /* client.h */,
+				620C16F01170E37E009F0434 /* commands.c */,
+				620C16F11170E37E009F0434 /* commands.h */,
+				620C16F21170E37E009F0434 /* DigiFi.h */,
+				620C16F31170E37E009F0434 /* regex_list.c */,
+				620C16F41170E37E009F0434 /* regex_list.h */,
+				620C16F51170E37E009F0434 /* rgets.c */,
+				620C16F61170E37E009F0434 /* rgets.h */,
+				620C16F71170E37E009F0434 /* types.h */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -161,12 +248,12 @@
 		62378B16116E92F8007F72C7 /* Comms */ = {
 			isa = PBXGroup;
 			children = (
-				62378B1C116F5642007F72C7 /* comm_manager.h */,
-				62378B1D116F5642007F72C7 /* comm_manager.c */,
-				62378A8D116E7F73007F72C7 /* comm_in.h */,
-				62378A8E116E7F73007F72C7 /* comm_in.c */,
-				62378A90116E7F7C007F72C7 /* comm_out.h */,
-				62378A91116E7F7C007F72C7 /* comm_out.c */,
+				620C17021170E394009F0434 /* comm_in.c */,
+				620C17031170E394009F0434 /* comm_in.h */,
+				620C17041170E394009F0434 /* comm_manager.c */,
+				620C17051170E394009F0434 /* comm_manager.h */,
+				620C17061170E394009F0434 /* comm_out.c */,
+				620C17071170E394009F0434 /* comm_out.h */,
 			);
 			name = Comms;
 			sourceTree = "<group>";
@@ -174,8 +261,22 @@
 		62378BB7116F7D87007F72C7 /* Discovery */ = {
 			isa = PBXGroup;
 			children = (
+				620C16FC1170E389009F0434 /* discover.c */,
+				620C16FD1170E389009F0434 /* discover.h */,
+				620C16FE1170E389009F0434 /* searchpacket.c */,
+				620C16FF1170E389009F0434 /* searchpacket.h */,
 			);
 			name = Discovery;
+			sourceTree = "<group>";
+		};
+		62B3C1C01170F9BE0091F925 /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+				6233C0721170E0CA009C37D5 /* entrypoint.c */,
+				62B3C1C11170F9CF0091F925 /* tests.h */,
+				62B3C1C21170F9CF0091F925 /* tests.c */,
+			);
+			name = Interface;
 			sourceTree = "<group>";
 		};
 		C6A0FF2B0290797F04C91782 /* Documentation */ = {
@@ -188,7 +289,58 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		620C178F1170E52B009F0434 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				620C179A1170E55E009F0434 /* allocator.h in Headers */,
+				620C179C1170E55E009F0434 /* charbuffer.h in Headers */,
+				620C179E1170E55E009F0434 /* client.h in Headers */,
+				620C17A01170E55E009F0434 /* comm_in.h in Headers */,
+				620C17A21170E55E009F0434 /* comm_manager.h in Headers */,
+				620C17A41170E55E009F0434 /* comm_out.h in Headers */,
+				620C17A61170E55E009F0434 /* commands.h in Headers */,
+				620C17A71170E55E009F0434 /* DigiFi.h in Headers */,
+				620C17A91170E55E009F0434 /* discover.h in Headers */,
+				620C17AB1170E55E009F0434 /* extraction.h in Headers */,
+				620C17AD1170E55E009F0434 /* formatting.h in Headers */,
+				620C17B01170E55E009F0434 /* pcre.h in Headers */,
+				620C17B11170E55E009F0434 /* pcreposix.h in Headers */,
+				620C17B31170E55E009F0434 /* queue.h in Headers */,
+				620C17B51170E55E009F0434 /* rbst.h in Headers */,
+				620C17B71170E55E009F0434 /* regex_list.h in Headers */,
+				620C17B91170E55E009F0434 /* regex_wrapper.h in Headers */,
+				620C17BB1170E55E009F0434 /* rgets.h in Headers */,
+				620C17BD1170E55E009F0434 /* searchpacket.h in Headers */,
+				620C17BF1170E55E009F0434 /* timing.h in Headers */,
+				620C17C01170E55E009F0434 /* types.h in Headers */,
+				62B3C1271170E92D0091F925 /* debugging.h in Headers */,
+				62B3C1C31170F9CF0091F925 /* tests.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		620C17931170E52B009F0434 /* DigiFi */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 620C17C41170E580009F0434 /* Build configuration list for PBXNativeTarget "DigiFi" */;
+			buildPhases = (
+				620C178F1170E52B009F0434 /* Headers */,
+				620C17901170E52B009F0434 /* Resources */,
+				620C17911170E52B009F0434 /* Sources */,
+				620C17921170E52B009F0434 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DigiFi;
+			productName = DigiFi;
+			productReference = 620C17941170E52B009F0434 /* DigiFi.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		8DD76FA90486AB0100D96B5E /* libdigifi.new */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB928508733DD80010E9CD /* Build configuration list for PBXNativeTarget "libdigifi.new" */;
@@ -220,31 +372,70 @@
 			projectRoot = "";
 			targets = (
 				8DD76FA90486AB0100D96B5E /* libdigifi.new */,
+				620C17931170E52B009F0434 /* DigiFi */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		620C17901170E52B009F0434 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		620C17911170E52B009F0434 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				620C17991170E55E009F0434 /* allocator.c in Sources */,
+				620C179B1170E55E009F0434 /* charbuffer.c in Sources */,
+				620C179D1170E55E009F0434 /* client.c in Sources */,
+				620C179F1170E55E009F0434 /* comm_in.c in Sources */,
+				620C17A11170E55E009F0434 /* comm_manager.c in Sources */,
+				620C17A31170E55E009F0434 /* comm_out.c in Sources */,
+				620C17A51170E55E009F0434 /* commands.c in Sources */,
+				620C17A81170E55E009F0434 /* discover.c in Sources */,
+				620C17AA1170E55E009F0434 /* extraction.c in Sources */,
+				620C17AC1170E55E009F0434 /* formatting.c in Sources */,
+				620C17B21170E55E009F0434 /* queue.c in Sources */,
+				620C17B41170E55E009F0434 /* rbst.c in Sources */,
+				620C17B61170E55E009F0434 /* regex_list.c in Sources */,
+				620C17B81170E55E009F0434 /* regex_wrapper.c in Sources */,
+				620C17BA1170E55E009F0434 /* rgets.c in Sources */,
+				620C17BC1170E55E009F0434 /* searchpacket.c in Sources */,
+				620C17BE1170E55E009F0434 /* timing.c in Sources */,
+				62B3C1C41170F9CF0091F925 /* tests.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DD76FAB0486AB0100D96B5E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8DD76FAC0486AB0100D96B5E /* main.c in Sources */,
-				62378A64116E77D7007F72C7 /* timing.c in Sources */,
-				62378A89116E7F3C007F72C7 /* formatting.c in Sources */,
-				62378A8C116E7F53007F72C7 /* extraction.c in Sources */,
-				62378A8F116E7F73007F72C7 /* comm_in.c in Sources */,
-				62378A92116E7F7C007F72C7 /* comm_out.c in Sources */,
-				62378ACF116E86E9007F72C7 /* charbuffer.c in Sources */,
-				62378AD0116E86E9007F72C7 /* rbst.c in Sources */,
-				62378B13116E92A3007F72C7 /* regex_wrapper.c in Sources */,
-				62378B1B116F557A007F72C7 /* regex_list.c in Sources */,
-				62378B1E116F5642007F72C7 /* comm_manager.c in Sources */,
-				62378B6F116F618F007F72C7 /* client.c in Sources */,
-				62378B72116F6196007F72C7 /* commands.c in Sources */,
-				62378B75116F619E007F72C7 /* rgets.c in Sources */,
-				62378BBC116F7E89007F72C7 /* queue.c in Sources */,
-				62378D12116FC094007F72C7 /* allocator.c in Sources */,
+				62B3C1DD1170FAF10091F925 /* tests.c in Sources */,
+				6233C0731170E0CA009C37D5 /* entrypoint.c in Sources */,
+				620C16F81170E37E009F0434 /* client.c in Sources */,
+				620C16F91170E37E009F0434 /* commands.c in Sources */,
+				620C16FA1170E37E009F0434 /* regex_list.c in Sources */,
+				620C16FB1170E37E009F0434 /* rgets.c in Sources */,
+				620C17001170E389009F0434 /* discover.c in Sources */,
+				620C17011170E389009F0434 /* searchpacket.c in Sources */,
+				620C17081170E394009F0434 /* comm_in.c in Sources */,
+				620C17091170E394009F0434 /* comm_manager.c in Sources */,
+				620C170A1170E394009F0434 /* comm_out.c in Sources */,
+				620C171B1170E3A4009F0434 /* allocator.c in Sources */,
+				620C171C1170E3A4009F0434 /* charbuffer.c in Sources */,
+				620C171D1170E3A4009F0434 /* extraction.c in Sources */,
+				620C171E1170E3A4009F0434 /* formatting.c in Sources */,
+				620C171F1170E3A4009F0434 /* queue.c in Sources */,
+				620C17201170E3A4009F0434 /* rbst.c in Sources */,
+				620C17211170E3A4009F0434 /* regex_wrapper.c in Sources */,
+				620C17221170E3A4009F0434 /* timing.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +452,10 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/pcre\"",
+				);
 				PRODUCT_NAME = libdigifi.new;
 			};
 			name = Debug;
@@ -272,6 +467,10 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/pcre\"",
+				);
 				PRODUCT_NAME = libdigifi.new;
 			};
 			name = Release;
@@ -295,10 +494,71 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		620C17951170E52B009F0434 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				GCC_VERSION = "";
+				INFOPLIST_FILE = "DigiFi-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/pcre\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
+				PRODUCT_NAME = DigiFi;
+			};
+			name = Debug;
+		};
+		620C17961170E52B009F0434 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				INFOPLIST_FILE = "DigiFi-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/pcre\"",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = DigiFi;
+				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -319,6 +579,15 @@
 			buildConfigurations = (
 				1DEB928A08733DD80010E9CD /* Debug */,
 				1DEB928B08733DD80010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		620C17C41170E580009F0434 /* Build configuration list for PBXNativeTarget "DigiFi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				620C17951170E52B009F0434 /* Debug */,
+				620C17961170E52B009F0434 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

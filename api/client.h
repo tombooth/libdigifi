@@ -27,5 +27,9 @@ void df_disconnect(df_connection *conn);
 
 void df_destroy();
 
+void dferrors_register_errorcallback(void (*callback)(int, char*));
+
+void dferrors_register_debugcallback(void (*callback)(char*));
+
 
 #endif

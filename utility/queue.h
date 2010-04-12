@@ -16,6 +16,8 @@
 
 void queue_push(void *item);
 
+void queue_filter(int (*filter)(void *, void *), void *context);
+
 void *queue_pop();
 
 

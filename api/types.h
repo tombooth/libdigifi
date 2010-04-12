@@ -52,9 +52,6 @@ typedef struct {
 	char *path;
 } df_trackname;
 
-
-
-
 // Get types
 
 typedef struct {
@@ -111,9 +108,10 @@ typedef struct {
 } df_rescanresult;
 
 typedef struct {
-	int UpdateDrive_Return;
-	char* UpdateDrive_ErrorMessage;
-} df_updatedrivedetails;
+	char* Message;
+	char* Category;
+	df_date DateCreated;
+} df_messagedetail;
 
 typedef struct {
 	char* DriveLetter;
@@ -288,15 +286,14 @@ typedef struct {
 } df_subgenre;
 
 typedef struct {
-	char* Message;
-	char* Category;
-	df_date DateCreated;
-} df_messagedetail;
-
-typedef struct {
 	int PromoteShareToMusicStore_Success;
 	char* PromoteShareToMusicStore_Message;
 } df_promoteshare;
+
+typedef struct {
+	int UpdateDrive_Return;
+	char* UpdateDrive_ErrorMessage;
+} df_updatedrivedetails;
 
 
 
@@ -306,7 +303,7 @@ typedef struct {
 
 struct __df_driverow {
 	struct __df_driverow *next;
-	
+
 	int DriveKey;
 	char* DriveLetter;
 	int IsPrimary;
@@ -320,7 +317,7 @@ typedef struct __df_driverow df_driverow;
 
 struct __df_outputdevicerow {
 	struct __df_outputdevicerow *next;
-	
+
 	char* Name;
 	int OutputDeviceID;
 };
@@ -329,7 +326,7 @@ typedef struct __df_outputdevicerow df_outputdevicerow;
 
 struct __df_type1row {
 	struct __df_type1row *next;
-	
+
 	char* Artist;
 	char* Album;
 	int Tracks;
@@ -348,7 +345,7 @@ typedef struct __df_type1row df_type1row;
 
 struct __df_settingsexrow {
 	struct __df_settingsexrow *next;
-	
+
 	char* RegistryKey;
 	char* Value;
 	int ReadOnly;
@@ -368,7 +365,7 @@ typedef struct __df_settingsexrow df_settingsexrow;
 
 struct __df_effformatrow {
 	struct __df_effformatrow *next;
-	
+
 	char* FieldName;
 	char* FormatSource;
 };
@@ -377,7 +374,7 @@ typedef struct __df_effformatrow df_effformatrow;
 
 struct __df_artistrow {
 	struct __df_artistrow *next;
-	
+
 	int ArtistKey;
 	char* Name;
 };
@@ -386,7 +383,7 @@ typedef struct __df_artistrow df_artistrow;
 
 struct __df_type0row {
 	struct __df_type0row *next;
-	
+
 	int TrackKey;
 	char* Name;
 	char* SortName;
@@ -416,7 +413,7 @@ typedef struct __df_type0row df_type0row;
 
 struct __df_tracksotherrow {
 	struct __df_tracksotherrow *next;
-	
+
 	int TrackKey;
 	char* Name;
 	char* SortName;
@@ -443,7 +440,7 @@ typedef struct __df_tracksotherrow df_tracksotherrow;
 
 struct __df_exttrackinforow {
 	struct __df_exttrackinforow *next;
-	
+
 	int TrackKey;
 	char* CompositionDate;
 	char* Part;
@@ -455,7 +452,7 @@ typedef struct __df_exttrackinforow df_exttrackinforow;
 
 struct __df_outputchannelrow {
 	struct __df_outputchannelrow *next;
-	
+
 	char* InitString;
 	int ChannelID;
 };
@@ -464,7 +461,7 @@ typedef struct __df_outputchannelrow df_outputchannelrow;
 
 struct __df_currplaylistexrow {
 	struct __df_currplaylistexrow *next;
-	
+
 	int TrackKey;
 	char* Name;
 	char* SortName;
@@ -492,7 +489,7 @@ typedef struct __df_currplaylistexrow df_currplaylistexrow;
 
 struct __df_extcontributorrow {
 	struct __df_extcontributorrow *next;
-	
+
 	int ContributorKey;
 	char* Name;
 	int ContributorType;
@@ -502,7 +499,7 @@ typedef struct __df_extcontributorrow df_extcontributorrow;
 
 struct __df_encodingstatusrow {
 	struct __df_encodingstatusrow *next;
-	
+
 	char* Artist;
 	char* Album;
 	char* Track;
@@ -515,7 +512,7 @@ typedef struct __df_encodingstatusrow df_encodingstatusrow;
 
 struct __df_vtunerpresetrow {
 	struct __df_vtunerpresetrow *next;
-	
+
 	int Key;
 	int ChannelNumber;
 	char* ChannelName;
@@ -547,7 +544,7 @@ typedef struct __df_vtunerpresetrow df_vtunerpresetrow;
 
 struct __df_albumrow {
 	struct __df_albumrow *next;
-	
+
 	int PlaylistKey;
 	char* Name;
 	int ArtistKey;
@@ -564,7 +561,7 @@ typedef struct __df_albumrow df_albumrow;
 
 struct __df_trackrow {
 	struct __df_trackrow *next;
-	
+
 	int TrackKey;
 	char* Name;
 	char* SortName;
@@ -584,7 +581,7 @@ typedef struct __df_trackrow df_trackrow;
 
 struct __df_settingsrow {
 	struct __df_settingsrow *next;
-	
+
 	char* RegistryKey;
 	char* Value;
 	int ReadOnly;
@@ -596,7 +593,7 @@ typedef struct __df_settingsrow df_settingsrow;
 
 struct __df_linkedroomdetailrow {
 	struct __df_linkedroomdetailrow *next;
-	
+
 	int RoomKey;
 	char* IPAddress;
 	int Channel;
@@ -616,7 +613,7 @@ typedef struct __df_linkedroomdetailrow df_linkedroomdetailrow;
 
 struct __df_albumdetailrow {
 	struct __df_albumdetailrow *next;
-	
+
 	int PlaylistKey;
 	char* Name;
 	int ArtistKey;
@@ -636,7 +633,7 @@ typedef struct __df_albumdetailrow df_albumdetailrow;
 
 struct __df_genrerow {
 	struct __df_genrerow *next;
-	
+
 	int GenreKey;
 	char* Genre;
 	df_date Created;
@@ -649,7 +646,7 @@ typedef struct __df_genrerow df_genrerow;
 
 struct __df_type4row {
 	struct __df_type4row *next;
-	
+
 	int QueueKey;
 	char* Status;
 	int Retries;
@@ -667,7 +664,7 @@ typedef struct __df_type4row df_type4row;
 
 struct __df_mediarendererrow {
 	struct __df_mediarendererrow *next;
-	
+
 	char* FriendlyName;
 	char* UDN;
 	char* Manufacturer;
@@ -679,7 +676,7 @@ typedef struct __df_mediarendererrow df_mediarendererrow;
 
 struct __df_subgenrerow {
 	struct __df_subgenrerow *next;
-	
+
 	int SubGenreKey;
 	char* SubGenre;
 	df_date Created;
@@ -691,7 +688,7 @@ typedef struct __df_subgenrerow df_subgenrerow;
 
 struct __df_statusmessagerow {
 	struct __df_statusmessagerow *next;
-	
+
 	int MessageAddress;
 	char* Severity;
 	char* Category;
@@ -704,7 +701,7 @@ typedef struct __df_statusmessagerow df_statusmessagerow;
 
 struct __df_type3row {
 	struct __df_type3row *next;
-	
+
 	int TrackKey;
 	char* Name;
 	char* SortName;
@@ -732,7 +729,7 @@ typedef struct __df_type3row df_type3row;
 
 struct __df_exttrackcontribrow {
 	struct __df_exttrackcontribrow *next;
-	
+
 	int TrackKey;
 	int ContributorKey;
 	char* Name;
@@ -743,7 +740,7 @@ typedef struct __df_exttrackcontribrow df_exttrackcontribrow;
 
 struct __df_vtunerplayedrow {
 	struct __df_vtunerplayedrow *next;
-	
+
 	int Key;
 	int HitCount;
 	df_date LastPlayed;
@@ -774,7 +771,7 @@ typedef struct __df_vtunerplayedrow df_vtunerplayedrow;
 
 struct __df_cddbgenrerow {
 	struct __df_cddbgenrerow *next;
-	
+
 	int CDDBGenreKey;
 	char* Name;
 	int SubGenreKey;
@@ -785,7 +782,7 @@ typedef struct __df_cddbgenrerow df_cddbgenrerow;
 
 struct __df_playerinstancerow {
 	struct __df_playerinstancerow *next;
-	
+
 	int Key;
 	char* Name;
 	int OutputDeviceID;
@@ -796,7 +793,7 @@ typedef struct __df_playerinstancerow df_playerinstancerow;
 
 struct __df_albumotherrow {
 	struct __df_albumotherrow *next;
-	
+
 	int PlaylistKey;
 	char* Name;
 	int ArtistKey;
@@ -822,7 +819,7 @@ typedef struct __df_albumotherrow df_albumotherrow;
 
 struct __df_roomrow {
 	struct __df_roomrow *next;
-	
+
 	int RoomKey;
 	char* IPAddress;
 	int Channel;
@@ -840,7 +837,7 @@ typedef struct __df_roomrow df_roomrow;
 
 struct __df_currentplaylistrow {
 	struct __df_currentplaylistrow *next;
-	
+
 	int TrackKey;
 	char* Name;
 	char* SortName;
@@ -861,7 +858,7 @@ typedef struct __df_currentplaylistrow df_currentplaylistrow;
 
 struct __df_storerow {
 	struct __df_storerow *next;
-	
+
 	int MusicStoreKey;
 	char* Path;
 	int Local;
@@ -878,7 +875,7 @@ typedef struct __df_storerow df_storerow;
 
 struct __df_statusrow {
 	struct __df_statusrow *next;
-	
+
 	char* StatusSettingName;
 	char* StatusSettingValue;
 };
@@ -887,7 +884,7 @@ typedef struct __df_statusrow df_statusrow;
 
 struct __df_networkadaptorrow {
 	struct __df_networkadaptorrow *next;
-	
+
 	int DeviceID;
 	char* Description;
 	char* MacAddress;
@@ -902,7 +899,7 @@ typedef struct __df_networkadaptorrow df_networkadaptorrow;
 
 struct __df_extworksrow {
 	struct __df_extworksrow *next;
-	
+
 	char* Work;
 };
 
@@ -910,7 +907,7 @@ typedef struct __df_extworksrow df_extworksrow;
 
 struct __df_backuplogdetailrow {
 	struct __df_backuplogdetailrow *next;
-	
+
 	int BackupLogKey;
 	int BackupJobKey;
 	int ExecutionType;
@@ -934,7 +931,7 @@ typedef struct __df_backuplogdetailrow df_backuplogdetailrow;
 
 struct __df_extalbumcreditrow {
 	struct __df_extalbumcreditrow *next;
-	
+
 	int CreditKey;
 	int PlaylistKey;
 	char* Description;
@@ -946,7 +943,7 @@ typedef struct __df_extalbumcreditrow df_extalbumcreditrow;
 
 struct __df_trackrangerow {
 	struct __df_trackrangerow *next;
-	
+
 	int TrackKey;
 	char* Name;
 	char* SortName;
@@ -967,7 +964,7 @@ typedef struct __df_trackrangerow df_trackrangerow;
 
 struct __df_keyvaluerow {
 	struct __df_keyvaluerow *next;
-	
+
 	char* Name;
 	char* Value;
 };
@@ -976,7 +973,7 @@ typedef struct __df_keyvaluerow df_keyvaluerow;
 
 struct __df_backuplogrow {
 	struct __df_backuplogrow *next;
-	
+
 	int BackupLogKey;
 	int BackupJobKey;
 	int ExecutionType;
@@ -999,7 +996,7 @@ typedef struct __df_backuplogrow df_backuplogrow;
 
 struct __df_tracksforplaylistrow {
 	struct __df_tracksforplaylistrow *next;
-	
+
 	int TrackKey;
 	char* Name;
 	char* SortName;
@@ -1020,7 +1017,7 @@ typedef struct __df_tracksforplaylistrow df_tracksforplaylistrow;
 
 struct __df_rippingalertrow {
 	struct __df_rippingalertrow *next;
-	
+
 	int AlertKey;
 	char* Severity;
 	char* Category;
@@ -1032,7 +1029,7 @@ typedef struct __df_rippingalertrow df_rippingalertrow;
 
 struct __df_rippingstatusrow {
 	struct __df_rippingstatusrow *next;
-	
+
 	char* Artist;
 	char* Album;
 	int Tracks;
@@ -1050,7 +1047,7 @@ typedef struct __df_rippingstatusrow df_rippingstatusrow;
 
 struct __df_extalbuminforow {
 	struct __df_extalbuminforow *next;
-	
+
 	int PlaylistKey;
 	int Discs;
 	int DiscNumber;
@@ -1062,7 +1059,7 @@ typedef struct __df_extalbuminforow df_extalbuminforow;
 
 struct __df_backupjobrow {
 	struct __df_backupjobrow *next;
-	
+
 	int BackupJobKey;
 	int SourceDriveKey;
 	int DestinationDriveKey;
@@ -1084,7 +1081,7 @@ typedef struct __df_backupjobrow df_backupjobrow;
 
 struct __df_genressubgenresrow {
 	struct __df_genressubgenresrow *next;
-	
+
 	int SubGenreKey;
 	char* SubGenre;
 	int GenreKey;
@@ -1098,7 +1095,7 @@ typedef struct __df_genressubgenresrow df_genressubgenresrow;
 
 struct __df_alertdetailrow {
 	struct __df_alertdetailrow *next;
-	
+
 	int AlertKey;
 	char* Severity;
 	char* Category;
@@ -1114,7 +1111,7 @@ typedef struct __df_alertdetailrow df_alertdetailrow;
 
 struct __df_encodingqueuerow {
 	struct __df_encodingqueuerow *next;
-	
+
 	char* Value;
 };
 
@@ -1122,7 +1119,7 @@ typedef struct __df_encodingqueuerow df_encodingqueuerow;
 
 struct __df_movealbumgetqueuerow {
 	struct __df_movealbumgetqueuerow *next;
-	
+
 	int QueueKey;
 	char* Status;
 	int Retries;
@@ -1141,7 +1138,7 @@ typedef struct __df_movealbumgetqueuerow df_movealbumgetqueuerow;
 
 struct __df_type2row {
 	struct __df_type2row *next;
-	
+
 	int PlaylistKey;
 	char* Name;
 	int ArtistKey;
@@ -1169,7 +1166,7 @@ typedef struct __df_type2row df_type2row;
 
 struct __df_storedetailrow {
 	struct __df_storedetailrow *next;
-	
+
 	int MusicStoreKey;
 	char* Path;
 	int Local;
@@ -1192,7 +1189,7 @@ typedef struct __df_storedetailrow df_storedetailrow;
 
 struct __df_externalstoragerow {
 	struct __df_externalstoragerow *next;
-	
+
 	int StorageKey;
 	char* IPAddress;
 	char* HostName;
@@ -1214,7 +1211,7 @@ typedef struct __df_externalstoragerow df_externalstoragerow;
 
 struct __df_bulklookuprow {
 	struct __df_bulklookuprow *next;
-	
+
 	int PlaylistKey;
 	int Success;
 	char* Message;
@@ -1224,7 +1221,7 @@ typedef struct __df_bulklookuprow df_bulklookuprow;
 
 struct __df_vtunernoderow {
 	struct __df_vtunernoderow *next;
-	
+
 	char* Name;
 	int NodeType;
 	char* UrlBookmark;
@@ -1249,7 +1246,7 @@ typedef struct __df_vtunernoderow df_vtunernoderow;
 
 struct __df_devicerow {
 	struct __df_devicerow *next;
-	
+
 	int DeviceKey;
 	char* Name;
 	char* SerialNumber;
@@ -1262,6 +1259,13 @@ struct __df_devicerow {
 };
 
 typedef struct __df_devicerow df_devicerow;
+
+
+
+
+
+
+
 
 #endif
 

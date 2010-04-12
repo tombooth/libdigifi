@@ -11,7 +11,8 @@
 #ifndef REGEXWRAPPER_H
 #define REGEXWRAPPER_H
 
-#include <regex.h>
+//#include <regex.h>
+#include "pcreposix.h"
 #include "rbst.h"
 #include "regex_list.h"
 
@@ -37,7 +38,11 @@ typedef struct {
 
 void regex_init();
 
+char *regex_get_error();
+
 regex_t* regex_get_compiled(char *name);
+
+regex_t* regex_compile(char *pattern);
 
 regex_result* regex_match(regex_t *regex, char *string);
 

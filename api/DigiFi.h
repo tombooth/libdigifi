@@ -1,5 +1,5 @@
 /*
- *  allocator.c
+ *  DigiFi.h
  *  libdigifi.new
  *
  *  Created by Tom Booth on 09/04/2010.
@@ -7,17 +7,7 @@
  *
  */
 
-
-#include "allocator.h"
-
-
-int allocator_get() {
-	return 1;
-}
-
-void allocator_return(int num) {
-	
-}
-
-
-
+#include "client.h"
+#include "discover.h"
+#include "rgets.h"
+#include "commands.h"

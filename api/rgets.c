@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "regex_wrapper.h"
+#include "formatting.h"
 
 
 
@@ -143,6 +144,7 @@ void process_incoming_rget(in_settings *settings, char *name, char *command) {
 		free(dt->albumname);
 		free(dt->artistname);
 		free(dt->genrename);
+		free(dt->path);
 		free(dt);
 	}
 	else if (strcmp(name,"GetLastPlayerError") == 0) {

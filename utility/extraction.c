@@ -41,6 +41,8 @@ extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t 
 		result = extraction_check_buffer(buffer, regex, error_regex);
 	}
 	
+	free(byte_buffer);
+	
 	return result;
 }
 
@@ -57,6 +59,7 @@ void extraction_free_result(extraction_result *result) {
 static extraction_result* extraction_check_buffer(cbuf *buffer, regex_t *regex, regex_t *error_regex) {
 	extraction_result *result;
 	regex_result *rx_result;
+	char *temp;
 	int is_error = 0;
 	
 	rx_result = regex_match(regex, buffer->data);
@@ -71,7 +74,8 @@ static extraction_result* extraction_check_buffer(cbuf *buffer, regex_t *regex, 
 		result->is_error = is_error;
 		result->result = rx_result;
 		
-		cbuf_extract(buffer, rx_result->start, rx_result->length);
+		temp = cbuf_extract(buffer, rx_result->start, rx_result->length);
+		if (temp != NULL) free(temp);
 	}
 	
 	

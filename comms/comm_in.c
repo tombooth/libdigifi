@@ -66,8 +66,14 @@ void comm_in_remove(in_settings *settings) {
 	
 	while (temp != NULL && temp->settings != settings) { temp = temp->next; }
 	if (temp != NULL) {
-		temp->next->previous = temp->previous;
-		temp->previous->next = temp->next;
+		if (temp->next != NULL) {
+			if (temp->previous != NULL) { temp->previous->next = temp->next; temp->next->previous = temp->previous; }
+			else { holder_front = temp->next; temp->next->previous = NULL; }
+		} else if (temp->previous != NULL) {
+			temp->previous->next = NULL;
+			if (holder_back == temp) { holder_back = temp->previous; }
+		} else { holder_front = NULL; holder_back = NULL; }
+		
 		free(temp);
 	}
 	

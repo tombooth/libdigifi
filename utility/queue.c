@@ -48,10 +48,23 @@ void queue_push(void *item) {
 	
 }
 
-
+void queue_filter(int (*filter)(void *, void *), void *context) {
+	struct item *current, *last;
+	
+	last = NULL;
+	current = front_pointer;
+	while (current != NULL) {
+		if (filter(current->value, context)) { 
+			last->next = current->next;
+			free(current);	// the filter needs to take care of cleaning up the value
+			current = last->next;
+		} else { last = current; current = current->next; }
+	}
+}
 
 void *queue_pop() {
 	void *item;
+	struct item *holder;
 	
 	pthread_mutex_lock(&queue_cond_mutex);
 	
@@ -60,12 +73,15 @@ void *queue_pop() {
 	// get the item from the front of the queue
 	pthread_mutex_lock(&queue_lock);
 	
+	holder = front_pointer;
 	item = front_pointer->value;
 	if (front_pointer->next == NULL) { 
 		front_pointer = NULL; back_pointer = NULL;
 	} else {
 		front_pointer = front_pointer->next;
 	}
+	
+	free(holder);
 	
 	pthread_mutex_unlock(&queue_lock);
 	
