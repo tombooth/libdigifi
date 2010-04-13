@@ -12007,6 +12007,7 @@ static struct command_option list_options[3] = { { "connections", list_connectio
 
 static int num_test_options = 2;
 static struct command_option test_options[2] = { { "main", main_conn_test },
+												 { "rget", rget_test },
 												 { "misc", misc_test }};
 
 static int num_rget_options = 10;
@@ -12488,7 +12489,7 @@ static void list_connections(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_trackposition_callback(df_time *time, void *context) {
+static void rget_trackposition_callback(int room, df_time *time, void *context) {
 	printf("%s TrackPosition: %d:%d:%d\n", (char*)context, time->hours, time->minutes, time->seconds);
 }
 
@@ -12505,7 +12506,7 @@ static void rget_trackposition(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_detailedtrackinfo_callback(df_detailedtrack *dt, void *context) {
+static void rget_detailedtrackinfo_callback(int room, df_detailedtrack *dt, void *context) {
 	printf("%s DetailedTrackInfo: %s - %s - %s\n", (char*)context, dt->artistname, dt->albumname, dt->name);
 }
 
@@ -12523,7 +12524,7 @@ static void rget_detailedtrackinfo(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_albumartist_callback(df_albumartist *aa, void *context) {
+static void rget_albumartist_callback(int room, df_albumartist *aa, void *context) {
 	printf("%s AlbumArtist: %s - %s\n", (char*)context, aa->Artist, aa->Album);
 }
 
@@ -12540,7 +12541,7 @@ static void rget_albumartist(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_lastplayererror_callback(char *lpe, void *context) {
+static void rget_lastplayererror_callback(int room, char *lpe, void *context) {
 	printf("%s LastPlayerError: %s\n", (char*)context, lpe);
 }
 
@@ -12557,7 +12558,7 @@ static void rget_lastplayererror(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_playerstatus_callback(char *lpe, void *context) {
+static void rget_playerstatus_callback(int room, char *lpe, void *context) {
 	printf("%s PlayerStatus: %s\n", (char*)context, lpe);
 }
 
@@ -12574,7 +12575,7 @@ static void rget_playerstatus(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_playingchecksum_callback(char *lpe, void *context) {
+static void rget_playingchecksum_callback(int room, char *lpe, void *context) {
 	printf("%s PlayingChecksum: %s\n", (char*)context, lpe);
 }
 
@@ -12591,7 +12592,7 @@ static void rget_playingchecksum(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_repeat_callback(int i, void *context) {
+static void rget_repeat_callback(int room, int i, void *context) {
 	printf("%s Repeat: %d\n", (char*)context, i);
 }
 
@@ -12608,7 +12609,7 @@ static void rget_repeat(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_shuffle_callback(int i, void *context) {
+static void rget_shuffle_callback(int room, int i, void *context) {
 	printf("%s Shuffle: %d\n", (char*)context, i);
 }
 
@@ -12625,7 +12626,7 @@ static void rget_shuffle(pthread_mutex_t *parent_lock) {
 
 
 
-static void rget_trackname_callback(df_trackname *tn, void *context) {
+static void rget_trackname_callback(int room, df_trackname *tn, void *context) {
 	printf("%s TrackName: %s\n", (char*)context, tn->name);
 }
 

@@ -66,11 +66,9 @@
 		620C17BE1170E55E009F0434 /* timing.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17191170E3A4009F0434 /* timing.c */; };
 		620C17BF1170E55E009F0434 /* timing.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C171A1170E3A4009F0434 /* timing.h */; };
 		620C17C01170E55E009F0434 /* types.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F71170E37E009F0434 /* types.h */; };
-		6233C0731170E0CA009C37D5 /* entrypoint.c in Sources */ = {isa = PBXBuildFile; fileRef = 6233C0721170E0CA009C37D5 /* entrypoint.c */; };
-		62B3C1271170E92D0091F925 /* debugging.h in Headers */ = {isa = PBXBuildFile; fileRef = 62B3C1261170E92D0091F925 /* debugging.h */; };
-		62B3C1C31170F9CF0091F925 /* tests.h in Headers */ = {isa = PBXBuildFile; fileRef = 62B3C1C11170F9CF0091F925 /* tests.h */; };
-		62B3C1C41170F9CF0091F925 /* tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 62B3C1C21170F9CF0091F925 /* tests.c */; };
-		62B3C1DD1170FAF10091F925 /* tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 62B3C1C21170F9CF0091F925 /* tests.c */; };
+		62D4FC661173E3A100BADB2B /* debugging.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D4FC651173E3A100BADB2B /* debugging.h */; };
+		62D4FC6C1173E3D500BADB2B /* entrypoint.c in Sources */ = {isa = PBXBuildFile; fileRef = 62D4FC5F1173E39100BADB2B /* entrypoint.c */; };
+		62D4FC6D1173E3D500BADB2B /* tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 62D4FC601173E39100BADB2B /* tests.c */; };
 		8DD76FB00486AB0100D96B5E /* libdigifi.new.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */; };
 /* End PBXBuildFile section */
 
@@ -130,10 +128,10 @@
 		620C17291170E3D2009F0434 /* pcreposix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcreposix.h; path = pcre/pcreposix.h; sourceTree = "<group>"; };
 		620C173E1170E455009F0434 /* DigiFi-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DigiFi-Info.plist"; sourceTree = "<group>"; };
 		620C17941170E52B009F0434 /* DigiFi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DigiFi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6233C0721170E0CA009C37D5 /* entrypoint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = entrypoint.c; sourceTree = "<group>"; };
-		62B3C1261170E92D0091F925 /* debugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debugging.h; sourceTree = "<group>"; };
-		62B3C1C11170F9CF0091F925 /* tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
-		62B3C1C21170F9CF0091F925 /* tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tests.c; sourceTree = "<group>"; };
+		62D4FC5F1173E39100BADB2B /* entrypoint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = entrypoint.c; path = interfaces/entrypoint.c; sourceTree = "<group>"; };
+		62D4FC601173E39100BADB2B /* tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tests.c; path = interfaces/tests.c; sourceTree = "<group>"; };
+		62D4FC611173E39100BADB2B /* tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests.h; path = interfaces/tests.h; sourceTree = "<group>"; };
+		62D4FC651173E3A100BADB2B /* debugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debugging.h; path = utility/debugging.h; sourceTree = "<group>"; };
 		8DD76FB20486AB0100D96B5E /* libdigifi.new */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libdigifi.new; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = libdigifi.new.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -207,6 +205,7 @@
 		62378B14116E92EC007F72C7 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				62D4FC651173E3A100BADB2B /* debugging.h */,
 				620C170B1170E3A4009F0434 /* allocator.c */,
 				620C170C1170E3A4009F0434 /* allocator.h */,
 				620C170D1170E3A4009F0434 /* charbuffer.c */,
@@ -223,7 +222,6 @@
 				620C17181170E3A4009F0434 /* regex_wrapper.h */,
 				620C17191170E3A4009F0434 /* timing.c */,
 				620C171A1170E3A4009F0434 /* timing.h */,
-				62B3C1261170E92D0091F925 /* debugging.h */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -272,9 +270,9 @@
 		62B3C1C01170F9BE0091F925 /* Interface */ = {
 			isa = PBXGroup;
 			children = (
-				6233C0721170E0CA009C37D5 /* entrypoint.c */,
-				62B3C1C11170F9CF0091F925 /* tests.h */,
-				62B3C1C21170F9CF0091F925 /* tests.c */,
+				62D4FC5F1173E39100BADB2B /* entrypoint.c */,
+				62D4FC601173E39100BADB2B /* tests.c */,
+				62D4FC611173E39100BADB2B /* tests.h */,
 			);
 			name = Interface;
 			sourceTree = "<group>";
@@ -315,8 +313,7 @@
 				620C17BD1170E55E009F0434 /* searchpacket.h in Headers */,
 				620C17BF1170E55E009F0434 /* timing.h in Headers */,
 				620C17C01170E55E009F0434 /* types.h in Headers */,
-				62B3C1271170E92D0091F925 /* debugging.h in Headers */,
-				62B3C1C31170F9CF0091F925 /* tests.h in Headers */,
+				62D4FC661173E3A100BADB2B /* debugging.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,7 +406,6 @@
 				620C17BA1170E55E009F0434 /* rgets.c in Sources */,
 				620C17BC1170E55E009F0434 /* searchpacket.c in Sources */,
 				620C17BE1170E55E009F0434 /* timing.c in Sources */,
-				62B3C1C41170F9CF0091F925 /* tests.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,8 +413,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				62B3C1DD1170FAF10091F925 /* tests.c in Sources */,
-				6233C0731170E0CA009C37D5 /* entrypoint.c in Sources */,
+				62D4FC6C1173E3D500BADB2B /* entrypoint.c in Sources */,
+				62D4FC6D1173E3D500BADB2B /* tests.c in Sources */,
 				620C16F81170E37E009F0434 /* client.c in Sources */,
 				620C16F91170E37E009F0434 /* commands.c in Sources */,
 				620C16FA1170E37E009F0434 /* regex_list.c in Sources */,

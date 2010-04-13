@@ -14,6 +14,7 @@
 #include <sys/select.h>
 #include <unistd.h>
 
+#include "debugging.h"
 
 static void ping_thread();
 static int update_fd_set(fd_set *descriptors);
@@ -119,6 +120,7 @@ void* comm_in_thread_start(void *args) {
 				temp = temp->next;
 			}
 		}
+		else { DFERROR("Failed on select with error %d", err); }
 		
 	}
 	

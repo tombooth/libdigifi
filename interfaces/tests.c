@@ -11,6 +11,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
 
@@ -116,6 +117,67 @@ static int randomise_int(int max) {
 static int randomise_bool(int range, int limit) {
 	return (randomise_int(range)>=limit);
 }
+
+
+
+
+
+static void test_rget_trackposition_handler(int room, df_time *time, void *context) {
+	fprintf(stdout, "TrackPosition [%d]: %d:%d:%d context:%s\n", room, time->hours, time->minutes, time->seconds, (char *)context);
+}
+
+static void test_rget_detailedtrack_handler(int room, df_detailedtrack *dt, void *context) {
+	fprintf(stdout, "DetailedTrack [%d]: %s - %s - %s  context:%s\n", room, dt->artistname, dt->albumname, dt->name, (char *)context);
+}
+
+static void test_rget_playerstatus_handler(int room, char *text, void *context) {
+	fprintf(stdout, "PlayerStatus [%d]: %s context:%s\n", room, text, (char *)context);
+}
+static void test_rget_playingchecksum_handler(int room, char *text, void *context) {
+	fprintf(stdout, "PlayingChecksum [%d]: %s context:%s\n", room, text, (char *)context);
+}
+
+static void test_rget_getalbums_handler(int num, df_albumrow *albums, void *context) {
+	fprintf(stdout, "GetAlbums receieved %d albums from digifi %s\n", num, ((df_connection*)context)->label);
+}
+
+void rget_test(pthread_mutex_t *parent_lock) {
+	df_connection *conn, *conn1, *curr_conn;
+	int i = 1;
+	char *message = strdup("context string");
+	
+	conn = df_connect("192.168.0.242", 2);
+	conn1 = df_connect("192.168.0.39", 2);
+	
+	while (1) {
+		curr_conn = (randomise_bool(10, 5)) ? conn : conn1;
+		
+		fprintf(stdout, "Linking rgets to room %d\n", i);		
+		dfrget_trackposition(curr_conn, i, test_rget_trackposition_handler, message);
+		dfrget_detailedtrackinfo(curr_conn, i, test_rget_detailedtrack_handler, message);
+		dfrget_playerstatus(curr_conn, i, test_rget_playerstatus_handler, message);
+		dfrget_playingchecksum(curr_conn, i, test_rget_playingchecksum_handler, message);
+		
+		df_GetAlbums(curr_conn, "", "", test_rget_getalbums_handler, curr_conn);
+		
+		fprintf(stdout, "Sleeping...\n");
+		sleep(randomise_int(30));
+		
+		fprintf(stdout, "Clearing rgets for room %d\n", i);
+		dfrget_clearcommands(curr_conn, i);
+		
+		i++; if (i>2) i = 1;
+	}
+	
+}
+
+
+
+
+
+
+
+
 
 
 

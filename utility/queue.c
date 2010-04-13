@@ -49,15 +49,17 @@ void queue_push(void *item) {
 }
 
 void queue_filter(int (*filter)(void *, void *), void *context) {
-	struct item *current, *last;
+	struct item *current, *last, *tmp;
 	
 	last = NULL;
 	current = front_pointer;
 	while (current != NULL) {
 		if (filter(current->value, context)) { 
-			last->next = current->next;
+			if (last!=NULL) { last->next = current->next; }
+			else { front_pointer = current->next; }
+			tmp = current->next;
 			free(current);	// the filter needs to take care of cleaning up the value
-			current = last->next;
+			current = tmp;
 		} else { last = current; current = current->next; }
 	}
 }
