@@ -110,7 +110,8 @@ void* comm_in_thread_start(void *args) {
 			temp = holder_front;
 			while (temp != NULL) {
 				if (FD_ISSET(temp->settings->client_fd, &signals)) {
-					result = extraction_run(temp->settings->client_fd, temp->settings->buffer, find_name_regex, NULL);
+					DFDEBUG("RGet receive on %d", temp->settings->client_fd);
+					result = extraction_run(temp->settings->client_fd, temp->settings->buffer, find_name_regex, NULL, NULL);
 					
 					process_callback(temp->settings, result->result->subexps[1].value, result->result->value);
 					
@@ -120,7 +121,9 @@ void* comm_in_thread_start(void *args) {
 				temp = temp->next;
 			}
 		}
-		else { DFERROR("Failed on select with error %d", err); }
+		else { DFERROR("Failed on select with error [%d] %s", errno, debugging_get_error_string(errno)); }
+		
+		usleep(500);
 		
 	}
 	

@@ -12,12 +12,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "debugging.h"
 
 
 #define CAPACITY_INC 1
 
 
 static void enlarge_entries_capacity(timing_obj *tmr);
+static void subtract_timevals(struct timeval *time1, struct timeval *time2, struct timeval *result);
 
 
 timing_obj* timing_create() {
@@ -50,11 +52,27 @@ void timing_punch(timing_obj *tmr) {
 }
 
 
+void timing_set_duration(timing_obj *tmr, unsigned seconds, unsigned minutes, unsigned hours) {
+	tmr->duration.seconds = seconds;
+	tmr->duration.minutes = minutes;
+	tmr->duration.hours = hours;
+}
 
-int timing_has_elapsed(timing_obj *tmr, timing_duration *d) {
+
+int timing_has_elapsed(timing_obj *tmr) {
+	struct timeval diff;
+	long int duration_l;
+	
 	if (!tmr->running) return 0;
 	
-	return 1;
+	timing_punch(tmr);
+	subtract_timevals(&(tmr->entries[tmr->num_entries-1]), &(tmr->entries[0]), &diff);
+	
+	duration_l = tmr->duration.seconds + (tmr->duration.minutes * 60) + (tmr->duration.hours * 3600);
+	
+	if (diff.tv_sec >= duration_l) DFDEBUG("Has elapsed: %ld >= %ld", diff.tv_sec, duration_l);
+	
+	return (diff.tv_sec >= duration_l);
 }
 
 
@@ -91,5 +109,19 @@ static void enlarge_entries_capacity(timing_obj *tmr) {
 	tmr->entries = realloc(tmr->entries, sizeof(struct timeval) * tmr->entries_capacity);
 }
 
-
+static void subtract_timevals(struct timeval *time1, struct timeval *time2, struct timeval *result) {
+	if ((time1->tv_sec < time2->tv_sec) ||
+		((time1->tv_sec == time2->tv_sec) &&
+		 (time1->tv_usec <= time2->tv_usec))) {	
+        result->tv_sec = result->tv_usec = 0 ;
+    } else {						
+        result->tv_sec = time1->tv_sec - time2->tv_sec ;
+        if (time1->tv_usec < time2->tv_usec) {
+            result->tv_usec = time1->tv_usec + 1000000L - time2->tv_usec ;
+            result->tv_sec-- ;		
+        } else {
+            result->tv_usec = time1->tv_usec - time2->tv_usec ;
+        }
+    }
+}
 

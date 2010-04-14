@@ -16,7 +16,7 @@ int df_init() {
 	
 	DFDEBUG("Starting init");
 	
-	comm_start(3, process_incoming_rget);
+	comm_start(2, process_incoming_rget);
 	
 	// setup formatting
 	formatting_init();

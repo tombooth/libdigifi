@@ -40,7 +40,7 @@
 		620C17A41170E55E009F0434 /* comm_out.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17071170E394009F0434 /* comm_out.h */; };
 		620C17A51170E55E009F0434 /* commands.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16F01170E37E009F0434 /* commands.c */; };
 		620C17A61170E55E009F0434 /* commands.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F11170E37E009F0434 /* commands.h */; };
-		620C17A71170E55E009F0434 /* DigiFi.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F21170E37E009F0434 /* DigiFi.h */; };
+		620C17A71170E55E009F0434 /* DigiFi.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16F21170E37E009F0434 /* DigiFi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		620C17A81170E55E009F0434 /* discover.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16FC1170E389009F0434 /* discover.c */; };
 		620C17A91170E55E009F0434 /* discover.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16FD1170E389009F0434 /* discover.h */; };
 		620C17AA1170E55E009F0434 /* extraction.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170F1170E3A4009F0434 /* extraction.c */; };
@@ -69,6 +69,8 @@
 		62D4FC661173E3A100BADB2B /* debugging.h in Headers */ = {isa = PBXBuildFile; fileRef = 62D4FC651173E3A100BADB2B /* debugging.h */; };
 		62D4FC6C1173E3D500BADB2B /* entrypoint.c in Sources */ = {isa = PBXBuildFile; fileRef = 62D4FC5F1173E39100BADB2B /* entrypoint.c */; };
 		62D4FC6D1173E3D500BADB2B /* tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 62D4FC601173E39100BADB2B /* tests.c */; };
+		62F65F08117603CB006B9B4C /* debugging.c in Sources */ = {isa = PBXBuildFile; fileRef = 62F65F07117603CB006B9B4C /* debugging.c */; };
+		62F65F0B117603EF006B9B4C /* debugging.c in Sources */ = {isa = PBXBuildFile; fileRef = 62F65F07117603CB006B9B4C /* debugging.c */; };
 		8DD76FB00486AB0100D96B5E /* libdigifi.new.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */; };
 /* End PBXBuildFile section */
 
@@ -132,6 +134,7 @@
 		62D4FC601173E39100BADB2B /* tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = tests.c; path = interfaces/tests.c; sourceTree = "<group>"; };
 		62D4FC611173E39100BADB2B /* tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests.h; path = interfaces/tests.h; sourceTree = "<group>"; };
 		62D4FC651173E3A100BADB2B /* debugging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debugging.h; path = utility/debugging.h; sourceTree = "<group>"; };
+		62F65F07117603CB006B9B4C /* debugging.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = debugging.c; sourceTree = "<group>"; };
 		8DD76FB20486AB0100D96B5E /* libdigifi.new */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libdigifi.new; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6A0FF2C0290799A04C91782 /* libdigifi.new.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = libdigifi.new.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -206,6 +209,7 @@
 			isa = PBXGroup;
 			children = (
 				62D4FC651173E3A100BADB2B /* debugging.h */,
+				62F65F07117603CB006B9B4C /* debugging.c */,
 				620C170B1170E3A4009F0434 /* allocator.c */,
 				620C170C1170E3A4009F0434 /* allocator.h */,
 				620C170D1170E3A4009F0434 /* charbuffer.c */,
@@ -406,6 +410,7 @@
 				620C17BA1170E55E009F0434 /* rgets.c in Sources */,
 				620C17BC1170E55E009F0434 /* searchpacket.c in Sources */,
 				620C17BE1170E55E009F0434 /* timing.c in Sources */,
+				62F65F08117603CB006B9B4C /* debugging.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,6 +437,7 @@
 				620C17201170E3A4009F0434 /* rbst.c in Sources */,
 				620C17211170E3A4009F0434 /* regex_wrapper.c in Sources */,
 				620C17221170E3A4009F0434 /* timing.c in Sources */,
+				62F65F0B117603EF006B9B4C /* debugging.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -481,7 +487,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.5;
 			};
 			name = Debug;
 		};

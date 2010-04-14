@@ -30,6 +30,7 @@ static int num_connections = 0;
 static void test_getroom_handler(int num, df_roomrow *rows, void *context) { DFDEBUG("Receieved get room rows"); df_roomrow_free(rows); }
 static void test_getartists_handler(int num, df_artistrow *rows, void *context) { DFDEBUG("Received get artists rows"); df_artistrow_free(rows); }
 static void test_getalbums_handler(int num, df_albumrow *rows, void *context) { DFDEBUG("Received get albums rows"); df_albumrow_free(rows); }
+static void test_getcurrentplaylistex_handler(int num, df_type0row *rows, void *context) { DFDEBUG("Received get currentplaylistex rows"); df_type0row_free(rows); }
 
 static void test_trackposition_handler(df_time *time, void *context) { DFDEBUG("Received a trackposition rget callback"); }
 static void test_detailedtrack_handler(df_detailedtrack *dt, void *context) { DFDEBUG("Received a detailedtrack rget callback"); }
@@ -73,16 +74,24 @@ void main_conn_test(pthread_mutex_t *parent_lock) {
 		
 		// execute some calls
 		if (num_connections > 0) {
-			switch (randomise_int(3)) {
+			switch (randomise_int(4)) {
 				case 0:
+					df_GetRooms(test_conns[randomise_int(num_connections)], 0, test_getroom_handler, NULL);
 					df_GetArtists(test_conns[randomise_int(num_connections)], 0, test_getartists_handler, NULL);
 					break;
 				case 1:
 					df_GetRooms(test_conns[randomise_int(num_connections)], 0, test_getroom_handler, NULL);
+					df_GetAlbums(test_conns[randomise_int(num_connections)], "", "", test_getalbums_handler, NULL);
 					break;
 				case 2:
 					df_GetAlbums(test_conns[randomise_int(num_connections)], "", "", test_getalbums_handler, NULL);
+					df_GetCurrentPlaylistEx(test_conns[randomise_int(num_connections)], 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
 					break;
+				case 3:
+					df_GetArtists(test_conns[randomise_int(num_connections)], 0, test_getartists_handler, NULL);
+					df_GetCurrentPlaylistEx(test_conns[randomise_int(num_connections)], 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
+					break;
+
 				default:
 					break;
 			}
@@ -95,6 +104,67 @@ void main_conn_test(pthread_mutex_t *parent_lock) {
 			DFDEBUG("Disconnecting digifi in slot %d", num_connections);
 			df_disconnect(test_conns[num_connections]);
 		}
+		
+		sleep(1);
+	}
+	
+	
+	pthread_mutex_unlock(parent_lock);
+}
+
+void main_func_test(pthread_mutex_t *parent_lock) {
+	df_connection *test_conn;
+	
+	printf("Starting function test...\n");
+	
+	test_conn = df_connect("192.168.0.242", 2);
+	
+	while (1) {
+		
+		// connect to some rgets
+		/*if (num_connections > 0) {
+			switch (randomise_int(3)) {
+				case 0:
+					dfrget_trackposition(test_conn, 1, test_trackposition_handler, NULL);
+					break;
+				case 1:
+					dfrget_detailedtrackinfo(test_conn, 1, test_detailedtrack_handler, NULL);
+					break;
+				case 2:
+					dfrget_playerstatus(test_conn, 1, test_playerstatus_handler, NULL);
+					break;
+				case 3:
+					DFDEBUG("Clearing commands for a room");
+					dfrget_clearcommands(test_conn, 1);
+					break;
+					
+				default:
+					break;
+			}
+		}*/
+		
+		// execute some calls
+			switch (randomise_int(4)) {
+				case 0:
+					df_GetRooms(test_conn, 0, test_getroom_handler, NULL);
+					df_GetArtists(test_conn, 0, test_getartists_handler, NULL);
+					break;
+				case 1:
+					df_GetRooms(test_conn, 0, test_getroom_handler, NULL);
+					df_GetAlbums(test_conn, "", "", test_getalbums_handler, NULL);
+					break;
+				case 2:
+					df_GetAlbums(test_conn, "", "", test_getalbums_handler, NULL);
+					df_GetCurrentPlaylistEx(test_conn, 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
+					break;
+				case 3:
+					df_GetArtists(test_conn, 0, test_getartists_handler, NULL);
+					df_GetCurrentPlaylistEx(test_conn, 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
+					break;
+					
+				default:
+					break;
+			}
 		
 		sleep(1);
 	}

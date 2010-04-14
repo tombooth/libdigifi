@@ -16,6 +16,11 @@
 
 #include "regex_wrapper.h"
 #include "charbuffer.h"
+#include "timing.h"
+
+
+
+#define NON_BLOCKING_READ_WAIT 500
 
 
 typedef struct {
@@ -25,7 +30,7 @@ typedef struct {
 
 
 
-extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t *error_regex);
+extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t *error_regex, timing_obj *tmr);
 
 void extraction_free_result(extraction_result *result);
 

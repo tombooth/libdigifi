@@ -12005,8 +12005,9 @@ static struct command_option list_options[3] = { { "connections", list_connectio
 												 { "threads", NULL },
 												 { "regex", NULL }};
 
-static int num_test_options = 2;
-static struct command_option test_options[2] = { { "main", main_conn_test },
+static int num_test_options = 4;
+static struct command_option test_options[4] = { { "main", main_conn_test },
+												 { "func", main_func_test },
 												 { "rget", rget_test },
 												 { "misc", misc_test }};
 

@@ -13,13 +13,15 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "debugging.h"
+
 #define READ_AMMOUNT 64
 
 
 static extraction_result* extraction_check_buffer(cbuf *buffer, regex_t *regex, regex_t *error_regex);
 
 
-extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t *error_regex) {
+extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t *error_regex, timing_obj *tmr) {
 	extraction_result *result;
 	void *byte_buffer;
 	int bytes_read;
@@ -35,10 +37,22 @@ extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t 
 		
 		// read from the file descriptor into the buffer
 		bytes_read = read(fd, byte_buffer, READ_AMMOUNT);
-		cbuf_append(buffer, byte_buffer, bytes_read);
+		if (bytes_read <= 0) {
+			if (errno == EAGAIN) {			// ignore a non-blocking return error as we can expect this occasionally or when somethings screwed up
+				usleep(NON_BLOCKING_READ_WAIT);
+			} else {
+				// an error has occurred
+				DFERROR("An error occured will trying to read from fd:%d [%d] %s", fd, errno, debugging_get_error_string(errno));
+			}
+		}
+		else {
+			cbuf_append(buffer, byte_buffer, bytes_read);
 		
-		// check the buffer now
-		result = extraction_check_buffer(buffer, regex, error_regex);
+			// check the buffer now
+			result = extraction_check_buffer(buffer, regex, error_regex);
+		}
+		
+		if (tmr!=NULL && timing_has_elapsed(tmr)) break;
 	}
 	
 	free(byte_buffer);
@@ -48,6 +62,7 @@ extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t 
 
 
 void extraction_free_result(extraction_result *result) {
+	if (result == NULL) return;
 	regex_free_result(result->result);
 	free(result);
 }

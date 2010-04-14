@@ -15,6 +15,7 @@
 #include <sys/socket.h>
 
 #include "queue.h"
+#include "timing.h"
 #include "debugging.h"
 
 
@@ -64,7 +65,7 @@ static int clear_queue_filter(void *item, void *context) {
 	out_request *request = (out_request *) item;
 	
 	for (i = 0; i < cc->num_fds; i++) {
-		if (request->socket == cc->fds[i].fd) {
+		if (request->socket->fd == cc->fds[i].fd) {
 			free_request(request);
 			return 1;
 		}
@@ -81,7 +82,8 @@ void* comm_out_thread_start(void *args) {
 	out_response *response_set;
 	cbuf *buffer;
 	regex_t *error_regex;
-	int i, error_occurred, extracted_rows;
+	int i, error_occurred, timeout_occurred, extracted_rows;
+	timing_obj *tmr;
 	
 	error_regex = NULL;
 	
@@ -90,16 +92,23 @@ void* comm_out_thread_start(void *args) {
 		pthread_testcancel();
 		
 		error_occurred = 0;
+		timeout_occurred = 0;
 		
 		request = queue_pop();
 		
 		// lock the socket for use
 		pthread_mutex_lock(&(request->socket->fd_lock));
 		
-		DFDEBUG("Sending %s for request [%p]", request->send, request);
+		tmr = timing_create();
+		timing_set_duration(tmr, COMMAND_TIMEOUT_SECS, 0, 0);
+		timing_start(tmr);
+		
+		DFDEBUG("Sending %s for request [%p] on %d", request->send, request, request->socket->fd);
 		
 		// send command
 		send(request->socket->fd, request->send, strlen(request->send) * sizeof(char), 0);
+		
+		timing_punch(tmr);
 		
 		// recieve response set
 		buffer = cbuf_new();
@@ -108,25 +117,32 @@ void* comm_out_thread_start(void *args) {
 		extracted_rows = 0;
 		
 		for (i = 0; i < request->response_count; i++) {
-			response_set[i].result = extraction_run(request->socket->fd, buffer, request->response_regex, error_regex); extracted_rows++;
-			if (response_set[i].result->is_error) { error_occurred = 1; break; }
+			response_set[i].result = extraction_run(request->socket->fd, buffer, request->response_regex, error_regex, tmr); extracted_rows++;
+			//DFDEBUG("Received on %d: %s", request->socket->fd, response_set[i].result->result->value);
+			if (response_set[i].result == NULL) { timeout_occurred = 1; break; }
+			else if (response_set[i].result->is_error) { error_occurred = 1; break; }
 		}
 		
-		DFDEBUG("Completed request [%p] num:%d err:%d", request, request->response_count, error_occurred);
+		DFDEBUG("Completed request [%p] on %d num:%d err:%d", request, request->socket->fd, request->response_count, error_occurred);
 		
 		// process the response that has come in
 		if (error_occurred) {
-			fprintf(stdout, "An Error Occurred: %s\n", response_set[0].result->result->value);
+			DFERROR("%s", response_set[0].result->result->value);
+		}
+		else if (timeout_occurred) {
+			DFERROR("TIMEOUT on command %s", request->send);
 		}
 		else if (request->callback != NULL) {
 			request->callback(request, response_set, request->response_count, request->context);
 		}
 		
-		
+		timing_stop(tmr);
 		
 		// cleanup after communication
 		cbuf_free(buffer);
 		request->socket->backlog--; // lower the backlog of messages as this one is done
+		request->socket->done++;
+		timing_destroy(tmr);
 		
 		
 		// clear the response_set

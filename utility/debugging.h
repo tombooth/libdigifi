@@ -13,8 +13,9 @@
 
 
 #include <stdio.h>
+#include <errno.h>
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 //#define DFDEBUG(...) { FILE *fd = fopen("/tmp/df.log","at"); fprintf(fd, "%s:%d %s() ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); fclose(fd); }
@@ -25,6 +26,9 @@
 #define DFDEBUG(...)
 #define DFERROR(...)
 #endif
+
+
+char *debugging_get_error_string(int err);
 
 
 #endif

@@ -27,6 +27,7 @@
 
 static int connect_to_socket(char *ipadress, int port);
 static int listen_on_socket(int port);
+static int set_non_blocking(int fd);
 static int randomise_port();
 static char* get_local_ip();
 static int pick_quietest_socket(connection *conn);
@@ -70,8 +71,10 @@ connection *comm_connect(char *ipaddress, int connections) {
 	// setup the outgoing connections
 	for (i = 0; i < connections; i++) {
 		conn->sockets[i].fd = connect_to_socket(ipaddress, SOPHIA_PORT);
+		set_non_blocking(conn->sockets[i].fd);
 		pthread_mutex_init(&(conn->sockets[i].fd_lock), 0);
 		conn->sockets[i].backlog = 0;
+		conn->sockets[i].done = 0;
 	}
 	
 	conn->connected = 1;
@@ -162,10 +165,13 @@ void comm_disconnect(connection *conn) {
 	comm_out_clear_requests_for(conn->sockets, conn->num_sockets);
 	comm_in_remove(&(conn->rget_settings));
 	
+	shutdown(conn->rget_settings.client_fd, SHUT_RDWR);
 	close(conn->rget_settings.client_fd);
+	shutdown(conn->rget_settings.server_fd, SHUT_RDWR);
 	close(conn->rget_settings.server_fd);
 	
 	for (i = 0; i < conn->num_sockets; i++) {
+		shutdown(conn->sockets[i].fd, SHUT_RDWR);
 		close(conn->sockets[i].fd);
 	}
 	
@@ -255,6 +261,17 @@ static int listen_on_socket(int port) {
 	
 	return fd;
 }
+
+static int set_non_blocking(int fd) {
+	int flags;
+	
+	if ((flags = fcntl(fd, F_GETFL, 0)) < 0) { return -1; } 
+	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0) { return -2; } 
+	
+	return 0;
+}
+
+
 
 static int randomise_port() {
 	int r;

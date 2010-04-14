@@ -14,10 +14,14 @@
 #include "extraction.h"
 
 
+#define COMMAND_TIMEOUT_SECS 15
+
+
 typedef struct {
 	int fd;
 	pthread_mutex_t fd_lock;
 	unsigned int backlog;
+	unsigned long done;
 } out_socket;
 
 

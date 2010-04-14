@@ -15,6 +15,7 @@
 #include "comm_out.h"
 #include "allocator.h"
 #include "formatting.h"
+#include "debugging.h"
 
 
 struct call_holder {
@@ -32,7 +33,7 @@ static void pull_rows(out_request *request, out_response *response, int num, voi
 	if (response != NULL) {
 		// get the searchnum and row count
 		rx = response->result->result;
-		sscanf(rx->subexps[rx->num_subexps-2].value,"%d",&search_num);
+		sscanf(rx->subexps[2].value,"%d",&search_num);
 		sscanf(rx->subexps[rx->num_subexps-1].value,"%d",&row_count);
 		call_name = strdup(rx->subexps[1].value);
 		
@@ -40,6 +41,7 @@ static void pull_rows(out_request *request, out_response *response, int num, voi
 			// if there are no rows to return
 		} else {	
 			// if there are rows
+			DFDEBUG("Pulling rows for request [%p] on %d search_num: %d response: %s maybe_search: %s", request, request->socket->fd, search_num, response->result->result->value, rx->subexps[2].value);
 			comm_send_via_socket(request->socket, call_name, row_count, row_handler, context, "[GetRows %d 1 -1]", search_num);
 		}
 		
