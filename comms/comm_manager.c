@@ -24,7 +24,7 @@
 
 #include "debugging.h"
 
-
+static void start_threads();
 static int connect_to_socket(char *ipadress, int port);
 static int listen_on_socket(int port);
 static int set_non_blocking(int fd);
@@ -35,29 +35,35 @@ static int pick_quietest_socket(connection *conn);
 
 
 static pthread_t *out_threads;
+static unsigned int out_threads_num;
 static pthread_t in_thread;
 
 
-void comm_start(int outgoing_threads, void (*rget_callback)(in_settings*, char*, char*)) {
-	int i;
-	
+void comm_start(int outgoing_threads, void (*rget_callback)(in_settings*, char*, char*)) {	
 	comm_in_init(rget_callback);
 	
 	out_threads = (pthread_t *) malloc(outgoing_threads * sizeof(pthread_t));
-	for (i=0; i < outgoing_threads; i++) {
+	out_threads_num = outgoing_threads;
+	in_thread = NULL;
+}
+
+
+static void start_threads() {
+	int i;
+	
+	for (i=0; i < out_threads_num; i++) {
 		pthread_create(&(out_threads[i]), NULL, comm_out_thread_start, NULL);
 	}
 	
 	pthread_create(&in_thread, NULL, comm_in_thread_start, NULL);
-	
 }
-
 
 
 connection *comm_connect(char *ipaddress, int connections) {
 	int i, port;
 	connection *conn;
 	
+	if (in_thread == NULL) start_threads();
 	if (connections < 1) return NULL;
 	if (ipaddress == NULL) return NULL;
 	

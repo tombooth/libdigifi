@@ -110,8 +110,9 @@ void* comm_in_thread_start(void *args) {
 			temp = holder_front;
 			while (temp != NULL) {
 				if (FD_ISSET(temp->settings->client_fd, &signals)) {
-					DFDEBUG("RGet receive on %d", temp->settings->client_fd);
+					
 					result = extraction_run(temp->settings->client_fd, temp->settings->buffer, find_name_regex, NULL, NULL);
+					DFDEBUG("RGet receive on %d: %s", temp->settings->client_fd, result->result->value);
 					
 					process_callback(temp->settings, result->result->subexps[1].value, result->result->value);
 					

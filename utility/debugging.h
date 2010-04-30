@@ -15,13 +15,13 @@
 #include <stdio.h>
 #include <errno.h>
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
-//#define DFDEBUG(...) { FILE *fd = fopen("/tmp/df.log","at"); fprintf(fd, "%s:%d %s() ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); fclose(fd); }
-#define DFDEBUG(...) { FILE *fd = stdout; fprintf(fd, "%s:%d %s() ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); }
-//#define DFERROR(...) { FILE *fd = fopen("/tmp/df.log","at"); fprintf(fd, "%s:%d %s() ERROR ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); fclose(fd); }
-#define DFERROR(...) { FILE *fd = stdout; fprintf(fd, "%s:%d %s() ERROR ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); }
+#define DFDEBUG(...) { FILE *fd = fopen("/tmp/df.log","at"); fprintf(fd, "%s:%d %s() ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); fclose(fd); }
+//#define DFDEBUG(...) { FILE *fd = stdout; fprintf(fd, "%s:%d %s() ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); }
+#define DFERROR(...) { FILE *fd = fopen("/tmp/df.log","at"); fprintf(fd, "%s:%d %s() ERROR ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); fclose(fd); }
+//#define DFERROR(...) { FILE *fd = stdout; fprintf(fd, "%s:%d %s() ERROR ", __FILE__, __LINE__, __func__); fprintf(fd, __VA_ARGS__); fprintf(fd, "\n"); }
 #else
 #define DFDEBUG(...)
 #define DFERROR(...)
