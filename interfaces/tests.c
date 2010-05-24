@@ -255,11 +255,22 @@ void rget_test(pthread_mutex_t *parent_lock) {
 
 void misc_test(pthread_mutex_t *parent_lock) {
 	char *string, *result;
+	df_connection *conn;
 	
-	string = "Simple Things \\[UK\\]";
+	conn = df_connect("192.168.1.70", 2);
+	
+	sleep(3);
+	
+	df_PlayTrack(conn, 1, 1, "a25225 a25221", NULL, NULL);
+	
+	sleep(3);
+	
+	df_disconnect(conn);
+	
+	/*string = "Simple Things \\[UK\\]";
 	
 	result = formatting_process(string);
-	fprintf(stdout, "Result from formatting of %s was %s\n", string, result);
+	fprintf(stdout, "Result from formatting of %s was %s\n", string, result);*/
 	
 	pthread_mutex_unlock(parent_lock);
 }
