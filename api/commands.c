@@ -12295,10 +12295,10 @@ static void Version_handler(out_request *request, out_response *response, int nu
 
 
 	rx = response->result->result;
-		tmp->Version_Service = formatting_process(rx->subexps[2].value);
-	tmp->Version_Protocol = formatting_process(rx->subexps[3].value);
-	tmp->Version_CommandDef = formatting_process(rx->subexps[4].value);
-	tmp->Version_System = formatting_process(rx->subexps[5].value);
+		tmp->Version_Service = formatting_process(rx->subexps[1].value);
+	tmp->Version_Protocol = formatting_process(rx->subexps[2].value);
+	tmp->Version_CommandDef = formatting_process(rx->subexps[3].value);
+	tmp->Version_System = formatting_process(rx->subexps[4].value);
 
 	((void (*)(df_version*, void*))(holder->callback))(tmp, holder->context);
 
