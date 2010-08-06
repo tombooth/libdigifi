@@ -119,6 +119,7 @@ void* comm_out_thread_start(void *args) {
 		for (i = 0; i < request->response_count; i++) {
 			response_set[i].result = extraction_run(request->socket->fd, buffer, request->response_regex, error_regex, tmr); extracted_rows++;
 			//DFDEBUG("Received on %d: %s", request->socket->fd, response_set[i].result->result->value);
+			DFDEBUG("Received %d", i);
 			if (response_set[i].result == NULL) { timeout_occurred = 1; break; }
 			else if (response_set[i].result->is_error) { error_occurred = 1; break; }
 		}
@@ -129,7 +130,7 @@ void* comm_out_thread_start(void *args) {
 		if (error_occurred) {
 			DFERROR("%s", response_set[0].result->result->value);
 		}
-		else if (timeout_occurred) {
+		else if (timeout_occurred) { 
 			DFERROR("TIMEOUT on command %s", request->send);
 		}
 		else if (request->callback != NULL) {

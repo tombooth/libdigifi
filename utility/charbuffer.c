@@ -97,8 +97,8 @@ char* cbuf_extract_to(cbuf *buffer, char *end, int min_length) {
 	if (buffer == NULL ||
 		end == NULL) { return ""; }
 	
-	char *ret;
-	int end_length = strlen(end);
+	// char *ret;
+	// int end_length = strlen(end);
 	
 	// TODO: Not sure if needed
 	

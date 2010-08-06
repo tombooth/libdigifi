@@ -20,7 +20,7 @@
 
 
 
-#define NON_BLOCKING_READ_WAIT 500
+#define NON_BLOCKING_READ_WAIT 200
 
 
 typedef struct {

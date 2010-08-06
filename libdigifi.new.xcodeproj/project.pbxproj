@@ -27,15 +27,15 @@
 		620C17251170E3C4009F0434 /* libpcre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 620C17241170E3C4009F0434 /* libpcre.a */; };
 		620C17271170E3C4009F0434 /* libpcreposix.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 620C17261170E3C4009F0434 /* libpcreposix.a */; };
 		620C17991170E55E009F0434 /* allocator.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170B1170E3A4009F0434 /* allocator.c */; };
-		620C179A1170E55E009F0434 /* allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C170C1170E3A4009F0434 /* allocator.h */; };
+		620C179A1170E55E009F0434 /* allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C170C1170E3A4009F0434 /* allocator.h */; settings = {ATTRIBUTES = (); }; };
 		620C179B1170E55E009F0434 /* charbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C170D1170E3A4009F0434 /* charbuffer.c */; };
-		620C179C1170E55E009F0434 /* charbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C170E1170E3A4009F0434 /* charbuffer.h */; };
+		620C179C1170E55E009F0434 /* charbuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C170E1170E3A4009F0434 /* charbuffer.h */; settings = {ATTRIBUTES = (); }; };
 		620C179D1170E55E009F0434 /* client.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16EE1170E37E009F0434 /* client.c */; };
-		620C179E1170E55E009F0434 /* client.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16EF1170E37E009F0434 /* client.h */; };
+		620C179E1170E55E009F0434 /* client.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C16EF1170E37E009F0434 /* client.h */; settings = {ATTRIBUTES = (); }; };
 		620C179F1170E55E009F0434 /* comm_in.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17021170E394009F0434 /* comm_in.c */; };
-		620C17A01170E55E009F0434 /* comm_in.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17031170E394009F0434 /* comm_in.h */; };
+		620C17A01170E55E009F0434 /* comm_in.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17031170E394009F0434 /* comm_in.h */; settings = {ATTRIBUTES = (); }; };
 		620C17A11170E55E009F0434 /* comm_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17041170E394009F0434 /* comm_manager.c */; };
-		620C17A21170E55E009F0434 /* comm_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17051170E394009F0434 /* comm_manager.h */; };
+		620C17A21170E55E009F0434 /* comm_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17051170E394009F0434 /* comm_manager.h */; settings = {ATTRIBUTES = (); }; };
 		620C17A31170E55E009F0434 /* comm_out.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C17061170E394009F0434 /* comm_out.c */; };
 		620C17A41170E55E009F0434 /* comm_out.h in Headers */ = {isa = PBXBuildFile; fileRef = 620C17071170E394009F0434 /* comm_out.h */; };
 		620C17A51170E55E009F0434 /* commands.c in Sources */ = {isa = PBXBuildFile; fileRef = 620C16F01170E37E009F0434 /* commands.c */; };
@@ -499,6 +499,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = " @executable_path/../Frameworks";
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
 			};
@@ -521,6 +522,7 @@
 				GCC_VERSION = "";
 				INFOPLIST_FILE = "DigiFi-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/pcre\"",
@@ -548,8 +550,9 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "DigiFi-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/pcre\"",
@@ -560,6 +563,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = DigiFi;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Release;

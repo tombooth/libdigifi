@@ -14,7 +14,7 @@
 #include "extraction.h"
 
 
-#define COMMAND_TIMEOUT_SECS 15
+#define COMMAND_TIMEOUT_SECS 60
 
 
 typedef struct {
@@ -46,6 +46,7 @@ struct __out_request{
 	
 	void (*callback)(struct __out_request*, out_response*, int, void*);
 	void *context;
+	unsigned int requested_count;
 	
 };
 

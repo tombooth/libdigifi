@@ -90,7 +90,7 @@ void timing_print(timing_obj *tmr) {
 	
 	printf("Entries in timing object:\n");
 	for (i = 0; i < tmr->num_entries; i++) {
-		printf("[%d] %lu %lu\n", i, tmr->entries[i].tv_sec, tmr->entries[i].tv_usec);
+		printf("[%d] %lu %lu\n", i, (long unsigned int)tmr->entries[i].tv_sec, (long unsigned int)tmr->entries[i].tv_usec);
 	}
 }
 

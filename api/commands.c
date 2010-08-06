@@ -26,7 +26,8 @@ struct call_holder {
 static void row_handler(out_request *request, out_response *response, int num, void *context);
 
 static void pull_rows(out_request *request, out_response *response, int num, void *context) {
-	int search_num, row_count;
+	int search_num = 0;
+	int row_count = 0;
 	char *call_name;
 	regex_result *rx;
 	
@@ -41,8 +42,9 @@ static void pull_rows(out_request *request, out_response *response, int num, voi
 			// if there are no rows to return
 		} else {	
 			// if there are rows
+			int count = (row_count < request->requested_count ? row_count : request->requested_count);
 			DFDEBUG("Pulling rows for request [%p] on %d search_num: %d response: %s maybe_search: %s", request, request->socket->fd, search_num, response->result->result->value, rx->subexps[2].value);
-			comm_send_via_socket(request->socket, call_name, row_count, row_handler, context, "[GetRows %d 1 -1]", search_num);
+			comm_send_via_socket(request->socket, call_name, count, count, row_handler, context, "[GetRows %d 1 %d]", search_num, count);
 		}
 		
 		free(call_name);
@@ -704,7 +706,7 @@ int df_ActivateExternalStorage(df_connection *conn, int StorageKey, int ActiveFl
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ActivateExternalStorage", 1, ActivateExternalStorage_handler, c, "[ActivateExternalStorage %d %d %d]", StorageKey, ActiveFlag, ClearPlaying);
+	return comm_send(conn, 0, "ActivateExternalStorage", 1, -1, ActivateExternalStorage_handler, c, "[ActivateExternalStorage %d %d %d]", StorageKey, ActiveFlag, ClearPlaying);
 }
 
 int df_AddAlbumsToUserPlaylist(df_connection *conn, char* UserPlaylistKey, char* AlbumKey, void (*callback)(int, void*), void *context) {
@@ -712,7 +714,7 @@ int df_AddAlbumsToUserPlaylist(df_connection *conn, char* UserPlaylistKey, char*
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddAlbumsToUserPlaylist", 1, AddAlbumsToUserPlaylist_handler, c, "[AddAlbumsToUserPlaylist \"%s\" \"%s\"]", UserPlaylistKey, AlbumKey);
+	return comm_send(conn, 0, "AddAlbumsToUserPlaylist", 1, -1, AddAlbumsToUserPlaylist_handler, c, "[AddAlbumsToUserPlaylist \"%s\" \"%s\"]", UserPlaylistKey, AlbumKey);
 }
 
 int df_AddExternalStorage(df_connection *conn, char* SharePath, char* Username, char* Password, int Activate, int ForceAdd, void (*callback)(df_extstorageresult*, void*), void *context) {
@@ -720,7 +722,7 @@ int df_AddExternalStorage(df_connection *conn, char* SharePath, char* Username, 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddExternalStorage", 1, AddExternalStorage_handler, c, "[AddExternalStorage \"%s\" \"%s\" \"%s\" %d %d]", SharePath, Username, Password, Activate, ForceAdd);
+	return comm_send(conn, 0, "AddExternalStorage", 1, -1, AddExternalStorage_handler, c, "[AddExternalStorage \"%s\" \"%s\" \"%s\" %d %d]", SharePath, Username, Password, Activate, ForceAdd);
 }
 
 int df_AddNewBackupJob(df_connection *conn, char* SourceDriveAddress, char* DestinationDriveAddress, char* Name, int BackupType, int BackupPeriod, int PeriodValue, df_date RunDate, df_time RunTime, void (*callback)(int, void*), void *context) {	char *RunDate_string;
@@ -732,7 +734,7 @@ int df_AddNewBackupJob(df_connection *conn, char* SourceDriveAddress, char* Dest
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddNewBackupJob", 1, AddNewBackupJob_handler, c, "[AddNewBackupJob \"%s\" \"%s\" \"%s\" %d %d %d \"%s\" \"%s\"]", SourceDriveAddress, DestinationDriveAddress, Name, BackupType, BackupPeriod, PeriodValue, RunDate_string, RunTime_string);
+	return comm_send(conn, 0, "AddNewBackupJob", 1, -1, AddNewBackupJob_handler, c, "[AddNewBackupJob \"%s\" \"%s\" \"%s\" %d %d %d \"%s\" \"%s\"]", SourceDriveAddress, DestinationDriveAddress, Name, BackupType, BackupPeriod, PeriodValue, RunDate_string, RunTime_string);
 }
 
 int df_AddNewDrive(df_connection *conn, char* DriveLetter, int PrimaryDrive, char* RootPath, char* SharePath, int Usage, int BadPathBehaviour, void (*callback)(df_newdriveresult*, void*), void *context) {
@@ -740,7 +742,7 @@ int df_AddNewDrive(df_connection *conn, char* DriveLetter, int PrimaryDrive, cha
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddNewDrive", 1, AddNewDrive_handler, c, "[AddNewDrive \"%s\" %d \"%s\" \"%s\" %d %d]", DriveLetter, PrimaryDrive, RootPath, SharePath, Usage, BadPathBehaviour);
+	return comm_send(conn, 0, "AddNewDrive", 1, -1, AddNewDrive_handler, c, "[AddNewDrive \"%s\" %d \"%s\" \"%s\" %d %d]", DriveLetter, PrimaryDrive, RootPath, SharePath, Usage, BadPathBehaviour);
 }
 
 int df_AddNewGenre(df_connection *conn, char* GenreName, int Ordinal, void (*callback)(int, void*), void *context) {
@@ -748,7 +750,7 @@ int df_AddNewGenre(df_connection *conn, char* GenreName, int Ordinal, void (*cal
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddNewGenre", 1, AddNewGenre_handler, c, "[AddNewGenre \"%s\" %d]", GenreName, Ordinal);
+	return comm_send(conn, 0, "AddNewGenre", 1, -1, AddNewGenre_handler, c, "[AddNewGenre \"%s\" %d]", GenreName, Ordinal);
 }
 
 int df_AddNewLinkedRoom(df_connection *conn, char* RoomName, char* ShortName, int RoomID, char* ChildRoomKey, void (*callback)(int, void*), void *context) {
@@ -756,7 +758,7 @@ int df_AddNewLinkedRoom(df_connection *conn, char* RoomName, char* ShortName, in
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddNewLinkedRoom", 1, AddNewLinkedRoom_handler, c, "[AddNewLinkedRoom \"%s\" \"%s\" %d \"%s\"]", RoomName, ShortName, RoomID, ChildRoomKey);
+	return comm_send(conn, 0, "AddNewLinkedRoom", 1, -1, AddNewLinkedRoom_handler, c, "[AddNewLinkedRoom \"%s\" \"%s\" %d \"%s\"]", RoomName, ShortName, RoomID, ChildRoomKey);
 }
 
 int df_AddNewRoom(df_connection *conn, char* RoomIP, int Channel, char* RoomName, char* ShortName, int PlaybackCapability, int RippingCapability, int MusicManagementCapability, int RoomID, char* HostName, void (*callback)(int, void*), void *context) {
@@ -764,7 +766,7 @@ int df_AddNewRoom(df_connection *conn, char* RoomIP, int Channel, char* RoomName
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddNewRoom", 1, AddNewRoom_handler, c, "[AddNewRoom \"%s\" %d \"%s\" \"%s\" %d %d %d %d \"%s\"]", RoomIP, Channel, RoomName, ShortName, PlaybackCapability, RippingCapability, MusicManagementCapability, RoomID, HostName);
+	return comm_send(conn, 0, "AddNewRoom", 1, -1, AddNewRoom_handler, c, "[AddNewRoom \"%s\" %d \"%s\" \"%s\" %d %d %d %d \"%s\"]", RoomIP, Channel, RoomName, ShortName, PlaybackCapability, RippingCapability, MusicManagementCapability, RoomID, HostName);
 }
 
 int df_AddNewSubGenre(df_connection *conn, char* GenreKey, char* SubGenreName, int Ordinal, void (*callback)(int, void*), void *context) {
@@ -772,7 +774,7 @@ int df_AddNewSubGenre(df_connection *conn, char* GenreKey, char* SubGenreName, i
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddNewSubGenre", 1, AddNewSubGenre_handler, c, "[AddNewSubGenre \"%s\" \"%s\" %d]", GenreKey, SubGenreName, Ordinal);
+	return comm_send(conn, 0, "AddNewSubGenre", 1, -1, AddNewSubGenre_handler, c, "[AddNewSubGenre \"%s\" \"%s\" %d]", GenreKey, SubGenreName, Ordinal);
 }
 
 int df_AddTracksToUserPlaylist(df_connection *conn, char* UserPlaylistKey, char* TrackKey, void (*callback)(int, void*), void *context) {
@@ -780,7 +782,7 @@ int df_AddTracksToUserPlaylist(df_connection *conn, char* UserPlaylistKey, char*
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "AddTracksToUserPlaylist", 1, AddTracksToUserPlaylist_handler, c, "[AddTracksToUserPlaylist \"%s\" \"%s\"]", UserPlaylistKey, TrackKey);
+	return comm_send(conn, 0, "AddTracksToUserPlaylist", 1, -1, AddTracksToUserPlaylist_handler, c, "[AddTracksToUserPlaylist \"%s\" \"%s\"]", UserPlaylistKey, TrackKey);
 }
 
 int df_BackupDrive(df_connection *conn, char* SourceDriveKey, char* DestDriveKey, int BackupType, int NoFileCheck, void (*callback)(df_backupresult*, void*), void *context) {
@@ -788,7 +790,7 @@ int df_BackupDrive(df_connection *conn, char* SourceDriveKey, char* DestDriveKey
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "BackupDrive", 1, BackupDrive_handler, c, "[BackupDrive \"%s\" \"%s\" %d %d]", SourceDriveKey, DestDriveKey, BackupType, NoFileCheck);
+	return comm_send(conn, 0, "BackupDrive", 1, -1, BackupDrive_handler, c, "[BackupDrive \"%s\" \"%s\" %d %d]", SourceDriveKey, DestDriveKey, BackupType, NoFileCheck);
 }
 
 int df_BulkCDLookupEx(df_connection *conn, int LookupProviderUsed, int Interval, char* AlbumKey, void (*callback)(int, void*), void *context) {
@@ -796,7 +798,7 @@ int df_BulkCDLookupEx(df_connection *conn, int LookupProviderUsed, int Interval,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "BulkCDLookupEx", 1, BulkCDLookupEx_handler, c, "[BulkCDLookupEx %d %d \"%s\"]", LookupProviderUsed, Interval, AlbumKey);
+	return comm_send(conn, 0, "BulkCDLookupEx", 1, -1, BulkCDLookupEx_handler, c, "[BulkCDLookupEx %d %d \"%s\"]", LookupProviderUsed, Interval, AlbumKey);
 }
 
 int df_CDLookupGetStatus(df_connection *conn, void (*callback)(df_type0*, void*), void *context) {
@@ -804,7 +806,7 @@ int df_CDLookupGetStatus(df_connection *conn, void (*callback)(df_type0*, void*)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CDLookupGetStatus", 1, CDLookupGetStatus_handler, c, "[CDLookupGetStatus]");
+	return comm_send(conn, 0, "CDLookupGetStatus", 1, -1, CDLookupGetStatus_handler, c, "[CDLookupGetStatus]");
 }
 
 int df_CancelRipping(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -812,7 +814,7 @@ int df_CancelRipping(df_connection *conn, int RoomID, void (*callback)(int, void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CancelRipping", 1, CancelRipping_handler, c, "[CancelRipping %d]", RoomID);
+	return comm_send(conn, 0, "CancelRipping", 1, -1, CancelRipping_handler, c, "[CancelRipping %d]", RoomID);
 }
 
 int df_ChangeAlbumSubGenre(df_connection *conn, char* AlbumKey, char* SubGenreKey, void (*callback)(char*, void*), void *context) {
@@ -820,7 +822,7 @@ int df_ChangeAlbumSubGenre(df_connection *conn, char* AlbumKey, char* SubGenreKe
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ChangeAlbumSubGenre", 1, ChangeAlbumSubGenre_handler, c, "[ChangeAlbumSubGenre \"%s\" \"%s\"]", AlbumKey, SubGenreKey);
+	return comm_send(conn, 0, "ChangeAlbumSubGenre", 1, -1, ChangeAlbumSubGenre_handler, c, "[ChangeAlbumSubGenre \"%s\" \"%s\"]", AlbumKey, SubGenreKey);
 }
 
 int df_ChangeNetworkAutoIP(df_connection *conn, int DeviceID, char* AutoIpRange, char* DefaultGateway, char* DnsServer, int RestartDevice, void (*callback)(int, void*), void *context) {
@@ -828,7 +830,7 @@ int df_ChangeNetworkAutoIP(df_connection *conn, int DeviceID, char* AutoIpRange,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ChangeNetworkAutoIP", 1, ChangeNetworkAutoIP_handler, c, "[ChangeNetworkAutoIP %d \"%s\" \"%s\" \"%s\" %d]", DeviceID, AutoIpRange, DefaultGateway, DnsServer, RestartDevice);
+	return comm_send(conn, 0, "ChangeNetworkAutoIP", 1, -1, ChangeNetworkAutoIP_handler, c, "[ChangeNetworkAutoIP %d \"%s\" \"%s\" \"%s\" %d]", DeviceID, AutoIpRange, DefaultGateway, DnsServer, RestartDevice);
 }
 
 int df_ChangeNetworkDhcp(df_connection *conn, int DeviceID, int RestartDevice, void (*callback)(int, void*), void *context) {
@@ -836,7 +838,7 @@ int df_ChangeNetworkDhcp(df_connection *conn, int DeviceID, int RestartDevice, v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ChangeNetworkDhcp", 1, ChangeNetworkDhcp_handler, c, "[ChangeNetworkDhcp %d %d]", DeviceID, RestartDevice);
+	return comm_send(conn, 0, "ChangeNetworkDhcp", 1, -1, ChangeNetworkDhcp_handler, c, "[ChangeNetworkDhcp %d %d]", DeviceID, RestartDevice);
 }
 
 int df_ChangeNetworkMachineName(df_connection *conn, char* MachineName, void (*callback)(int, void*), void *context) {
@@ -844,7 +846,7 @@ int df_ChangeNetworkMachineName(df_connection *conn, char* MachineName, void (*c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ChangeNetworkMachineName", 1, ChangeNetworkMachineName_handler, c, "[ChangeNetworkMachineName \"%s\"]", MachineName);
+	return comm_send(conn, 0, "ChangeNetworkMachineName", 1, -1, ChangeNetworkMachineName_handler, c, "[ChangeNetworkMachineName \"%s\"]", MachineName);
 }
 
 int df_ChangeNetworkStatic(df_connection *conn, int DeviceID, char* IpAddress, char* SubnetMask, char* DefaultGateway, char* DnsServer, int RestartDevice, void (*callback)(int, void*), void *context) {
@@ -852,7 +854,7 @@ int df_ChangeNetworkStatic(df_connection *conn, int DeviceID, char* IpAddress, c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ChangeNetworkStatic", 1, ChangeNetworkStatic_handler, c, "[ChangeNetworkStatic %d \"%s\" \"%s\" \"%s\" \"%s\" %d]", DeviceID, IpAddress, SubnetMask, DefaultGateway, DnsServer, RestartDevice);
+	return comm_send(conn, 0, "ChangeNetworkStatic", 1, -1, ChangeNetworkStatic_handler, c, "[ChangeNetworkStatic %d \"%s\" \"%s\" \"%s\" \"%s\" %d]", DeviceID, IpAddress, SubnetMask, DefaultGateway, DnsServer, RestartDevice);
 }
 
 int df_ChangeNetworkWorkgroup(df_connection *conn, char* Workgroup, void (*callback)(int, void*), void *context) {
@@ -860,7 +862,7 @@ int df_ChangeNetworkWorkgroup(df_connection *conn, char* Workgroup, void (*callb
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ChangeNetworkWorkgroup", 1, ChangeNetworkWorkgroup_handler, c, "[ChangeNetworkWorkgroup \"%s\"]", Workgroup);
+	return comm_send(conn, 0, "ChangeNetworkWorkgroup", 1, -1, ChangeNetworkWorkgroup_handler, c, "[ChangeNetworkWorkgroup \"%s\"]", Workgroup);
 }
 
 int df_ChangeSystemSerialNumber(df_connection *conn, char* SerialNumber, void (*callback)(int, void*), void *context) {
@@ -868,7 +870,7 @@ int df_ChangeSystemSerialNumber(df_connection *conn, char* SerialNumber, void (*
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ChangeSystemSerialNumber", 1, ChangeSystemSerialNumber_handler, c, "[ChangeSystemSerialNumber \"%s\"]", SerialNumber);
+	return comm_send(conn, 0, "ChangeSystemSerialNumber", 1, -1, ChangeSystemSerialNumber_handler, c, "[ChangeSystemSerialNumber \"%s\"]", SerialNumber);
 }
 
 int df_ChangeTrackOrdinal(df_connection *conn, char* TrackKey, char* PlaylistKey, int Ordinal, int NewPosition, int ReorderPlaylist, void (*callback)(int, void*), void *context) {
@@ -876,7 +878,7 @@ int df_ChangeTrackOrdinal(df_connection *conn, char* TrackKey, char* PlaylistKey
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ChangeTrackOrdinal", 1, ChangeTrackOrdinal_handler, c, "[ChangeTrackOrdinal \"%s\" \"%s\" %d %d %d]", TrackKey, PlaylistKey, Ordinal, NewPosition, ReorderPlaylist);
+	return comm_send(conn, 0, "ChangeTrackOrdinal", 1, -1, ChangeTrackOrdinal_handler, c, "[ChangeTrackOrdinal \"%s\" \"%s\" %d %d %d]", TrackKey, PlaylistKey, Ordinal, NewPosition, ReorderPlaylist);
 }
 
 int df_CheckCoverImage(df_connection *conn, char* Address, int ImageSize, int AddressType, int Local, char* Protocol, char* ImageFormat, void (*callback)(df_coverimage*, void*), void *context) {
@@ -884,7 +886,7 @@ int df_CheckCoverImage(df_connection *conn, char* Address, int ImageSize, int Ad
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CheckCoverImage", 1, CheckCoverImage_handler, c, "[CheckCoverImage \"%s\" %d %d %d \"%s\" \"%s\"]", Address, ImageSize, AddressType, Local, Protocol, ImageFormat);
+	return comm_send(conn, 0, "CheckCoverImage", 1, -1, CheckCoverImage_handler, c, "[CheckCoverImage \"%s\" %d %d %d \"%s\" \"%s\"]", Address, ImageSize, AddressType, Local, Protocol, ImageFormat);
 }
 
 int df_CompactGenreOrdinals(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -892,7 +894,7 @@ int df_CompactGenreOrdinals(df_connection *conn, void (*callback)(int, void*), v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CompactGenreOrdinals", 1, CompactGenreOrdinals_handler, c, "[CompactGenreOrdinals]");
+	return comm_send(conn, 0, "CompactGenreOrdinals", 1, -1, CompactGenreOrdinals_handler, c, "[CompactGenreOrdinals]");
 }
 
 int df_ComplexSearchCountAlbums(df_connection *conn, char* SearchParameter, void (*callback)(int, void*), void *context) {
@@ -900,7 +902,7 @@ int df_ComplexSearchCountAlbums(df_connection *conn, char* SearchParameter, void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ComplexSearchCountAlbums", 1, ComplexSearchCountAlbums_handler, c, "[ComplexSearchCountAlbums \"%s\"]", SearchParameter);
+	return comm_send(conn, 0, "ComplexSearchCountAlbums", 1, -1, ComplexSearchCountAlbums_handler, c, "[ComplexSearchCountAlbums \"%s\"]", SearchParameter);
 }
 
 int df_ComplexSearchCountArtists(df_connection *conn, char* SearchParameter, void (*callback)(int, void*), void *context) {
@@ -908,7 +910,7 @@ int df_ComplexSearchCountArtists(df_connection *conn, char* SearchParameter, voi
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ComplexSearchCountArtists", 1, ComplexSearchCountArtists_handler, c, "[ComplexSearchCountArtists \"%s\"]", SearchParameter);
+	return comm_send(conn, 0, "ComplexSearchCountArtists", 1, -1, ComplexSearchCountArtists_handler, c, "[ComplexSearchCountArtists \"%s\"]", SearchParameter);
 }
 
 int df_ComplexSearchCountContributors(df_connection *conn, int Type, char* SearchParameter, void (*callback)(int, void*), void *context) {
@@ -916,7 +918,7 @@ int df_ComplexSearchCountContributors(df_connection *conn, int Type, char* Searc
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ComplexSearchCountContributors", 1, ComplexSearchCountContributors_handler, c, "[ComplexSearchCountContributors %d \"%s\"]", Type, SearchParameter);
+	return comm_send(conn, 0, "ComplexSearchCountContributors", 1, -1, ComplexSearchCountContributors_handler, c, "[ComplexSearchCountContributors %d \"%s\"]", Type, SearchParameter);
 }
 
 int df_ComplexSearchCountTracks(df_connection *conn, char* SearchParameter, void (*callback)(int, void*), void *context) {
@@ -924,7 +926,7 @@ int df_ComplexSearchCountTracks(df_connection *conn, char* SearchParameter, void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ComplexSearchCountTracks", 1, ComplexSearchCountTracks_handler, c, "[ComplexSearchCountTracks \"%s\"]", SearchParameter);
+	return comm_send(conn, 0, "ComplexSearchCountTracks", 1, -1, ComplexSearchCountTracks_handler, c, "[ComplexSearchCountTracks \"%s\"]", SearchParameter);
 }
 
 int df_CountAlbums(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -932,7 +934,7 @@ int df_CountAlbums(df_connection *conn, void (*callback)(int, void*), void *cont
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountAlbums", 1, CountAlbums_handler, c, "[CountAlbums]");
+	return comm_send(conn, 0, "CountAlbums", 1, -1, CountAlbums_handler, c, "[CountAlbums]");
 }
 
 int df_CountAlbumsForArtist(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -940,7 +942,7 @@ int df_CountAlbumsForArtist(df_connection *conn, char* Address, void (*callback)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountAlbumsForArtist", 1, CountAlbumsForArtist_handler, c, "[CountAlbumsForArtist \"%s\"]", Address);
+	return comm_send(conn, 0, "CountAlbumsForArtist", 1, -1, CountAlbumsForArtist_handler, c, "[CountAlbumsForArtist \"%s\"]", Address);
 }
 
 int df_CountAlbumsForArtistForDevice(df_connection *conn, char* Address, char* DeviceAddress, void (*callback)(int, void*), void *context) {
@@ -948,7 +950,7 @@ int df_CountAlbumsForArtistForDevice(df_connection *conn, char* Address, char* D
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountAlbumsForArtistForDevice", 1, CountAlbumsForArtistForDevice_handler, c, "[CountAlbumsForArtistForDevice \"%s\" \"%s\"]", Address, DeviceAddress);
+	return comm_send(conn, 0, "CountAlbumsForArtistForDevice", 1, -1, CountAlbumsForArtistForDevice_handler, c, "[CountAlbumsForArtistForDevice \"%s\" \"%s\"]", Address, DeviceAddress);
 }
 
 int df_CountAlbumsForArtistForServer(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -956,7 +958,7 @@ int df_CountAlbumsForArtistForServer(df_connection *conn, char* Address, void (*
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountAlbumsForArtistForServer", 1, CountAlbumsForArtistForServer_handler, c, "[CountAlbumsForArtistForServer \"%s\"]", Address);
+	return comm_send(conn, 0, "CountAlbumsForArtistForServer", 1, -1, CountAlbumsForArtistForServer_handler, c, "[CountAlbumsForArtistForServer \"%s\"]", Address);
 }
 
 int df_CountAlbumsForArtistForShare(df_connection *conn, char* Address, char* ShareAddress, void (*callback)(int, void*), void *context) {
@@ -964,7 +966,7 @@ int df_CountAlbumsForArtistForShare(df_connection *conn, char* Address, char* Sh
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountAlbumsForArtistForShare", 1, CountAlbumsForArtistForShare_handler, c, "[CountAlbumsForArtistForShare \"%s\" \"%s\"]", Address, ShareAddress);
+	return comm_send(conn, 0, "CountAlbumsForArtistForShare", 1, -1, CountAlbumsForArtistForShare_handler, c, "[CountAlbumsForArtistForShare \"%s\" \"%s\"]", Address, ShareAddress);
 }
 
 int df_CountAlbumsForDevice(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -972,7 +974,7 @@ int df_CountAlbumsForDevice(df_connection *conn, char* Address, void (*callback)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountAlbumsForDevice", 1, CountAlbumsForDevice_handler, c, "[CountAlbumsForDevice \"%s\"]", Address);
+	return comm_send(conn, 0, "CountAlbumsForDevice", 1, -1, CountAlbumsForDevice_handler, c, "[CountAlbumsForDevice \"%s\"]", Address);
 }
 
 int df_CountAlbumsForServer(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -980,7 +982,7 @@ int df_CountAlbumsForServer(df_connection *conn, void (*callback)(int, void*), v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountAlbumsForServer", 1, CountAlbumsForServer_handler, c, "[CountAlbumsForServer]");
+	return comm_send(conn, 0, "CountAlbumsForServer", 1, -1, CountAlbumsForServer_handler, c, "[CountAlbumsForServer]");
 }
 
 int df_CountAlbumsForShare(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -988,7 +990,7 @@ int df_CountAlbumsForShare(df_connection *conn, char* Address, void (*callback)(
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountAlbumsForShare", 1, CountAlbumsForShare_handler, c, "[CountAlbumsForShare \"%s\"]", Address);
+	return comm_send(conn, 0, "CountAlbumsForShare", 1, -1, CountAlbumsForShare_handler, c, "[CountAlbumsForShare \"%s\"]", Address);
 }
 
 int df_CountArtists(df_connection *conn, int Allocated, void (*callback)(int, void*), void *context) {
@@ -996,7 +998,7 @@ int df_CountArtists(df_connection *conn, int Allocated, void (*callback)(int, vo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountArtists", 1, CountArtists_handler, c, "[CountArtists %d]", Allocated);
+	return comm_send(conn, 0, "CountArtists", 1, -1, CountArtists_handler, c, "[CountArtists %d]", Allocated);
 }
 
 int df_CountArtistsForDevice(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1004,7 +1006,7 @@ int df_CountArtistsForDevice(df_connection *conn, char* Address, void (*callback
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountArtistsForDevice", 1, CountArtistsForDevice_handler, c, "[CountArtistsForDevice \"%s\"]", Address);
+	return comm_send(conn, 0, "CountArtistsForDevice", 1, -1, CountArtistsForDevice_handler, c, "[CountArtistsForDevice \"%s\"]", Address);
 }
 
 int df_CountArtistsForServer(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1012,7 +1014,7 @@ int df_CountArtistsForServer(df_connection *conn, void (*callback)(int, void*), 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountArtistsForServer", 1, CountArtistsForServer_handler, c, "[CountArtistsForServer]");
+	return comm_send(conn, 0, "CountArtistsForServer", 1, -1, CountArtistsForServer_handler, c, "[CountArtistsForServer]");
 }
 
 int df_CountArtistsForShare(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1020,7 +1022,7 @@ int df_CountArtistsForShare(df_connection *conn, char* Address, void (*callback)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountArtistsForShare", 1, CountArtistsForShare_handler, c, "[CountArtistsForShare \"%s\"]", Address);
+	return comm_send(conn, 0, "CountArtistsForShare", 1, -1, CountArtistsForShare_handler, c, "[CountArtistsForShare \"%s\"]", Address);
 }
 
 int df_CountDevices(df_connection *conn, int ActiveOnly, void (*callback)(int, void*), void *context) {
@@ -1028,7 +1030,7 @@ int df_CountDevices(df_connection *conn, int ActiveOnly, void (*callback)(int, v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountDevices", 1, CountDevices_handler, c, "[CountDevices %d]", ActiveOnly);
+	return comm_send(conn, 0, "CountDevices", 1, -1, CountDevices_handler, c, "[CountDevices %d]", ActiveOnly);
 }
 
 int df_CountGenres(df_connection *conn, int Allocated, void (*callback)(int, void*), void *context) {
@@ -1036,7 +1038,7 @@ int df_CountGenres(df_connection *conn, int Allocated, void (*callback)(int, voi
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountGenres", 1, CountGenres_handler, c, "[CountGenres %d]", Allocated);
+	return comm_send(conn, 0, "CountGenres", 1, -1, CountGenres_handler, c, "[CountGenres %d]", Allocated);
 }
 
 int df_CountPlaylistsForSubGenre(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1044,7 +1046,7 @@ int df_CountPlaylistsForSubGenre(df_connection *conn, char* Address, void (*call
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountPlaylistsForSubGenre", 1, CountPlaylistsForSubGenre_handler, c, "[CountPlaylistsForSubGenre \"%s\"]", Address);
+	return comm_send(conn, 0, "CountPlaylistsForSubGenre", 1, -1, CountPlaylistsForSubGenre_handler, c, "[CountPlaylistsForSubGenre \"%s\"]", Address);
 }
 
 int df_CountPlaylistsForSubGenreForDevice(df_connection *conn, char* Address, char* DeviceAddress, void (*callback)(int, void*), void *context) {
@@ -1052,7 +1054,7 @@ int df_CountPlaylistsForSubGenreForDevice(df_connection *conn, char* Address, ch
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountPlaylistsForSubGenreForDevice", 1, CountPlaylistsForSubGenreForDevice_handler, c, "[CountPlaylistsForSubGenreForDevice \"%s\" \"%s\"]", Address, DeviceAddress);
+	return comm_send(conn, 0, "CountPlaylistsForSubGenreForDevice", 1, -1, CountPlaylistsForSubGenreForDevice_handler, c, "[CountPlaylistsForSubGenreForDevice \"%s\" \"%s\"]", Address, DeviceAddress);
 }
 
 int df_CountPlaylistsForSubGenreForServer(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1060,7 +1062,7 @@ int df_CountPlaylistsForSubGenreForServer(df_connection *conn, char* Address, vo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountPlaylistsForSubGenreForServer", 1, CountPlaylistsForSubGenreForServer_handler, c, "[CountPlaylistsForSubGenreForServer \"%s\"]", Address);
+	return comm_send(conn, 0, "CountPlaylistsForSubGenreForServer", 1, -1, CountPlaylistsForSubGenreForServer_handler, c, "[CountPlaylistsForSubGenreForServer \"%s\"]", Address);
 }
 
 int df_CountPlaylistsForSubGenreForShare(df_connection *conn, char* Address, char* ShareAddress, void (*callback)(int, void*), void *context) {
@@ -1068,7 +1070,7 @@ int df_CountPlaylistsForSubGenreForShare(df_connection *conn, char* Address, cha
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountPlaylistsForSubGenreForShare", 1, CountPlaylistsForSubGenreForShare_handler, c, "[CountPlaylistsForSubGenreForShare \"%s\" \"%s\"]", Address, ShareAddress);
+	return comm_send(conn, 0, "CountPlaylistsForSubGenreForShare", 1, -1, CountPlaylistsForSubGenreForShare_handler, c, "[CountPlaylistsForSubGenreForShare \"%s\" \"%s\"]", Address, ShareAddress);
 }
 
 int df_CountShares(df_connection *conn, int AvailableOnly, void (*callback)(int, void*), void *context) {
@@ -1076,7 +1078,7 @@ int df_CountShares(df_connection *conn, int AvailableOnly, void (*callback)(int,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountShares", 1, CountShares_handler, c, "[CountShares %d]", AvailableOnly);
+	return comm_send(conn, 0, "CountShares", 1, -1, CountShares_handler, c, "[CountShares %d]", AvailableOnly);
 }
 
 int df_CountSubGenresForDevice(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1084,7 +1086,7 @@ int df_CountSubGenresForDevice(df_connection *conn, char* Address, void (*callba
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountSubGenresForDevice", 1, CountSubGenresForDevice_handler, c, "[CountSubGenresForDevice \"%s\"]", Address);
+	return comm_send(conn, 0, "CountSubGenresForDevice", 1, -1, CountSubGenresForDevice_handler, c, "[CountSubGenresForDevice \"%s\"]", Address);
 }
 
 int df_CountSubGenresForGenre(df_connection *conn, char* Address, int Allocated, void (*callback)(int, void*), void *context) {
@@ -1092,7 +1094,7 @@ int df_CountSubGenresForGenre(df_connection *conn, char* Address, int Allocated,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountSubGenresForGenre", 1, CountSubGenresForGenre_handler, c, "[CountSubGenresForGenre \"%s\" %d]", Address, Allocated);
+	return comm_send(conn, 0, "CountSubGenresForGenre", 1, -1, CountSubGenresForGenre_handler, c, "[CountSubGenresForGenre \"%s\" %d]", Address, Allocated);
 }
 
 int df_CountSubGenresForServer(df_connection *conn, int Allocated, int UserDefined, void (*callback)(int, void*), void *context) {
@@ -1100,7 +1102,7 @@ int df_CountSubGenresForServer(df_connection *conn, int Allocated, int UserDefin
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountSubGenresForServer", 1, CountSubGenresForServer_handler, c, "[CountSubGenresForServer %d %d]", Allocated, UserDefined);
+	return comm_send(conn, 0, "CountSubGenresForServer", 1, -1, CountSubGenresForServer_handler, c, "[CountSubGenresForServer %d %d]", Allocated, UserDefined);
 }
 
 int df_CountSubGenresForShare(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1108,7 +1110,7 @@ int df_CountSubGenresForShare(df_connection *conn, char* Address, void (*callbac
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountSubGenresForShare", 1, CountSubGenresForShare_handler, c, "[CountSubGenresForShare \"%s\"]", Address);
+	return comm_send(conn, 0, "CountSubGenresForShare", 1, -1, CountSubGenresForShare_handler, c, "[CountSubGenresForShare \"%s\"]", Address);
 }
 
 int df_CountTracksAll(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1116,7 +1118,7 @@ int df_CountTracksAll(df_connection *conn, void (*callback)(int, void*), void *c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountTracksAll", 1, CountTracksAll_handler, c, "[CountTracksAll]");
+	return comm_send(conn, 0, "CountTracksAll", 1, -1, CountTracksAll_handler, c, "[CountTracksAll]");
 }
 
 int df_CountTracksForDevice(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1124,7 +1126,7 @@ int df_CountTracksForDevice(df_connection *conn, char* Address, void (*callback)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountTracksForDevice", 1, CountTracksForDevice_handler, c, "[CountTracksForDevice \"%s\"]", Address);
+	return comm_send(conn, 0, "CountTracksForDevice", 1, -1, CountTracksForDevice_handler, c, "[CountTracksForDevice \"%s\"]", Address);
 }
 
 int df_CountTracksForPlaylist(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1132,7 +1134,7 @@ int df_CountTracksForPlaylist(df_connection *conn, char* Address, void (*callbac
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountTracksForPlaylist", 1, CountTracksForPlaylist_handler, c, "[CountTracksForPlaylist \"%s\"]", Address);
+	return comm_send(conn, 0, "CountTracksForPlaylist", 1, -1, CountTracksForPlaylist_handler, c, "[CountTracksForPlaylist \"%s\"]", Address);
 }
 
 int df_CountTracksForServer(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1140,7 +1142,7 @@ int df_CountTracksForServer(df_connection *conn, void (*callback)(int, void*), v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountTracksForServer", 1, CountTracksForServer_handler, c, "[CountTracksForServer]");
+	return comm_send(conn, 0, "CountTracksForServer", 1, -1, CountTracksForServer_handler, c, "[CountTracksForServer]");
 }
 
 int df_CountTracksForShare(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1148,7 +1150,7 @@ int df_CountTracksForShare(df_connection *conn, char* Address, void (*callback)(
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountTracksForShare", 1, CountTracksForShare_handler, c, "[CountTracksForShare \"%s\"]", Address);
+	return comm_send(conn, 0, "CountTracksForShare", 1, -1, CountTracksForShare_handler, c, "[CountTracksForShare \"%s\"]", Address);
 }
 
 int df_CountUserPlaylists(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1156,7 +1158,7 @@ int df_CountUserPlaylists(df_connection *conn, void (*callback)(int, void*), voi
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountUserPlaylists", 1, CountUserPlaylists_handler, c, "[CountUserPlaylists]");
+	return comm_send(conn, 0, "CountUserPlaylists", 1, -1, CountUserPlaylists_handler, c, "[CountUserPlaylists]");
 }
 
 int df_CountUserPlaylistsForDevice(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1164,7 +1166,7 @@ int df_CountUserPlaylistsForDevice(df_connection *conn, char* Address, void (*ca
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountUserPlaylistsForDevice", 1, CountUserPlaylistsForDevice_handler, c, "[CountUserPlaylistsForDevice \"%s\"]", Address);
+	return comm_send(conn, 0, "CountUserPlaylistsForDevice", 1, -1, CountUserPlaylistsForDevice_handler, c, "[CountUserPlaylistsForDevice \"%s\"]", Address);
 }
 
 int df_CountUserPlaylistsForServer(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1172,7 +1174,7 @@ int df_CountUserPlaylistsForServer(df_connection *conn, void (*callback)(int, vo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountUserPlaylistsForServer", 1, CountUserPlaylistsForServer_handler, c, "[CountUserPlaylistsForServer]");
+	return comm_send(conn, 0, "CountUserPlaylistsForServer", 1, -1, CountUserPlaylistsForServer_handler, c, "[CountUserPlaylistsForServer]");
 }
 
 int df_CountUserPlaylistsForShare(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1180,7 +1182,7 @@ int df_CountUserPlaylistsForShare(df_connection *conn, char* Address, void (*cal
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CountUserPlaylistsForShare", 1, CountUserPlaylistsForShare_handler, c, "[CountUserPlaylistsForShare \"%s\"]", Address);
+	return comm_send(conn, 0, "CountUserPlaylistsForShare", 1, -1, CountUserPlaylistsForShare_handler, c, "[CountUserPlaylistsForShare \"%s\"]", Address);
 }
 
 int df_CreatePlaylist(df_connection *conn, char* Name, char* TrackKey, void (*callback)(int, void*), void *context) {
@@ -1188,7 +1190,7 @@ int df_CreatePlaylist(df_connection *conn, char* Name, char* TrackKey, void (*ca
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CreatePlaylist", 1, CreatePlaylist_handler, c, "[CreatePlaylist \"%s\" \"%s\"]", Name, TrackKey);
+	return comm_send(conn, 0, "CreatePlaylist", 1, -1, CreatePlaylist_handler, c, "[CreatePlaylist \"%s\" \"%s\"]", Name, TrackKey);
 }
 
 int df_CreateRandomPlaylist(df_connection *conn, int RoomID, char* Genre, char* SubGenre, char* Artists, char* Albums, int MaxTracks, char* Tracks, void (*callback)(int, void*), void *context) {
@@ -1196,7 +1198,7 @@ int df_CreateRandomPlaylist(df_connection *conn, int RoomID, char* Genre, char* 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CreateRandomPlaylist", 1, CreateRandomPlaylist_handler, c, "[CreateRandomPlaylist %d \"%s\" \"%s\" \"%s\" \"%s\" %d \"%s\"]", RoomID, Genre, SubGenre, Artists, Albums, MaxTracks, Tracks);
+	return comm_send(conn, 0, "CreateRandomPlaylist", 1, -1, CreateRandomPlaylist_handler, c, "[CreateRandomPlaylist %d \"%s\" \"%s\" \"%s\" \"%s\" %d \"%s\"]", RoomID, Genre, SubGenre, Artists, Albums, MaxTracks, Tracks);
 }
 
 int df_CreateRandomPlaylistEx(df_connection *conn, int RoomID, int Replace, int PlayScope, char* ScopeKey, char* SubGenre, char* Artists, char* Albums, char* Tracks, void (*callback)(int, void*), void *context) {
@@ -1204,7 +1206,7 @@ int df_CreateRandomPlaylistEx(df_connection *conn, int RoomID, int Replace, int 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "CreateRandomPlaylistEx", 1, CreateRandomPlaylistEx_handler, c, "[CreateRandomPlaylistEx %d %d %d \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"]", RoomID, Replace, PlayScope, ScopeKey, SubGenre, Artists, Albums, Tracks);
+	return comm_send(conn, 0, "CreateRandomPlaylistEx", 1, -1, CreateRandomPlaylistEx_handler, c, "[CreateRandomPlaylistEx %d %d %d \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"]", RoomID, Replace, PlayScope, ScopeKey, SubGenre, Artists, Albums, Tracks);
 }
 
 int df_DeleteAlbum(df_connection *conn, char* AlbumKey, void (*callback)(int, void*), void *context) {
@@ -1212,7 +1214,7 @@ int df_DeleteAlbum(df_connection *conn, char* AlbumKey, void (*callback)(int, vo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteAlbum", 1, DeleteAlbum_handler, c, "[DeleteAlbum \"%s\"]", AlbumKey);
+	return comm_send(conn, 0, "DeleteAlbum", 1, -1, DeleteAlbum_handler, c, "[DeleteAlbum \"%s\"]", AlbumKey);
 }
 
 int df_DeleteBackupJob(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1220,7 +1222,7 @@ int df_DeleteBackupJob(df_connection *conn, char* Address, void (*callback)(int,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteBackupJob", 1, DeleteBackupJob_handler, c, "[DeleteBackupJob \"%s\"]", Address);
+	return comm_send(conn, 0, "DeleteBackupJob", 1, -1, DeleteBackupJob_handler, c, "[DeleteBackupJob \"%s\"]", Address);
 }
 
 int df_DeleteDevice(df_connection *conn, int Key, void (*callback)(int, void*), void *context) {
@@ -1228,7 +1230,7 @@ int df_DeleteDevice(df_connection *conn, int Key, void (*callback)(int, void*), 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteDevice", 1, DeleteDevice_handler, c, "[DeleteDevice %d]", Key);
+	return comm_send(conn, 0, "DeleteDevice", 1, -1, DeleteDevice_handler, c, "[DeleteDevice %d]", Key);
 }
 
 int df_DeleteDrive(df_connection *conn, char* DriveKey, void (*callback)(int, void*), void *context) {
@@ -1236,7 +1238,7 @@ int df_DeleteDrive(df_connection *conn, char* DriveKey, void (*callback)(int, vo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteDrive", 1, DeleteDrive_handler, c, "[DeleteDrive \"%s\"]", DriveKey);
+	return comm_send(conn, 0, "DeleteDrive", 1, -1, DeleteDrive_handler, c, "[DeleteDrive \"%s\"]", DriveKey);
 }
 
 int df_DeleteGenre(df_connection *conn, char* GenreKey, void (*callback)(int, void*), void *context) {
@@ -1244,7 +1246,7 @@ int df_DeleteGenre(df_connection *conn, char* GenreKey, void (*callback)(int, vo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteGenre", 1, DeleteGenre_handler, c, "[DeleteGenre \"%s\"]", GenreKey);
+	return comm_send(conn, 0, "DeleteGenre", 1, -1, DeleteGenre_handler, c, "[DeleteGenre \"%s\"]", GenreKey);
 }
 
 int df_DeleteLinkedRoom(df_connection *conn, char* RoomKey, void (*callback)(int, void*), void *context) {
@@ -1252,7 +1254,7 @@ int df_DeleteLinkedRoom(df_connection *conn, char* RoomKey, void (*callback)(int
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteLinkedRoom", 1, DeleteLinkedRoom_handler, c, "[DeleteLinkedRoom \"%s\"]", RoomKey);
+	return comm_send(conn, 0, "DeleteLinkedRoom", 1, -1, DeleteLinkedRoom_handler, c, "[DeleteLinkedRoom \"%s\"]", RoomKey);
 }
 
 int df_DeleteOutputChannel(df_connection *conn, int RoomID, char* HostName, int ChannelNumber, void (*callback)(int, void*), void *context) {
@@ -1260,7 +1262,7 @@ int df_DeleteOutputChannel(df_connection *conn, int RoomID, char* HostName, int 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteOutputChannel", 1, DeleteOutputChannel_handler, c, "[DeleteOutputChannel %d \"%s\" %d]", RoomID, HostName, ChannelNumber);
+	return comm_send(conn, 0, "DeleteOutputChannel", 1, -1, DeleteOutputChannel_handler, c, "[DeleteOutputChannel %d \"%s\" %d]", RoomID, HostName, ChannelNumber);
 }
 
 int df_DeleteRoom(df_connection *conn, char* RoomKey, void (*callback)(int, void*), void *context) {
@@ -1268,7 +1270,7 @@ int df_DeleteRoom(df_connection *conn, char* RoomKey, void (*callback)(int, void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteRoom", 1, DeleteRoom_handler, c, "[DeleteRoom \"%s\"]", RoomKey);
+	return comm_send(conn, 0, "DeleteRoom", 1, -1, DeleteRoom_handler, c, "[DeleteRoom \"%s\"]", RoomKey);
 }
 
 int df_DeleteSubGenre(df_connection *conn, char* SubGenreKey, void (*callback)(int, void*), void *context) {
@@ -1276,7 +1278,7 @@ int df_DeleteSubGenre(df_connection *conn, char* SubGenreKey, void (*callback)(i
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteSubGenre", 1, DeleteSubGenre_handler, c, "[DeleteSubGenre \"%s\"]", SubGenreKey);
+	return comm_send(conn, 0, "DeleteSubGenre", 1, -1, DeleteSubGenre_handler, c, "[DeleteSubGenre \"%s\"]", SubGenreKey);
 }
 
 int df_DeleteTrack(df_connection *conn, char* TrackKey, char* PlaylistKey, int Ordinal, void (*callback)(int, void*), void *context) {
@@ -1284,7 +1286,7 @@ int df_DeleteTrack(df_connection *conn, char* TrackKey, char* PlaylistKey, int O
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeleteTrack", 1, DeleteTrack_handler, c, "[DeleteTrack \"%s\" \"%s\" %d]", TrackKey, PlaylistKey, Ordinal);
+	return comm_send(conn, 0, "DeleteTrack", 1, -1, DeleteTrack_handler, c, "[DeleteTrack \"%s\" \"%s\" %d]", TrackKey, PlaylistKey, Ordinal);
 }
 
 int df_DemoteMusicStoreToShare(df_connection *conn, char* MusicStoreKey, int Deactivate, void (*callback)(df_demoteresult*, void*), void *context) {
@@ -1292,7 +1294,7 @@ int df_DemoteMusicStoreToShare(df_connection *conn, char* MusicStoreKey, int Dea
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DemoteMusicStoreToShare", 1, DemoteMusicStoreToShare_handler, c, "[DemoteMusicStoreToShare \"%s\" %d]", MusicStoreKey, Deactivate);
+	return comm_send(conn, 0, "DemoteMusicStoreToShare", 1, -1, DemoteMusicStoreToShare_handler, c, "[DemoteMusicStoreToShare \"%s\" %d]", MusicStoreKey, Deactivate);
 }
 
 int df_DeviceChecksum(df_connection *conn, void (*callback)(char*, void*), void *context) {
@@ -1300,7 +1302,7 @@ int df_DeviceChecksum(df_connection *conn, void (*callback)(char*, void*), void 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DeviceChecksum", 1, DeviceChecksum_handler, c, "[DeviceChecksum]");
+	return comm_send(conn, 0, "DeviceChecksum", 1, -1, DeviceChecksum_handler, c, "[DeviceChecksum]");
 }
 
 int df_DisconnectDevice(df_connection *conn, int Key, int ClearPlaying, void (*callback)(int, void*), void *context) {
@@ -1308,7 +1310,7 @@ int df_DisconnectDevice(df_connection *conn, int Key, int ClearPlaying, void (*c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "DisconnectDevice", 1, DisconnectDevice_handler, c, "[DisconnectDevice %d %d]", Key, ClearPlaying);
+	return comm_send(conn, 0, "DisconnectDevice", 1, -1, DisconnectDevice_handler, c, "[DisconnectDevice %d %d]", Key, ClearPlaying);
 }
 
 int df_ExternalStorageCancelScan(df_connection *conn, char* StorageKey, void (*callback)(int, void*), void *context) {
@@ -1316,7 +1318,7 @@ int df_ExternalStorageCancelScan(df_connection *conn, char* StorageKey, void (*c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ExternalStorageCancelScan", 1, ExternalStorageCancelScan_handler, c, "[ExternalStorageCancelScan \"%s\"]", StorageKey);
+	return comm_send(conn, 0, "ExternalStorageCancelScan", 1, -1, ExternalStorageCancelScan_handler, c, "[ExternalStorageCancelScan \"%s\"]", StorageKey);
 }
 
 int df_FindAllRooms(df_connection *conn, int TimeoutPerHost, void (*callback)(int, void*), void *context) {
@@ -1324,7 +1326,7 @@ int df_FindAllRooms(df_connection *conn, int TimeoutPerHost, void (*callback)(in
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "FindAllRooms", 1, FindAllRooms_handler, c, "[FindAllRooms %d]", TimeoutPerHost);
+	return comm_send(conn, 0, "FindAllRooms", 1, -1, FindAllRooms_handler, c, "[FindAllRooms %d]", TimeoutPerHost);
 }
 
 int df_FindNewRooms(df_connection *conn, int TimeoutPerHost, void (*callback)(int, void*), void *context) {
@@ -1332,7 +1334,7 @@ int df_FindNewRooms(df_connection *conn, int TimeoutPerHost, void (*callback)(in
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "FindNewRooms", 1, FindNewRooms_handler, c, "[FindNewRooms %d]", TimeoutPerHost);
+	return comm_send(conn, 0, "FindNewRooms", 1, -1, FindNewRooms_handler, c, "[FindNewRooms %d]", TimeoutPerHost);
 }
 
 int df_ForceGenrePlaylistBackup(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1340,7 +1342,7 @@ int df_ForceGenrePlaylistBackup(df_connection *conn, void (*callback)(int, void*
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ForceGenrePlaylistBackup", 1, ForceGenrePlaylistBackup_handler, c, "[ForceGenrePlaylistBackup]");
+	return comm_send(conn, 0, "ForceGenrePlaylistBackup", 1, -1, ForceGenrePlaylistBackup_handler, c, "[ForceGenrePlaylistBackup]");
 }
 
 int df_ForceGenrePlaylistRestore(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1348,7 +1350,7 @@ int df_ForceGenrePlaylistRestore(df_connection *conn, void (*callback)(int, void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ForceGenrePlaylistRestore", 1, ForceGenrePlaylistRestore_handler, c, "[ForceGenrePlaylistRestore]");
+	return comm_send(conn, 0, "ForceGenrePlaylistRestore", 1, -1, ForceGenrePlaylistRestore_handler, c, "[ForceGenrePlaylistRestore]");
 }
 
 int df_GetAlbumArtist(df_connection *conn, int RoomID, void (*callback)(df_albumartist*, void*), void *context) {
@@ -1356,7 +1358,7 @@ int df_GetAlbumArtist(df_connection *conn, int RoomID, void (*callback)(df_album
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetAlbumArtist", 1, GetAlbumArtist_handler, c, "[GetAlbumArtist %d]", RoomID);
+	return comm_send(conn, 0, "GetAlbumArtist", 1, -1, GetAlbumArtist_handler, c, "[GetAlbumArtist %d]", RoomID);
 }
 
 int df_GetBackupStatus(df_connection *conn, void (*callback)(df_backupstatus*, void*), void *context) {
@@ -1364,7 +1366,7 @@ int df_GetBackupStatus(df_connection *conn, void (*callback)(df_backupstatus*, v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetBackupStatus", 1, GetBackupStatus_handler, c, "[GetBackupStatus]");
+	return comm_send(conn, 0, "GetBackupStatus", 1, -1, GetBackupStatus_handler, c, "[GetBackupStatus]");
 }
 
 int df_GetCount(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1372,7 +1374,7 @@ int df_GetCount(df_connection *conn, void (*callback)(int, void*), void *context
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetCount", 1, GetCount_handler, c, "[GetCount]");
+	return comm_send(conn, 0, "GetCount", 1, -1, GetCount_handler, c, "[GetCount]");
 }
 
 int df_GetCurOp(df_connection *conn, void (*callback)(char*, void*), void *context) {
@@ -1380,7 +1382,7 @@ int df_GetCurOp(df_connection *conn, void (*callback)(char*, void*), void *conte
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetCurOp", 1, GetCurOp_handler, c, "[GetCurOp]");
+	return comm_send(conn, 0, "GetCurOp", 1, -1, GetCurOp_handler, c, "[GetCurOp]");
 }
 
 int df_GetDriveDetail(df_connection *conn, char* DriveKey, void (*callback)(df_drivedetail*, void*), void *context) {
@@ -1388,7 +1390,7 @@ int df_GetDriveDetail(df_connection *conn, char* DriveKey, void (*callback)(df_d
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetDriveDetail", 1, GetDriveDetail_handler, c, "[GetDriveDetail \"%s\"]", DriveKey);
+	return comm_send(conn, 0, "GetDriveDetail", 1, -1, GetDriveDetail_handler, c, "[GetDriveDetail \"%s\"]", DriveKey);
 }
 
 int df_GetExtCountAlbumsByContributor(df_connection *conn, char* Address, int Type, void (*callback)(int, void*), void *context) {
@@ -1396,7 +1398,7 @@ int df_GetExtCountAlbumsByContributor(df_connection *conn, char* Address, int Ty
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExtCountAlbumsByContributor", 1, GetExtCountAlbumsByContributor_handler, c, "[GetExtCountAlbumsByContributor \"%s\" %d]", Address, Type);
+	return comm_send(conn, 0, "GetExtCountAlbumsByContributor", 1, -1, GetExtCountAlbumsByContributor_handler, c, "[GetExtCountAlbumsByContributor \"%s\" %d]", Address, Type);
 }
 
 int df_GetExtCountAlbumsByContributorForDevice(df_connection *conn, char* Address, char* DeviceAddress, int Type, void (*callback)(int, void*), void *context) {
@@ -1404,7 +1406,7 @@ int df_GetExtCountAlbumsByContributorForDevice(df_connection *conn, char* Addres
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExtCountAlbumsByContributorForDevice", 1, GetExtCountAlbumsByContributorForDevice_handler, c, "[GetExtCountAlbumsByContributorForDevice \"%s\" \"%s\" %d]", Address, DeviceAddress, Type);
+	return comm_send(conn, 0, "GetExtCountAlbumsByContributorForDevice", 1, -1, GetExtCountAlbumsByContributorForDevice_handler, c, "[GetExtCountAlbumsByContributorForDevice \"%s\" \"%s\" %d]", Address, DeviceAddress, Type);
 }
 
 int df_GetExtCountAlbumsByContributorForServer(df_connection *conn, char* Address, int Type, void (*callback)(int, void*), void *context) {
@@ -1412,7 +1414,7 @@ int df_GetExtCountAlbumsByContributorForServer(df_connection *conn, char* Addres
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExtCountAlbumsByContributorForServer", 1, GetExtCountAlbumsByContributorForServer_handler, c, "[GetExtCountAlbumsByContributorForServer \"%s\" %d]", Address, Type);
+	return comm_send(conn, 0, "GetExtCountAlbumsByContributorForServer", 1, -1, GetExtCountAlbumsByContributorForServer_handler, c, "[GetExtCountAlbumsByContributorForServer \"%s\" %d]", Address, Type);
 }
 
 int df_GetExtCountAlbumsByContributorForShare(df_connection *conn, char* Address, char* ShareAddress, int Type, void (*callback)(int, void*), void *context) {
@@ -1420,7 +1422,7 @@ int df_GetExtCountAlbumsByContributorForShare(df_connection *conn, char* Address
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExtCountAlbumsByContributorForShare", 1, GetExtCountAlbumsByContributorForShare_handler, c, "[GetExtCountAlbumsByContributorForShare \"%s\" \"%s\" %d]", Address, ShareAddress, Type);
+	return comm_send(conn, 0, "GetExtCountAlbumsByContributorForShare", 1, -1, GetExtCountAlbumsByContributorForShare_handler, c, "[GetExtCountAlbumsByContributorForShare \"%s\" \"%s\" %d]", Address, ShareAddress, Type);
 }
 
 int df_GetExtCountContributors(df_connection *conn, int Type, void (*callback)(int, void*), void *context) {
@@ -1428,7 +1430,7 @@ int df_GetExtCountContributors(df_connection *conn, int Type, void (*callback)(i
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExtCountContributors", 1, GetExtCountContributors_handler, c, "[GetExtCountContributors %d]", Type);
+	return comm_send(conn, 0, "GetExtCountContributors", 1, -1, GetExtCountContributors_handler, c, "[GetExtCountContributors %d]", Type);
 }
 
 int df_GetExtCountContributorsForDevice(df_connection *conn, char* Address, int Type, void (*callback)(int, void*), void *context) {
@@ -1436,7 +1438,7 @@ int df_GetExtCountContributorsForDevice(df_connection *conn, char* Address, int 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExtCountContributorsForDevice", 1, GetExtCountContributorsForDevice_handler, c, "[GetExtCountContributorsForDevice \"%s\" %d]", Address, Type);
+	return comm_send(conn, 0, "GetExtCountContributorsForDevice", 1, -1, GetExtCountContributorsForDevice_handler, c, "[GetExtCountContributorsForDevice \"%s\" %d]", Address, Type);
 }
 
 int df_GetExtCountContributorsForServer(df_connection *conn, int Type, void (*callback)(int, void*), void *context) {
@@ -1444,7 +1446,7 @@ int df_GetExtCountContributorsForServer(df_connection *conn, int Type, void (*ca
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExtCountContributorsForServer", 1, GetExtCountContributorsForServer_handler, c, "[GetExtCountContributorsForServer %d]", Type);
+	return comm_send(conn, 0, "GetExtCountContributorsForServer", 1, -1, GetExtCountContributorsForServer_handler, c, "[GetExtCountContributorsForServer %d]", Type);
 }
 
 int df_GetExtCountContributorsForShare(df_connection *conn, char* Address, int Type, void (*callback)(int, void*), void *context) {
@@ -1452,7 +1454,7 @@ int df_GetExtCountContributorsForShare(df_connection *conn, char* Address, int T
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExtCountContributorsForShare", 1, GetExtCountContributorsForShare_handler, c, "[GetExtCountContributorsForShare \"%s\" %d]", Address, Type);
+	return comm_send(conn, 0, "GetExtCountContributorsForShare", 1, -1, GetExtCountContributorsForShare_handler, c, "[GetExtCountContributorsForShare \"%s\" %d]", Address, Type);
 }
 
 int df_GetExternalStorageDetail(df_connection *conn, char* StorageKey, void (*callback)(df_extstoragedetail*, void*), void *context) {
@@ -1460,7 +1462,7 @@ int df_GetExternalStorageDetail(df_connection *conn, char* StorageKey, void (*ca
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetExternalStorageDetail", 1, GetExternalStorageDetail_handler, c, "[GetExternalStorageDetail \"%s\"]", StorageKey);
+	return comm_send(conn, 0, "GetExternalStorageDetail", 1, -1, GetExternalStorageDetail_handler, c, "[GetExternalStorageDetail \"%s\"]", StorageKey);
 }
 
 int df_GetFileSystemDriveDetail(df_connection *conn, char* DriveLetter, void (*callback)(df_fsdrivedetail*, void*), void *context) {
@@ -1468,7 +1470,7 @@ int df_GetFileSystemDriveDetail(df_connection *conn, char* DriveLetter, void (*c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetFileSystemDriveDetail", 1, GetFileSystemDriveDetail_handler, c, "[GetFileSystemDriveDetail \"%s\"]", DriveLetter);
+	return comm_send(conn, 0, "GetFileSystemDriveDetail", 1, -1, GetFileSystemDriveDetail_handler, c, "[GetFileSystemDriveDetail \"%s\"]", DriveLetter);
 }
 
 int df_GetGenreDetail(df_connection *conn, char* GenreKey, void (*callback)(df_genre*, void*), void *context) {
@@ -1476,7 +1478,7 @@ int df_GetGenreDetail(df_connection *conn, char* GenreKey, void (*callback)(df_g
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetGenreDetail", 1, GetGenreDetail_handler, c, "[GetGenreDetail \"%s\"]", GenreKey);
+	return comm_send(conn, 0, "GetGenreDetail", 1, -1, GetGenreDetail_handler, c, "[GetGenreDetail \"%s\"]", GenreKey);
 }
 
 int df_GetHostDetails(df_connection *conn, void (*callback)(df_hostdetails*, void*), void *context) {
@@ -1484,7 +1486,7 @@ int df_GetHostDetails(df_connection *conn, void (*callback)(df_hostdetails*, voi
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetHostDetails", 1, GetHostDetails_handler, c, "[GetHostDetails]");
+	return comm_send(conn, 0, "GetHostDetails", 1, -1, GetHostDetails_handler, c, "[GetHostDetails]");
 }
 
 int df_GetLastError(df_connection *conn, void (*callback)(char*, void*), void *context) {
@@ -1492,7 +1494,7 @@ int df_GetLastError(df_connection *conn, void (*callback)(char*, void*), void *c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetLastError", 1, GetLastError_handler, c, "[GetLastError]");
+	return comm_send(conn, 0, "GetLastError", 1, -1, GetLastError_handler, c, "[GetLastError]");
 }
 
 int df_GetLibraryCheckSum(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1500,7 +1502,7 @@ int df_GetLibraryCheckSum(df_connection *conn, int RoomID, void (*callback)(int,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetLibraryCheckSum", 1, GetLibraryCheckSum_handler, c, "[GetLibraryCheckSum %d]", RoomID);
+	return comm_send(conn, 0, "GetLibraryCheckSum", 1, -1, GetLibraryCheckSum_handler, c, "[GetLibraryCheckSum %d]", RoomID);
 }
 
 int df_GetNetworkWorkgroup(df_connection *conn, void (*callback)(char*, void*), void *context) {
@@ -1508,7 +1510,7 @@ int df_GetNetworkWorkgroup(df_connection *conn, void (*callback)(char*, void*), 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetNetworkWorkgroup", 1, GetNetworkWorkgroup_handler, c, "[GetNetworkWorkgroup]");
+	return comm_send(conn, 0, "GetNetworkWorkgroup", 1, -1, GetNetworkWorkgroup_handler, c, "[GetNetworkWorkgroup]");
 }
 
 int df_GetOperationActivity(df_connection *conn, int RoomID, int Service, void (*callback)(char*, void*), void *context) {
@@ -1516,7 +1518,7 @@ int df_GetOperationActivity(df_connection *conn, int RoomID, int Service, void (
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetOperationActivity", 1, GetOperationActivity_handler, c, "[GetOperationActivity %d %d]", RoomID, Service);
+	return comm_send(conn, 0, "GetOperationActivity", 1, -1, GetOperationActivity_handler, c, "[GetOperationActivity %d %d]", RoomID, Service);
 }
 
 int df_GetPlayerStatus(df_connection *conn, int RoomID, void (*callback)(char*, void*), void *context) {
@@ -1524,7 +1526,7 @@ int df_GetPlayerStatus(df_connection *conn, int RoomID, void (*callback)(char*, 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetPlayerStatus", 1, GetPlayerStatus_handler, c, "[GetPlayerStatus %d]", RoomID);
+	return comm_send(conn, 0, "GetPlayerStatus", 1, -1, GetPlayerStatus_handler, c, "[GetPlayerStatus %d]", RoomID);
 }
 
 int df_GetPlayerVersion(df_connection *conn, int RoomID, void (*callback)(char*, void*), void *context) {
@@ -1532,7 +1534,7 @@ int df_GetPlayerVersion(df_connection *conn, int RoomID, void (*callback)(char*,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetPlayerVersion", 1, GetPlayerVersion_handler, c, "[GetPlayerVersion %d]", RoomID);
+	return comm_send(conn, 0, "GetPlayerVersion", 1, -1, GetPlayerVersion_handler, c, "[GetPlayerVersion %d]", RoomID);
 }
 
 int df_GetRepeat(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1540,7 +1542,7 @@ int df_GetRepeat(df_connection *conn, int RoomID, void (*callback)(int, void*), 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetRepeat", 1, GetRepeat_handler, c, "[GetRepeat %d]", RoomID);
+	return comm_send(conn, 0, "GetRepeat", 1, -1, GetRepeat_handler, c, "[GetRepeat %d]", RoomID);
 }
 
 int df_GetRoomDetail(df_connection *conn, char* RoomKey, void (*callback)(df_room*, void*), void *context) {
@@ -1548,7 +1550,7 @@ int df_GetRoomDetail(df_connection *conn, char* RoomKey, void (*callback)(df_roo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetRoomDetail", 1, GetRoomDetail_handler, c, "[GetRoomDetail \"%s\"]", RoomKey);
+	return comm_send(conn, 0, "GetRoomDetail", 1, -1, GetRoomDetail_handler, c, "[GetRoomDetail \"%s\"]", RoomKey);
 }
 
 int df_GetRows(df_connection *conn, int StartRow, int RowCount, char* FormatList, void (*callback)(int, void*), void *context) {
@@ -1556,7 +1558,7 @@ int df_GetRows(df_connection *conn, int StartRow, int RowCount, char* FormatList
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetRows", 1, GetRows_handler, c, "[GetRows %d %d \"%s\"]", StartRow, RowCount, FormatList);
+	return comm_send(conn, 0, "GetRows", 1, -1, GetRows_handler, c, "[GetRows %d %d \"%s\"]", StartRow, RowCount, FormatList);
 }
 
 int df_GetSearchOffset(df_connection *conn, char* SearchValue, char* SearchColumn, int SearchType, void (*callback)(df_searchoffset*, void*), void *context) {
@@ -1564,7 +1566,7 @@ int df_GetSearchOffset(df_connection *conn, char* SearchValue, char* SearchColum
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetSearchOffset", 1, GetSearchOffset_handler, c, "[GetSearchOffset \"%s\" \"%s\" %d]", SearchValue, SearchColumn, SearchType);
+	return comm_send(conn, 0, "GetSearchOffset", 1, -1, GetSearchOffset_handler, c, "[GetSearchOffset \"%s\" \"%s\" %d]", SearchValue, SearchColumn, SearchType);
 }
 
 int df_GetSetupVal(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1572,7 +1574,7 @@ int df_GetSetupVal(df_connection *conn, void (*callback)(int, void*), void *cont
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetSetupVal", 1, GetSetupVal_handler, c, "[GetSetupVal]");
+	return comm_send(conn, 0, "GetSetupVal", 1, -1, GetSetupVal_handler, c, "[GetSetupVal]");
 }
 
 int df_GetShuffle(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1580,7 +1582,7 @@ int df_GetShuffle(df_connection *conn, int RoomID, void (*callback)(int, void*),
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetShuffle", 1, GetShuffle_handler, c, "[GetShuffle %d]", RoomID);
+	return comm_send(conn, 0, "GetShuffle", 1, -1, GetShuffle_handler, c, "[GetShuffle %d]", RoomID);
 }
 
 int df_GetSingleRipEncSetting(df_connection *conn, int RoomID, char* SettingName, void (*callback)(char*, void*), void *context) {
@@ -1588,7 +1590,7 @@ int df_GetSingleRipEncSetting(df_connection *conn, int RoomID, char* SettingName
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetSingleRipEncSetting", 1, GetSingleRipEncSetting_handler, c, "[GetSingleRipEncSetting %d \"%s\"]", RoomID, SettingName);
+	return comm_send(conn, 0, "GetSingleRipEncSetting", 1, -1, GetSingleRipEncSetting_handler, c, "[GetSingleRipEncSetting %d \"%s\"]", RoomID, SettingName);
 }
 
 int df_GetSingleSystemSetting(df_connection *conn, int RoomID, char* SettingName, void (*callback)(char*, void*), void *context) {
@@ -1596,7 +1598,7 @@ int df_GetSingleSystemSetting(df_connection *conn, int RoomID, char* SettingName
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetSingleSystemSetting", 1, GetSingleSystemSetting_handler, c, "[GetSingleSystemSetting %d \"%s\"]", RoomID, SettingName);
+	return comm_send(conn, 0, "GetSingleSystemSetting", 1, -1, GetSingleSystemSetting_handler, c, "[GetSingleSystemSetting %d \"%s\"]", RoomID, SettingName);
 }
 
 int df_GetStatusMessageDetail(df_connection *conn, char* Key, void (*callback)(df_messagedetail*, void*), void *context) {
@@ -1604,7 +1606,7 @@ int df_GetStatusMessageDetail(df_connection *conn, char* Key, void (*callback)(d
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetStatusMessageDetail", 1, GetStatusMessageDetail_handler, c, "[GetStatusMessageDetail \"%s\"]", Key);
+	return comm_send(conn, 0, "GetStatusMessageDetail", 1, -1, GetStatusMessageDetail_handler, c, "[GetStatusMessageDetail \"%s\"]", Key);
 }
 
 int df_GetSubGenreDetail(df_connection *conn, char* SubGenreKey, void (*callback)(df_subgenre*, void*), void *context) {
@@ -1612,7 +1614,7 @@ int df_GetSubGenreDetail(df_connection *conn, char* SubGenreKey, void (*callback
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetSubGenreDetail", 1, GetSubGenreDetail_handler, c, "[GetSubGenreDetail \"%s\"]", SubGenreKey);
+	return comm_send(conn, 0, "GetSubGenreDetail", 1, -1, GetSubGenreDetail_handler, c, "[GetSubGenreDetail \"%s\"]", SubGenreKey);
 }
 
 int df_GetSystemTime(df_connection *conn, void (*callback)(df_systemtime*, void*), void *context) {
@@ -1620,7 +1622,7 @@ int df_GetSystemTime(df_connection *conn, void (*callback)(df_systemtime*, void*
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetSystemTime", 1, GetSystemTime_handler, c, "[GetSystemTime]");
+	return comm_send(conn, 0, "GetSystemTime", 1, -1, GetSystemTime_handler, c, "[GetSystemTime]");
 }
 
 int df_GetTrackCount(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1628,7 +1630,7 @@ int df_GetTrackCount(df_connection *conn, int RoomID, void (*callback)(int, void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetTrackCount", 1, GetTrackCount_handler, c, "[GetTrackCount %d]", RoomID);
+	return comm_send(conn, 0, "GetTrackCount", 1, -1, GetTrackCount_handler, c, "[GetTrackCount %d]", RoomID);
 }
 
 int df_GetTrackDetailsFromPlayer(df_connection *conn, int RoomID, char* TrackPath, void (*callback)(df_trackfromplayer*, void*), void *context) {
@@ -1636,7 +1638,7 @@ int df_GetTrackDetailsFromPlayer(df_connection *conn, int RoomID, char* TrackPat
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetTrackDetailsFromPlayer", 1, GetTrackDetailsFromPlayer_handler, c, "[GetTrackDetailsFromPlayer %d \"%s\"]", RoomID, TrackPath);
+	return comm_send(conn, 0, "GetTrackDetailsFromPlayer", 1, -1, GetTrackDetailsFromPlayer_handler, c, "[GetTrackDetailsFromPlayer %d \"%s\"]", RoomID, TrackPath);
 }
 
 int df_GetTrackLength(df_connection *conn, int RoomID, void (*callback)(df_time, void*), void *context) {
@@ -1644,7 +1646,7 @@ int df_GetTrackLength(df_connection *conn, int RoomID, void (*callback)(df_time,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetTrackLength", 1, GetTrackLength_handler, c, "[GetTrackLength %d]", RoomID);
+	return comm_send(conn, 0, "GetTrackLength", 1, -1, GetTrackLength_handler, c, "[GetTrackLength %d]", RoomID);
 }
 
 int df_GetTrackName(df_connection *conn, int RoomID, void (*callback)(df_trkname*, void*), void *context) {
@@ -1652,7 +1654,7 @@ int df_GetTrackName(df_connection *conn, int RoomID, void (*callback)(df_trkname
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetTrackName", 1, GetTrackName_handler, c, "[GetTrackName %d]", RoomID);
+	return comm_send(conn, 0, "GetTrackName", 1, -1, GetTrackName_handler, c, "[GetTrackName %d]", RoomID);
 }
 
 int df_GetTrackNum(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1660,7 +1662,7 @@ int df_GetTrackNum(df_connection *conn, int RoomID, void (*callback)(int, void*)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetTrackNum", 1, GetTrackNum_handler, c, "[GetTrackNum %d]", RoomID);
+	return comm_send(conn, 0, "GetTrackNum", 1, -1, GetTrackNum_handler, c, "[GetTrackNum %d]", RoomID);
 }
 
 int df_GetTrackPosition(df_connection *conn, int RoomID, void (*callback)(df_time, void*), void *context) {
@@ -1668,7 +1670,7 @@ int df_GetTrackPosition(df_connection *conn, int RoomID, void (*callback)(df_tim
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetTrackPosition", 1, GetTrackPosition_handler, c, "[GetTrackPosition %d]", RoomID);
+	return comm_send(conn, 0, "GetTrackPosition", 1, -1, GetTrackPosition_handler, c, "[GetTrackPosition %d]", RoomID);
 }
 
 int df_GetVolume(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1676,7 +1678,7 @@ int df_GetVolume(df_connection *conn, int RoomID, void (*callback)(int, void*), 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetVolume", 1, GetVolume_handler, c, "[GetVolume %d]", RoomID);
+	return comm_send(conn, 0, "GetVolume", 1, -1, GetVolume_handler, c, "[GetVolume %d]", RoomID);
 }
 
 int df_IgnoreExternalStorage(df_connection *conn, char* StorageKey, int IgnoreLevel, void (*callback)(int, void*), void *context) {
@@ -1684,7 +1686,7 @@ int df_IgnoreExternalStorage(df_connection *conn, char* StorageKey, int IgnoreLe
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "IgnoreExternalStorage", 1, IgnoreExternalStorage_handler, c, "[IgnoreExternalStorage \"%s\" %d]", StorageKey, IgnoreLevel);
+	return comm_send(conn, 0, "IgnoreExternalStorage", 1, -1, IgnoreExternalStorage_handler, c, "[IgnoreExternalStorage \"%s\" %d]", StorageKey, IgnoreLevel);
 }
 
 int df_IsCDPlaying(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1692,7 +1694,7 @@ int df_IsCDPlaying(df_connection *conn, int RoomID, void (*callback)(int, void*)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "IsCDPlaying", 1, IsCDPlaying_handler, c, "[IsCDPlaying %d]", RoomID);
+	return comm_send(conn, 0, "IsCDPlaying", 1, -1,IsCDPlaying_handler, c, "[IsCDPlaying %d]", RoomID);
 }
 
 int df_LookupError(df_connection *conn, int ErrorCode, void (*callback)(char*, void*), void *context) {
@@ -1700,7 +1702,7 @@ int df_LookupError(df_connection *conn, int ErrorCode, void (*callback)(char*, v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "LookupError", 1, LookupError_handler, c, "[LookupError %d]", ErrorCode);
+	return comm_send(conn, 0, "LookupError", 1, -1,LookupError_handler, c, "[LookupError %d]", ErrorCode);
 }
 
 int df_MoveAlbumGetStatus(df_connection *conn, void (*callback)(df_movealbumstatus*, void*), void *context) {
@@ -1708,7 +1710,7 @@ int df_MoveAlbumGetStatus(df_connection *conn, void (*callback)(df_movealbumstat
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "MoveAlbumGetStatus", 1, MoveAlbumGetStatus_handler, c, "[MoveAlbumGetStatus]");
+	return comm_send(conn, 0, "MoveAlbumGetStatus", 1, -1,MoveAlbumGetStatus_handler, c, "[MoveAlbumGetStatus]");
 }
 
 int df_MoveAlbumToMusicStore(df_connection *conn, char* Address, char* MusicStoreKey, void (*callback)(int, void*), void *context) {
@@ -1716,7 +1718,7 @@ int df_MoveAlbumToMusicStore(df_connection *conn, char* Address, char* MusicStor
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "MoveAlbumToMusicStore", 1, MoveAlbumToMusicStore_handler, c, "[MoveAlbumToMusicStore \"%s\" \"%s\"]", Address, MusicStoreKey);
+	return comm_send(conn, 0, "MoveAlbumToMusicStore", 1, -1,MoveAlbumToMusicStore_handler, c, "[MoveAlbumToMusicStore \"%s\" \"%s\"]", Address, MusicStoreKey);
 }
 
 int df_NewOutputChannel(df_connection *conn, int RoomID, char* HostName, int ChannelNumber, char* InitString, void (*callback)(int, void*), void *context) {
@@ -1724,7 +1726,7 @@ int df_NewOutputChannel(df_connection *conn, int RoomID, char* HostName, int Cha
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "NewOutputChannel", 1, NewOutputChannel_handler, c, "[NewOutputChannel %d \"%s\" %d \"%s\"]", RoomID, HostName, ChannelNumber, InitString);
+	return comm_send(conn, 0, "NewOutputChannel", 1, -1,NewOutputChannel_handler, c, "[NewOutputChannel %d \"%s\" %d \"%s\"]", RoomID, HostName, ChannelNumber, InitString);
 }
 
 int df_NextTrack(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1732,7 +1734,7 @@ int df_NextTrack(df_connection *conn, int RoomID, void (*callback)(int, void*), 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "NextTrack", 1, NextTrack_handler, c, "[NextTrack %d]", RoomID);
+	return comm_send(conn, 0, "NextTrack", 1, -1,NextTrack_handler, c, "[NextTrack %d]", RoomID);
 }
 
 int df_PlayAlbum(df_connection *conn, int RoomID, int Replace, char* Address, int StartTrack, void (*callback)(int, void*), void *context) {
@@ -1740,7 +1742,7 @@ int df_PlayAlbum(df_connection *conn, int RoomID, int Replace, char* Address, in
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayAlbum", 1, PlayAlbum_handler, c, "[PlayAlbum %d %d \"%s\" %d]", RoomID, Replace, Address, StartTrack);
+	return comm_send(conn, 0, "PlayAlbum", 1, -1,PlayAlbum_handler, c, "[PlayAlbum %d %d \"%s\" %d]", RoomID, Replace, Address, StartTrack);
 }
 
 int df_PlayAlbums(df_connection *conn, int RoomID, int Replace, char* Address, void (*callback)(int, void*), void *context) {
@@ -1748,7 +1750,7 @@ int df_PlayAlbums(df_connection *conn, int RoomID, int Replace, char* Address, v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayAlbums", 1, PlayAlbums_handler, c, "[PlayAlbums %d %d \"%s\"]", RoomID, Replace, Address);
+	return comm_send(conn, 0, "PlayAlbums", 1, -1,PlayAlbums_handler, c, "[PlayAlbums %d %d \"%s\"]", RoomID, Replace, Address);
 }
 
 int df_PlayAlbumsFromSearch(df_connection *conn, int RoomID, int Replace, void (*callback)(int, void*), void *context) {
@@ -1756,7 +1758,7 @@ int df_PlayAlbumsFromSearch(df_connection *conn, int RoomID, int Replace, void (
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayAlbumsFromSearch", 1, PlayAlbumsFromSearch_handler, c, "[PlayAlbumsFromSearch %d %d]", RoomID, Replace);
+	return comm_send(conn, 0, "PlayAlbumsFromSearch", 1, -1,PlayAlbumsFromSearch_handler, c, "[PlayAlbumsFromSearch %d %d]", RoomID, Replace);
 }
 
 int df_PlayAll(df_connection *conn, int RoomID, int Replace, int PlayScope, char* ScopeKey, int PlayType, char* Address, void (*callback)(int, void*), void *context) {
@@ -1764,7 +1766,7 @@ int df_PlayAll(df_connection *conn, int RoomID, int Replace, int PlayScope, char
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayAll", 1, PlayAll_handler, c, "[PlayAll %d %d %d \"%s\" %d \"%s\"]", RoomID, Replace, PlayScope, ScopeKey, PlayType, Address);
+	return comm_send(conn, 0, "PlayAll", 1, -1,PlayAll_handler, c, "[PlayAll %d %d %d \"%s\" %d \"%s\"]", RoomID, Replace, PlayScope, ScopeKey, PlayType, Address);
 }
 
 int df_PlayArtistAlbum(df_connection *conn, int RoomID, char* Artist, char* Album, int Randomise, int OnErrorBehaviour, void (*callback)(int, void*), void *context) {
@@ -1772,7 +1774,7 @@ int df_PlayArtistAlbum(df_connection *conn, int RoomID, char* Artist, char* Albu
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayArtistAlbum", 1, PlayArtistAlbum_handler, c, "[PlayArtistAlbum %d \"%s\" \"%s\" %d %d]", RoomID, Artist, Album, Randomise, OnErrorBehaviour);
+	return comm_send(conn, 0, "PlayArtistAlbum", 1, -1,PlayArtistAlbum_handler, c, "[PlayArtistAlbum %d \"%s\" \"%s\" %d %d]", RoomID, Artist, Album, Randomise, OnErrorBehaviour);
 }
 
 int df_PlayLastPlayed(df_connection *conn, int RoomID, int Randomise, int Number, void (*callback)(int, void*), void *context) {
@@ -1780,7 +1782,7 @@ int df_PlayLastPlayed(df_connection *conn, int RoomID, int Randomise, int Number
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayLastPlayed", 1, PlayLastPlayed_handler, c, "[PlayLastPlayed %d %d %d]", RoomID, Randomise, Number);
+	return comm_send(conn, 0, "PlayLastPlayed", 1, -1,PlayLastPlayed_handler, c, "[PlayLastPlayed %d %d %d]", RoomID, Randomise, Number);
 }
 
 int df_PlayLastRipped(df_connection *conn, int RoomID, int Randomise, int Number, void (*callback)(int, void*), void *context) {
@@ -1788,7 +1790,7 @@ int df_PlayLastRipped(df_connection *conn, int RoomID, int Randomise, int Number
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayLastRipped", 1, PlayLastRipped_handler, c, "[PlayLastRipped %d %d %d]", RoomID, Randomise, Number);
+	return comm_send(conn, 0, "PlayLastRipped", 1, -1,PlayLastRipped_handler, c, "[PlayLastRipped %d %d %d]", RoomID, Randomise, Number);
 }
 
 int df_PlayMostPopular(df_connection *conn, int RoomID, int Randomise, int Number, void (*callback)(int, void*), void *context) {
@@ -1796,7 +1798,7 @@ int df_PlayMostPopular(df_connection *conn, int RoomID, int Randomise, int Numbe
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayMostPopular", 1, PlayMostPopular_handler, c, "[PlayMostPopular %d %d %d]", RoomID, Randomise, Number);
+	return comm_send(conn, 0, "PlayMostPopular", 1, -1,PlayMostPopular_handler, c, "[PlayMostPopular %d %d %d]", RoomID, Randomise, Number);
 }
 
 int df_PlayPlaylist(df_connection *conn, int RoomID, char* PlaylistName, int Randomise, int OnErrorBehaviour, void (*callback)(int, void*), void *context) {
@@ -1804,7 +1806,7 @@ int df_PlayPlaylist(df_connection *conn, int RoomID, char* PlaylistName, int Ran
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayPlaylist", 1, PlayPlaylist_handler, c, "[PlayPlaylist %d \"%s\" %d %d]", RoomID, PlaylistName, Randomise, OnErrorBehaviour);
+	return comm_send(conn, 0, "PlayPlaylist", 1, -1,PlayPlaylist_handler, c, "[PlayPlaylist %d \"%s\" %d %d]", RoomID, PlaylistName, Randomise, OnErrorBehaviour);
 }
 
 int df_PlayRandom(df_connection *conn, int RoomID, char* Genre, char* SubGenre, int OnErrorBehaviour, void (*callback)(int, void*), void *context) {
@@ -1812,7 +1814,7 @@ int df_PlayRandom(df_connection *conn, int RoomID, char* Genre, char* SubGenre, 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayRandom", 1, PlayRandom_handler, c, "[PlayRandom %d \"%s\" \"%s\" %d]", RoomID, Genre, SubGenre, OnErrorBehaviour);
+	return comm_send(conn, 0, "PlayRandom", 1, -1,PlayRandom_handler, c, "[PlayRandom %d \"%s\" \"%s\" %d]", RoomID, Genre, SubGenre, OnErrorBehaviour);
 }
 
 int df_PlayTrack(df_connection *conn, int RoomID, int Replace, char* Address, void (*callback)(int, void*), void *context) {
@@ -1820,7 +1822,7 @@ int df_PlayTrack(df_connection *conn, int RoomID, int Replace, char* Address, vo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayTrack", 1, PlayTrack_handler, c, "[PlayTrack %d %d \"%s\"]", RoomID, Replace, Address);
+	return comm_send(conn, 0, "PlayTrack", 1, -1,PlayTrack_handler, c, "[PlayTrack %d %d \"%s\"]", RoomID, Replace, Address);
 }
 
 int df_PlayTracks(df_connection *conn, int RoomID, int Replace, char* Address, int StartTrack, void (*callback)(int, void*), void *context) {
@@ -1828,7 +1830,7 @@ int df_PlayTracks(df_connection *conn, int RoomID, int Replace, char* Address, i
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayTracks", 1, PlayTracks_handler, c, "[PlayTracks %d %d \"%s\" %d]", RoomID, Replace, Address, StartTrack);
+	return comm_send(conn, 0, "PlayTracks", 1, -1,PlayTracks_handler, c, "[PlayTracks %d %d \"%s\" %d]", RoomID, Replace, Address, StartTrack);
 }
 
 int df_PlayTracksFromSearch(df_connection *conn, int RoomID, int Replace, int StartTrack, void (*callback)(int, void*), void *context) {
@@ -1836,7 +1838,7 @@ int df_PlayTracksFromSearch(df_connection *conn, int RoomID, int Replace, int St
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayTracksFromSearch", 1, PlayTracksFromSearch_handler, c, "[PlayTracksFromSearch %d %d %d]", RoomID, Replace, StartTrack);
+	return comm_send(conn, 0, "PlayTracksFromSearch", 1, -1,PlayTracksFromSearch_handler, c, "[PlayTracksFromSearch %d %d %d]", RoomID, Replace, StartTrack);
 }
 
 int df_PlayUrl(df_connection *conn, int RoomID, int Replace, char* Url, void (*callback)(int, void*), void *context) {
@@ -1844,7 +1846,7 @@ int df_PlayUrl(df_connection *conn, int RoomID, int Replace, char* Url, void (*c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayUrl", 1, PlayUrl_handler, c, "[PlayUrl %d %d \"%s\"]", RoomID, Replace, Url);
+	return comm_send(conn, 0, "PlayUrl", 1, -1,PlayUrl_handler, c, "[PlayUrl %d %d \"%s\"]", RoomID, Replace, Url);
 }
 
 int df_PlayUrls(df_connection *conn, int RoomID, int Replace, char* Urls, int StartTrack, void (*callback)(int, void*), void *context) {
@@ -1852,7 +1854,7 @@ int df_PlayUrls(df_connection *conn, int RoomID, int Replace, char* Urls, int St
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PlayUrls", 1, PlayUrls_handler, c, "[PlayUrls %d %d \"%s\" %d]", RoomID, Replace, Urls, StartTrack);
+	return comm_send(conn, 0, "PlayUrls", 1, -1,PlayUrls_handler, c, "[PlayUrls %d %d \"%s\" %d]", RoomID, Replace, Urls, StartTrack);
 }
 
 int df_PrevTrack(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
@@ -1860,7 +1862,7 @@ int df_PrevTrack(df_connection *conn, int RoomID, void (*callback)(int, void*), 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PrevTrack", 1, PrevTrack_handler, c, "[PrevTrack %d]", RoomID);
+	return comm_send(conn, 0, "PrevTrack", 1, -1,PrevTrack_handler, c, "[PrevTrack %d]", RoomID);
 }
 
 int df_ProcessEmbeddedInit(df_connection *conn, void (*callback)(char*, void*), void *context) {
@@ -1868,7 +1870,7 @@ int df_ProcessEmbeddedInit(df_connection *conn, void (*callback)(char*, void*), 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ProcessEmbeddedInit", 1, ProcessEmbeddedInit_handler, c, "[ProcessEmbeddedInit]");
+	return comm_send(conn, 0, "ProcessEmbeddedInit", 1, -1,ProcessEmbeddedInit_handler, c, "[ProcessEmbeddedInit]");
 }
 
 int df_PromoteShareToMusicStore(df_connection *conn, char* ShareKey, int ChangeOwnership, void (*callback)(df_promoteshare*, void*), void *context) {
@@ -1876,7 +1878,7 @@ int df_PromoteShareToMusicStore(df_connection *conn, char* ShareKey, int ChangeO
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "PromoteShareToMusicStore", 1, PromoteShareToMusicStore_handler, c, "[PromoteShareToMusicStore \"%s\" %d]", ShareKey, ChangeOwnership);
+	return comm_send(conn, 0, "PromoteShareToMusicStore", 1, -1,PromoteShareToMusicStore_handler, c, "[PromoteShareToMusicStore \"%s\" %d]", ShareKey, ChangeOwnership);
 }
 
 int df_QueryAllPlayback(df_connection *conn, int RoomID, void (*callback)(df_queryplayback*, void*), void *context) {
@@ -1884,7 +1886,7 @@ int df_QueryAllPlayback(df_connection *conn, int RoomID, void (*callback)(df_que
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "QueryAllPlayback", 1, QueryAllPlayback_handler, c, "[QueryAllPlayback %d]", RoomID);
+	return comm_send(conn, 0, "QueryAllPlayback", 1, -1,QueryAllPlayback_handler, c, "[QueryAllPlayback %d]", RoomID);
 }
 
 int df_ReleaseSerialPort(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1892,7 +1894,7 @@ int df_ReleaseSerialPort(df_connection *conn, void (*callback)(int, void*), void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ReleaseSerialPort", 1, ReleaseSerialPort_handler, c, "[ReleaseSerialPort]");
+	return comm_send(conn, 0, "ReleaseSerialPort", 1, -1,ReleaseSerialPort_handler, c, "[ReleaseSerialPort]");
 }
 
 int df_RemoveAlbumsFromUserPlaylist(df_connection *conn, char* UserPlaylistKey, char* AlbumKey, void (*callback)(int, void*), void *context) {
@@ -1900,7 +1902,7 @@ int df_RemoveAlbumsFromUserPlaylist(df_connection *conn, char* UserPlaylistKey, 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RemoveAlbumsFromUserPlaylist", 1, RemoveAlbumsFromUserPlaylist_handler, c, "[RemoveAlbumsFromUserPlaylist \"%s\" \"%s\"]", UserPlaylistKey, AlbumKey);
+	return comm_send(conn, 0, "RemoveAlbumsFromUserPlaylist", 1, -1,RemoveAlbumsFromUserPlaylist_handler, c, "[RemoveAlbumsFromUserPlaylist \"%s\" \"%s\"]", UserPlaylistKey, AlbumKey);
 }
 
 int df_RemoveCoverImage(df_connection *conn, char* Address, void (*callback)(char*, void*), void *context) {
@@ -1908,7 +1910,7 @@ int df_RemoveCoverImage(df_connection *conn, char* Address, void (*callback)(cha
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RemoveCoverImage", 1, RemoveCoverImage_handler, c, "[RemoveCoverImage \"%s\"]", Address);
+	return comm_send(conn, 0, "RemoveCoverImage", 1, -1,RemoveCoverImage_handler, c, "[RemoveCoverImage \"%s\"]", Address);
 }
 
 int df_RemoveExternalStorage(df_connection *conn, int StorageKey, void (*callback)(int, void*), void *context) {
@@ -1916,7 +1918,7 @@ int df_RemoveExternalStorage(df_connection *conn, int StorageKey, void (*callbac
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RemoveExternalStorage", 1, RemoveExternalStorage_handler, c, "[RemoveExternalStorage %d]", StorageKey);
+	return comm_send(conn, 0, "RemoveExternalStorage", 1, -1,RemoveExternalStorage_handler, c, "[RemoveExternalStorage %d]", StorageKey);
 }
 
 int df_RemoveOldRooms(df_connection *conn, int TimeoutPerHost, void (*callback)(int, void*), void *context) {
@@ -1924,7 +1926,7 @@ int df_RemoveOldRooms(df_connection *conn, int TimeoutPerHost, void (*callback)(
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RemoveOldRooms", 1, RemoveOldRooms_handler, c, "[RemoveOldRooms %d]", TimeoutPerHost);
+	return comm_send(conn, 0, "RemoveOldRooms", 1, -1,RemoveOldRooms_handler, c, "[RemoveOldRooms %d]", TimeoutPerHost);
 }
 
 int df_RemovePlayerInstance(df_connection *conn, int RoomID, int Key, void (*callback)(int, void*), void *context) {
@@ -1932,7 +1934,7 @@ int df_RemovePlayerInstance(df_connection *conn, int RoomID, int Key, void (*cal
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RemovePlayerInstance", 1, RemovePlayerInstance_handler, c, "[RemovePlayerInstance %d %d]", RoomID, Key);
+	return comm_send(conn, 0, "RemovePlayerInstance", 1, -1,RemovePlayerInstance_handler, c, "[RemovePlayerInstance %d %d]", RoomID, Key);
 }
 
 int df_RemoveTrack(df_connection *conn, int RoomID, int TrackNumber, void (*callback)(int, void*), void *context) {
@@ -1940,7 +1942,7 @@ int df_RemoveTrack(df_connection *conn, int RoomID, int TrackNumber, void (*call
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RemoveTrack", 1, RemoveTrack_handler, c, "[RemoveTrack %d %d]", RoomID, TrackNumber);
+	return comm_send(conn, 0, "RemoveTrack", 1, -1,RemoveTrack_handler, c, "[RemoveTrack %d %d]", RoomID, TrackNumber);
 }
 
 int df_RenameAlbum(df_connection *conn, char* AlbumKey, char* NewAlbumName, void (*callback)(char*, void*), void *context) {
@@ -1948,7 +1950,7 @@ int df_RenameAlbum(df_connection *conn, char* AlbumKey, char* NewAlbumName, void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RenameAlbum", 1, RenameAlbum_handler, c, "[RenameAlbum \"%s\" \"%s\"]", AlbumKey, NewAlbumName);
+	return comm_send(conn, 0, "RenameAlbum", 1, -1,RenameAlbum_handler, c, "[RenameAlbum \"%s\" \"%s\"]", AlbumKey, NewAlbumName);
 }
 
 int df_RenameArtist(df_connection *conn, char* AlbumKey, char* NewArtistName, void (*callback)(char*, void*), void *context) {
@@ -1956,7 +1958,7 @@ int df_RenameArtist(df_connection *conn, char* AlbumKey, char* NewArtistName, vo
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RenameArtist", 1, RenameArtist_handler, c, "[RenameArtist \"%s\" \"%s\"]", AlbumKey, NewArtistName);
+	return comm_send(conn, 0, "RenameArtist", 1, -1,RenameArtist_handler, c, "[RenameArtist \"%s\" \"%s\"]", AlbumKey, NewArtistName);
 }
 
 int df_RenamePlaylist(df_connection *conn, char* PlaylistKey, char* NewName, void (*callback)(int, void*), void *context) {
@@ -1964,7 +1966,7 @@ int df_RenamePlaylist(df_connection *conn, char* PlaylistKey, char* NewName, voi
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RenamePlaylist", 1, RenamePlaylist_handler, c, "[RenamePlaylist \"%s\" \"%s\"]", PlaylistKey, NewName);
+	return comm_send(conn, 0, "RenamePlaylist", 1, -1,RenamePlaylist_handler, c, "[RenamePlaylist \"%s\" \"%s\"]", PlaylistKey, NewName);
 }
 
 int df_RenameTrack(df_connection *conn, char* TrackKey, char* NewTrackName, void (*callback)(char*, void*), void *context) {
@@ -1972,7 +1974,7 @@ int df_RenameTrack(df_connection *conn, char* TrackKey, char* NewTrackName, void
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RenameTrack", 1, RenameTrack_handler, c, "[RenameTrack \"%s\" \"%s\"]", TrackKey, NewTrackName);
+	return comm_send(conn, 0, "RenameTrack", 1, -1,RenameTrack_handler, c, "[RenameTrack \"%s\" \"%s\"]", TrackKey, NewTrackName);
 }
 
 int df_RequestAlbumCover(df_connection *conn, char* Address, void (*callback)(int, void*), void *context) {
@@ -1980,7 +1982,7 @@ int df_RequestAlbumCover(df_connection *conn, char* Address, void (*callback)(in
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RequestAlbumCover", 1, RequestAlbumCover_handler, c, "[RequestAlbumCover \"%s\"]", Address);
+	return comm_send(conn, 0, "RequestAlbumCover", 1, -1,RequestAlbumCover_handler, c, "[RequestAlbumCover \"%s\"]", Address);
 }
 
 int df_RescanExternalStorages(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -1988,7 +1990,7 @@ int df_RescanExternalStorages(df_connection *conn, void (*callback)(int, void*),
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RescanExternalStorages", 1, RescanExternalStorages_handler, c, "[RescanExternalStorages]");
+	return comm_send(conn, 0, "RescanExternalStorages", 1, -1,RescanExternalStorages_handler, c, "[RescanExternalStorages]");
 }
 
 int df_RescanMusicStore(df_connection *conn, char* MusicStoreKey, void (*callback)(df_rescanresult*, void*), void *context) {
@@ -1996,7 +1998,7 @@ int df_RescanMusicStore(df_connection *conn, char* MusicStoreKey, void (*callbac
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RescanMusicStore", 1, RescanMusicStore_handler, c, "[RescanMusicStore \"%s\"]", MusicStoreKey);
+	return comm_send(conn, 0, "RescanMusicStore", 1, -1,RescanMusicStore_handler, c, "[RescanMusicStore \"%s\"]", MusicStoreKey);
 }
 
 int df_RestoreSingleAlbum(df_connection *conn, char* AlbumKey, void (*callback)(int, void*), void *context) {
@@ -2004,7 +2006,7 @@ int df_RestoreSingleAlbum(df_connection *conn, char* AlbumKey, void (*callback)(
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RestoreSingleAlbum", 1, RestoreSingleAlbum_handler, c, "[RestoreSingleAlbum \"%s\"]", AlbumKey);
+	return comm_send(conn, 0, "RestoreSingleAlbum", 1, -1,RestoreSingleAlbum_handler, c, "[RestoreSingleAlbum \"%s\"]", AlbumKey);
 }
 
 int df_RestoreSingleTrack(df_connection *conn, char* AlbumKey, char* TrackKey, void (*callback)(int, void*), void *context) {
@@ -2012,7 +2014,7 @@ int df_RestoreSingleTrack(df_connection *conn, char* AlbumKey, char* TrackKey, v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "RestoreSingleTrack", 1, RestoreSingleTrack_handler, c, "[RestoreSingleTrack \"%s\" \"%s\"]", AlbumKey, TrackKey);
+	return comm_send(conn, 0, "RestoreSingleTrack", 1, -1,RestoreSingleTrack_handler, c, "[RestoreSingleTrack \"%s\" \"%s\"]", AlbumKey, TrackKey);
 }
 
 int df_SaveCurrentPlayList(df_connection *conn, int RoomID, char* NewName, void (*callback)(int, void*), void *context) {
@@ -2020,7 +2022,7 @@ int df_SaveCurrentPlayList(df_connection *conn, int RoomID, char* NewName, void 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "SaveCurrentPlayList", 1, SaveCurrentPlayList_handler, c, "[SaveCurrentPlayList %d \"%s\"]", RoomID, NewName);
+	return comm_send(conn, 0, "SaveCurrentPlayList", 1, -1,SaveCurrentPlayList_handler, c, "[SaveCurrentPlayList %d \"%s\"]", RoomID, NewName);
 }
 
 int df_SavePlayerInstance(df_connection *conn, int RoomID, int Key, int OutputDeviceID, int SourceLineID, void (*callback)(int, void*), void *context) {
@@ -2028,7 +2030,7 @@ int df_SavePlayerInstance(df_connection *conn, int RoomID, int Key, int OutputDe
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "SavePlayerInstance", 1, SavePlayerInstance_handler, c, "[SavePlayerInstance %d %d %d %d]", RoomID, Key, OutputDeviceID, SourceLineID);
+	return comm_send(conn, 0, "SavePlayerInstance", 1, -1,SavePlayerInstance_handler, c, "[SavePlayerInstance %d %d %d %d]", RoomID, Key, OutputDeviceID, SourceLineID);
 }
 
 int df_ScanExternalStorage(df_connection *conn, char* StorageKey, void (*callback)(int, void*), void *context) {
@@ -2036,7 +2038,7 @@ int df_ScanExternalStorage(df_connection *conn, char* StorageKey, void (*callbac
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ScanExternalStorage", 1, ScanExternalStorage_handler, c, "[ScanExternalStorage \"%s\"]", StorageKey);
+	return comm_send(conn, 0, "ScanExternalStorage", 1, -1,ScanExternalStorage_handler, c, "[ScanExternalStorage \"%s\"]", StorageKey);
 }
 
 int df_ScanForExternalStorages(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -2044,7 +2046,7 @@ int df_ScanForExternalStorages(df_connection *conn, void (*callback)(int, void*)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ScanForExternalStorages", 1, ScanForExternalStorages_handler, c, "[ScanForExternalStorages]");
+	return comm_send(conn, 0, "ScanForExternalStorages", 1, -1,ScanForExternalStorages_handler, c, "[ScanForExternalStorages]");
 }
 
 int df_ServiceMode(df_connection *conn, void (*callback)(df_servicemode*, void*), void *context) {
@@ -2052,7 +2054,7 @@ int df_ServiceMode(df_connection *conn, void (*callback)(df_servicemode*, void*)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ServiceMode", 1, ServiceMode_handler, c, "[ServiceMode]");
+	return comm_send(conn, 0, "ServiceMode", 1, -1,ServiceMode_handler, c, "[ServiceMode]");
 }
 
 int df_SetAlbumLowQuality(df_connection *conn, char* AlbumKey, int LowQuality, void (*callback)(int, void*), void *context) {
@@ -2060,7 +2062,7 @@ int df_SetAlbumLowQuality(df_connection *conn, char* AlbumKey, int LowQuality, v
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "SetAlbumLowQuality", 1, SetAlbumLowQuality_handler, c, "[SetAlbumLowQuality \"%s\" %d]", AlbumKey, LowQuality);
+	return comm_send(conn, 0, "SetAlbumLowQuality", 1, -1,SetAlbumLowQuality_handler, c, "[SetAlbumLowQuality \"%s\" %d]", AlbumKey, LowQuality);
 }
 
 int df_SetCoverImage(df_connection *conn, char* Address, int ForceOverwrite, char* ImageData, void (*callback)(char*, void*), void *context) {
@@ -2068,7 +2070,7 @@ int df_SetCoverImage(df_connection *conn, char* Address, int ForceOverwrite, cha
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "SetCoverImage", 1, SetCoverImage_handler, c, "[SetCoverImage \"%s\" %d \"%s\"]", Address, ForceOverwrite, ImageData);
+	return comm_send(conn, 0, "SetCoverImage", 1, -1,SetCoverImage_handler, c, "[SetCoverImage \"%s\" %d \"%s\"]", Address, ForceOverwrite, ImageData);
 }
 
 int df_SetDriveUsage(df_connection *conn, char* DriveKey, int Usage, int ForceChange, void (*callback)(df_driveusageresult*, void*), void *context) {
@@ -2076,7 +2078,7 @@ int df_SetDriveUsage(df_connection *conn, char* DriveKey, int Usage, int ForceCh
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "SetDriveUsage", 1, SetDriveUsage_handler, c, "[SetDriveUsage \"%s\" %d %d]", DriveKey, Usage, ForceChange);
+	return comm_send(conn, 0, "SetDriveUsage", 1, -1,SetDriveUsage_handler, c, "[SetDriveUsage \"%s\" %d %d]", DriveKey, Usage, ForceChange);
 }
 
 int df_SetMusicStoreCredentials(df_connection *conn, char* MusicStoreKey, char* Username, char* Password, void (*callback)(int, void*), void *context) {
@@ -2084,7 +2086,7 @@ int df_SetMusicStoreCredentials(df_connection *conn, char* MusicStoreKey, char* 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "SetMusicStoreCredentials", 1, SetMusicStoreCredentials_handler, c, "[SetMusicStoreCredentials \"%s\" \"%s\" \"%s\"]", MusicStoreKey, Username, Password);
+	return comm_send(conn, 0, "SetMusicStoreCredentials", 1, -1,SetMusicStoreCredentials_handler, c, "[SetMusicStoreCredentials \"%s\" \"%s\" \"%s\"]", MusicStoreKey, Username, Password);
 }
 
 int df_SetMusicStorePriority(df_connection *conn, char* MusicStoreKey, int Priority, void (*callback)(df_musicstorepriorityresult*, void*), void *context) {
@@ -2092,7 +2094,7 @@ int df_SetMusicStorePriority(df_connection *conn, char* MusicStoreKey, int Prior
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "SetMusicStorePriority", 1, SetMusicStorePriority_handler, c, "[SetMusicStorePriority \"%s\" %d]", MusicStoreKey, Priority);
+	return comm_send(conn, 0, "SetMusicStorePriority", 1, -1,SetMusicStorePriority_handler, c, "[SetMusicStorePriority \"%s\" %d]", MusicStoreKey, Priority);
 }
 
 int df_StopBackupDrive(df_connection *conn, void (*callback)(df_stopbackupdriveresult*, void*), void *context) {
@@ -2100,7 +2102,7 @@ int df_StopBackupDrive(df_connection *conn, void (*callback)(df_stopbackupdriver
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "StopBackupDrive", 1, StopBackupDrive_handler, c, "[StopBackupDrive]");
+	return comm_send(conn, 0, "StopBackupDrive", 1, -1,StopBackupDrive_handler, c, "[StopBackupDrive]");
 }
 
 int df_ToggleDeviceSync(df_connection *conn, int Key, int Sync, void (*callback)(int, void*), void *context) {
@@ -2108,7 +2110,7 @@ int df_ToggleDeviceSync(df_connection *conn, int Key, int Sync, void (*callback)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "ToggleDeviceSync", 1, ToggleDeviceSync_handler, c, "[ToggleDeviceSync %d %d]", Key, Sync);
+	return comm_send(conn, 0, "ToggleDeviceSync", 1, -1,ToggleDeviceSync_handler, c, "[ToggleDeviceSync %d %d]", Key, Sync);
 }
 
 int df_UpdateBackupJob(df_connection *conn, char* Address, char* SourceDriveAddress, char* DestinationDriveAddress, char* Name, int BackupType, int BackupPeriod, int PeriodValue, df_date RunDate, df_time RunTime, void (*callback)(int, void*), void *context) {	char *RunDate_string;
@@ -2120,7 +2122,7 @@ int df_UpdateBackupJob(df_connection *conn, char* Address, char* SourceDriveAddr
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateBackupJob", 1, UpdateBackupJob_handler, c, "[UpdateBackupJob \"%s\" \"%s\" \"%s\" \"%s\" %d %d %d \"%s\" \"%s\"]", Address, SourceDriveAddress, DestinationDriveAddress, Name, BackupType, BackupPeriod, PeriodValue, RunDate_string, RunTime_string);
+	return comm_send(conn, 0, "UpdateBackupJob", 1, -1,UpdateBackupJob_handler, c, "[UpdateBackupJob \"%s\" \"%s\" \"%s\" \"%s\" %d %d %d \"%s\" \"%s\"]", Address, SourceDriveAddress, DestinationDriveAddress, Name, BackupType, BackupPeriod, PeriodValue, RunDate_string, RunTime_string);
 }
 
 int df_UpdateDrive(df_connection *conn, char* DriveKey, char* DriveLetter, int PrimaryDrive, char* RootPath, char* SharePath, int BadPathBehaviour, void (*callback)(df_updatedrivedetails*, void*), void *context) {
@@ -2128,7 +2130,7 @@ int df_UpdateDrive(df_connection *conn, char* DriveKey, char* DriveLetter, int P
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateDrive", 1, UpdateDrive_handler, c, "[UpdateDrive \"%s\" \"%s\" %d \"%s\" \"%s\" %d]", DriveKey, DriveLetter, PrimaryDrive, RootPath, SharePath, BadPathBehaviour);
+	return comm_send(conn, 0, "UpdateDrive", 1, -1,UpdateDrive_handler, c, "[UpdateDrive \"%s\" \"%s\" %d \"%s\" \"%s\" %d]", DriveKey, DriveLetter, PrimaryDrive, RootPath, SharePath, BadPathBehaviour);
 }
 
 int df_UpdateExternalStorage(df_connection *conn, char* StorageKey, char* IPAddress, char* HostName, char* ShareName, char* UserName, char* Password, void (*callback)(int, void*), void *context) {
@@ -2136,7 +2138,7 @@ int df_UpdateExternalStorage(df_connection *conn, char* StorageKey, char* IPAddr
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateExternalStorage", 1, UpdateExternalStorage_handler, c, "[UpdateExternalStorage \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"]", StorageKey, IPAddress, HostName, ShareName, UserName, Password);
+	return comm_send(conn, 0, "UpdateExternalStorage", 1, -1,UpdateExternalStorage_handler, c, "[UpdateExternalStorage \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"]", StorageKey, IPAddress, HostName, ShareName, UserName, Password);
 }
 
 int df_UpdateGenre(df_connection *conn, char* GenreKey, char* GenreName, int Ordinal, void (*callback)(int, void*), void *context) {
@@ -2144,7 +2146,7 @@ int df_UpdateGenre(df_connection *conn, char* GenreKey, char* GenreName, int Ord
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateGenre", 1, UpdateGenre_handler, c, "[UpdateGenre \"%s\" \"%s\" %d]", GenreKey, GenreName, Ordinal);
+	return comm_send(conn, 0, "UpdateGenre", 1, -1,UpdateGenre_handler, c, "[UpdateGenre \"%s\" \"%s\" %d]", GenreKey, GenreName, Ordinal);
 }
 
 int df_UpdateHitCount(df_connection *conn, char* Address, int ResetHitCount, void (*callback)(int, void*), void *context) {
@@ -2152,7 +2154,7 @@ int df_UpdateHitCount(df_connection *conn, char* Address, int ResetHitCount, voi
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateHitCount", 1, UpdateHitCount_handler, c, "[UpdateHitCount \"%s\" %d]", Address, ResetHitCount);
+	return comm_send(conn, 0, "UpdateHitCount", 1, -1,UpdateHitCount_handler, c, "[UpdateHitCount \"%s\" %d]", Address, ResetHitCount);
 }
 
 int df_UpdateLinkedRoom(df_connection *conn, char* RoomKey, char* RoomName, char* ShortName, int RoomID, char* ChildRoomKey, void (*callback)(int, void*), void *context) {
@@ -2160,7 +2162,7 @@ int df_UpdateLinkedRoom(df_connection *conn, char* RoomKey, char* RoomName, char
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateLinkedRoom", 1, UpdateLinkedRoom_handler, c, "[UpdateLinkedRoom \"%s\" \"%s\" \"%s\" %d \"%s\"]", RoomKey, RoomName, ShortName, RoomID, ChildRoomKey);
+	return comm_send(conn, 0, "UpdateLinkedRoom", 1, -1,UpdateLinkedRoom_handler, c, "[UpdateLinkedRoom \"%s\" \"%s\" \"%s\" %d \"%s\"]", RoomKey, RoomName, ShortName, RoomID, ChildRoomKey);
 }
 
 int df_UpdateOutputChannel(df_connection *conn, int RoomID, char* HostName, int ChannelNumber, char* InitString, void (*callback)(int, void*), void *context) {
@@ -2168,7 +2170,7 @@ int df_UpdateOutputChannel(df_connection *conn, int RoomID, char* HostName, int 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateOutputChannel", 1, UpdateOutputChannel_handler, c, "[UpdateOutputChannel %d \"%s\" %d \"%s\"]", RoomID, HostName, ChannelNumber, InitString);
+	return comm_send(conn, 0, "UpdateOutputChannel", 1, -1,UpdateOutputChannel_handler, c, "[UpdateOutputChannel %d \"%s\" %d \"%s\"]", RoomID, HostName, ChannelNumber, InitString);
 }
 
 int df_UpdatePlaylist(df_connection *conn, char* PlaylistKey, char* Name, char* TrackKey, void (*callback)(int, void*), void *context) {
@@ -2176,7 +2178,7 @@ int df_UpdatePlaylist(df_connection *conn, char* PlaylistKey, char* Name, char* 
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdatePlaylist", 1, UpdatePlaylist_handler, c, "[UpdatePlaylist \"%s\" \"%s\" \"%s\"]", PlaylistKey, Name, TrackKey);
+	return comm_send(conn, 0, "UpdatePlaylist", 1, -1,UpdatePlaylist_handler, c, "[UpdatePlaylist \"%s\" \"%s\" \"%s\"]", PlaylistKey, Name, TrackKey);
 }
 
 int df_UpdateRoom(df_connection *conn, char* RoomKey, char* RoomIP, int Channel, char* RoomName, char* ShortName, int PlaybackCapability, int RippingCapability, int MusicManagementCapability, int RoomID, char* HostName, void (*callback)(int, void*), void *context) {
@@ -2184,7 +2186,7 @@ int df_UpdateRoom(df_connection *conn, char* RoomKey, char* RoomIP, int Channel,
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateRoom", 1, UpdateRoom_handler, c, "[UpdateRoom \"%s\" \"%s\" %d \"%s\" \"%s\" %d %d %d %d \"%s\"]", RoomKey, RoomIP, Channel, RoomName, ShortName, PlaybackCapability, RippingCapability, MusicManagementCapability, RoomID, HostName);
+	return comm_send(conn, 0, "UpdateRoom", 1, -1,UpdateRoom_handler, c, "[UpdateRoom \"%s\" \"%s\" %d \"%s\" \"%s\" %d %d %d %d \"%s\"]", RoomKey, RoomIP, Channel, RoomName, ShortName, PlaybackCapability, RippingCapability, MusicManagementCapability, RoomID, HostName);
 }
 
 int df_UpdateSingleRipEncSetting(df_connection *conn, int RoomID, char* SettingName, char* NewValue, void (*callback)(char*, void*), void *context) {
@@ -2192,7 +2194,7 @@ int df_UpdateSingleRipEncSetting(df_connection *conn, int RoomID, char* SettingN
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateSingleRipEncSetting", 1, UpdateSingleRipEncSetting_handler, c, "[UpdateSingleRipEncSetting %d \"%s\" \"%s\"]", RoomID, SettingName, NewValue);
+	return comm_send(conn, 0, "UpdateSingleRipEncSetting", 1, -1,UpdateSingleRipEncSetting_handler, c, "[UpdateSingleRipEncSetting %d \"%s\" \"%s\"]", RoomID, SettingName, NewValue);
 }
 
 int df_UpdateSingleSystemSetting(df_connection *conn, int RoomID, char* SettingName, char* NewValue, void (*callback)(char*, void*), void *context) {
@@ -2200,7 +2202,7 @@ int df_UpdateSingleSystemSetting(df_connection *conn, int RoomID, char* SettingN
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateSingleSystemSetting", 1, UpdateSingleSystemSetting_handler, c, "[UpdateSingleSystemSetting %d \"%s\" \"%s\"]", RoomID, SettingName, NewValue);
+	return comm_send(conn, 0, "UpdateSingleSystemSetting", 1, -1,UpdateSingleSystemSetting_handler, c, "[UpdateSingleSystemSetting %d \"%s\" \"%s\"]", RoomID, SettingName, NewValue);
 }
 
 int df_UpdateSubGenre(df_connection *conn, char* SubGenreKey, char* GenreKey, char* SubGenreName, int Ordinal, void (*callback)(int, void*), void *context) {
@@ -2208,7 +2210,7 @@ int df_UpdateSubGenre(df_connection *conn, char* SubGenreKey, char* GenreKey, ch
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UpdateSubGenre", 1, UpdateSubGenre_handler, c, "[UpdateSubGenre \"%s\" \"%s\" \"%s\" %d]", SubGenreKey, GenreKey, SubGenreName, Ordinal);
+	return comm_send(conn, 0, "UpdateSubGenre", 1, -1,UpdateSubGenre_handler, c, "[UpdateSubGenre \"%s\" \"%s\" \"%s\" %d]", SubGenreKey, GenreKey, SubGenreName, Ordinal);
 }
 
 int df_UploadMessages(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -2216,7 +2218,7 @@ int df_UploadMessages(df_connection *conn, void (*callback)(int, void*), void *c
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "UploadMessages", 1, UploadMessages_handler, c, "[UploadMessages]");
+	return comm_send(conn, 0, "UploadMessages", 1, -1,UploadMessages_handler, c, "[UploadMessages]");
 }
 
 int df_Version(df_connection *conn, void (*callback)(df_version*, void*), void *context) {
@@ -2224,7 +2226,7 @@ int df_Version(df_connection *conn, void (*callback)(df_version*, void*), void *
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "Version", 1, Version_handler, c, "[Version]");
+	return comm_send(conn, 0, "Version", 1, -1,Version_handler, c, "[Version]");
 }
 
 int df_vTunerAddRemoveFavourite(df_connection *conn, char* vTunerUrl, void (*callback)(int, void*), void *context) {
@@ -2232,7 +2234,7 @@ int df_vTunerAddRemoveFavourite(df_connection *conn, char* vTunerUrl, void (*cal
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "vTunerAddRemoveFavourite", 1, vTunerAddRemoveFavourite_handler, c, "[vTunerAddRemoveFavourite \"%s\"]", vTunerUrl);
+	return comm_send(conn, 0, "vTunerAddRemoveFavourite", 1, -1,vTunerAddRemoveFavourite_handler, c, "[vTunerAddRemoveFavourite \"%s\"]", vTunerUrl);
 }
 
 int df_vTunerCheckAvailability(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -2240,7 +2242,7 @@ int df_vTunerCheckAvailability(df_connection *conn, void (*callback)(int, void*)
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "vTunerCheckAvailability", 1, vTunerCheckAvailability_handler, c, "[vTunerCheckAvailability]");
+	return comm_send(conn, 0, "vTunerCheckAvailability", 1, -1,vTunerCheckAvailability_handler, c, "[vTunerCheckAvailability]");
 }
 
 int df_vTunerPlayById(df_connection *conn, int RoomID, int Replace, char* Address, void (*callback)(int, void*), void *context) {
@@ -2248,7 +2250,7 @@ int df_vTunerPlayById(df_connection *conn, int RoomID, int Replace, char* Addres
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "vTunerPlayById", 1, vTunerPlayById_handler, c, "[vTunerPlayById %d %d \"%s\"]", RoomID, Replace, Address);
+	return comm_send(conn, 0, "vTunerPlayById", 1, -1,vTunerPlayById_handler, c, "[vTunerPlayById %d %d \"%s\"]", RoomID, Replace, Address);
 }
 
 int df_vTunerPlayByIds(df_connection *conn, int RoomID, int Replace, char* Address, void (*callback)(int, void*), void *context) {
@@ -2256,7 +2258,7 @@ int df_vTunerPlayByIds(df_connection *conn, int RoomID, int Replace, char* Addre
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "vTunerPlayByIds", 1, vTunerPlayByIds_handler, c, "[vTunerPlayByIds %d %d \"%s\"]", RoomID, Replace, Address);
+	return comm_send(conn, 0, "vTunerPlayByIds", 1, -1,vTunerPlayByIds_handler, c, "[vTunerPlayByIds %d %d \"%s\"]", RoomID, Replace, Address);
 }
 
 int df_vTunerSetPresetChannel(df_connection *conn, int ChannelNumber, char* VTunerID, char* ChannelName, void (*callback)(int, void*), void *context) {
@@ -2264,7 +2266,7 @@ int df_vTunerSetPresetChannel(df_connection *conn, int ChannelNumber, char* VTun
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "vTunerSetPresetChannel", 1, vTunerSetPresetChannel_handler, c, "[vTunerSetPresetChannel %d \"%s\" \"%s\"]", ChannelNumber, VTunerID, ChannelName);
+	return comm_send(conn, 0, "vTunerSetPresetChannel", 1, -1,vTunerSetPresetChannel_handler, c, "[vTunerSetPresetChannel %d \"%s\" \"%s\"]", ChannelNumber, VTunerID, ChannelName);
 }
 
 
@@ -2275,132 +2277,132 @@ int df_vTunerSetPresetChannel(df_connection *conn, int ChannelNumber, char* VTun
 
 int df_CDLookupCancel(df_connection *conn, char* Address) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[CDLookupCancel \"%s\"]", Address);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[CDLookupCancel \"%s\"]", Address);
 }
 
 int df_ChangeCDDBSubGenreAssociation(df_connection *conn, char* GenreKey, char* NewSubGenreKey) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[ChangeCDDBSubGenreAssociation \"%s\" \"%s\"]", GenreKey, NewSubGenreKey);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[ChangeCDDBSubGenreAssociation \"%s\" \"%s\"]", GenreKey, NewSubGenreKey);
 }
 
 int df_ClearAllPlaying(df_connection *conn) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[ClearAllPlaying]");
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[ClearAllPlaying]");
 }
 
 int df_ClearDownloadFolder(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[ClearDownloadFolder %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[ClearDownloadFolder %d]", RoomID);
 }
 
 int df_ClearPlaylist(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[ClearPlaylist %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[ClearPlaylist %d]", RoomID);
 }
 
 int df_DisableField(df_connection *conn, char* FormatList, char* FieldName) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[DisableField \"%s\" \"%s\"]", FormatList, FieldName);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[DisableField \"%s\" \"%s\"]", FormatList, FieldName);
 }
 
 int df_EjectCD(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[EjectCD %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[EjectCD %d]", RoomID);
 }
 
 int df_EmptyRecycleBin(df_connection *conn) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[EmptyRecycleBin]");
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[EmptyRecycleBin]");
 }
 
 int df_EmptyRipShare(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[EmptyRipShare %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[EmptyRipShare %d]", RoomID);
 }
 
 int df_EnableField(df_connection *conn, char* FormatList, char* FieldName) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[EnableField \"%s\" \"%s\"]", FormatList, FieldName);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[EnableField \"%s\" \"%s\"]", FormatList, FieldName);
 }
 
 int df_FastForward(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[FastForward %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[FastForward %d]", RoomID);
 }
 
 int df_FastRewind(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[FastRewind %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[FastRewind %d]", RoomID);
 }
 
 int df_ForceDBRebuild(df_connection *conn) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[ForceDBRebuild]");
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[ForceDBRebuild]");
 }
 
 int df_ForceHostUpgrade(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[ForceHostUpgrade %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[ForceHostUpgrade %d]", RoomID);
 }
 
 int df_MasterIpChanged(df_connection *conn, char* MasterName, char* MasterAddress) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[MasterIpChanged \"%s\" \"%s\"]", MasterName, MasterAddress);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[MasterIpChanged \"%s\" \"%s\"]", MasterName, MasterAddress);
 }
 
 int df_MoveAlbumCancel(df_connection *conn, char* Address) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[MoveAlbumCancel \"%s\"]", Address);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[MoveAlbumCancel \"%s\"]", Address);
 }
 
 int df_Pause(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[Pause %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[Pause %d]", RoomID);
 }
 
 int df_Play(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[Play %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[Play %d]", RoomID);
 }
 
 int df_PurgeImageCache(df_connection *conn, int All) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[PurgeImageCache %d]", All);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[PurgeImageCache %d]", All);
 }
 
 int df_RandomisePlaylist(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[RandomisePlaylist %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[RandomisePlaylist %d]", RoomID);
 }
 
 int df_RestartDevice(df_connection *conn) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[RestartDevice]");
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[RestartDevice]");
 }
 
 int df_RoomIpChanged(df_connection *conn) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[RoomIpChanged]");
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[RoomIpChanged]");
 }
 
 int df_SetCDDetected(df_connection *conn, int CDDetected) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetCDDetected %d]", CDDetected);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetCDDetected %d]", CDDetected);
 }
 
 int df_SetConnOption(df_connection *conn, char* OptionName, char* OptionValue) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetConnOption \"%s\" \"%s\"]", OptionName, OptionValue);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetConnOption \"%s\" \"%s\"]", OptionName, OptionValue);
 }
 
 int df_SetLength(df_connection *conn, char* FormatList, char* FieldName, int Length) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetLength \"%s\" \"%s\" %d]", FormatList, FieldName, Length);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetLength \"%s\" \"%s\" %d]", FormatList, FieldName, Length);
 }
 
 int df_SetRepeat(df_connection *conn, int RoomID, int Repeat) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetRepeat %d %d]", RoomID, Repeat);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetRepeat %d %d]", RoomID, Repeat);
 }
 
 int df_SetRippingStatus(df_connection *conn, char* Artist, char* Album, int Tracks, int TracksRipped, int Errors, df_time TimeTaken, df_time TimeLeft, char* Track, int TrackPercent, char* UserMessage, char* LookupProviderUsed, char* SourceFolder) {	char *TimeTaken_string;
@@ -2409,44 +2411,44 @@ int df_SetRippingStatus(df_connection *conn, char* Artist, char* Album, int Trac
 	TimeTaken_string = dftime_to_string(TimeTaken);
 	TimeLeft_string = dftime_to_string(TimeLeft);
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetRippingStatus \"%s\" \"%s\" %d %d %d \"%s\" \"%s\" \"%s\" %d \"%s\" \"%s\" \"%s\"]", Artist, Album, Tracks, TracksRipped, Errors, TimeTaken_string, TimeLeft_string, Track, TrackPercent, UserMessage, LookupProviderUsed, SourceFolder);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetRippingStatus \"%s\" \"%s\" %d %d %d \"%s\" \"%s\" \"%s\" %d \"%s\" \"%s\" \"%s\"]", Artist, Album, Tracks, TracksRipped, Errors, TimeTaken_string, TimeLeft_string, Track, TrackPercent, UserMessage, LookupProviderUsed, SourceFolder);
 }
 
 int df_SetShuffle(df_connection *conn, int RoomID, int Shuffle) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetShuffle %d %d]", RoomID, Shuffle);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetShuffle %d %d]", RoomID, Shuffle);
 }
 
 int df_SetTrack(df_connection *conn, int RoomID, int TrackNumber) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetTrack %d %d]", RoomID, TrackNumber);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetTrack %d %d]", RoomID, TrackNumber);
 }
 
 int df_SetTrackPosition(df_connection *conn, int RoomID, df_time PlayPosition) {	char *PlayPosition_string;
 
 	PlayPosition_string = dftime_to_string(PlayPosition);
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetTrackPosition %d \"%s\"]", RoomID, PlayPosition_string);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetTrackPosition %d \"%s\"]", RoomID, PlayPosition_string);
 }
 
 int df_SetVolume(df_connection *conn, int RoomID, int Volume) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[SetVolume %d %d]", RoomID, Volume);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[SetVolume %d %d]", RoomID, Volume);
 }
 
 int df_Stop(df_connection *conn, int RoomID) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[Stop %d]", RoomID);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[Stop %d]", RoomID);
 }
 
 int df_vTunerCleanStatistics(df_connection *conn) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[vTunerCleanStatistics]");
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[vTunerCleanStatistics]");
 }
 
 int df_vTunerClearPresetChannel(df_connection *conn, int ChannelNumber) {
 
-	return comm_send(conn, 0, "void", 1, NULL, NULL, "[vTunerClearPresetChannel %d]", ChannelNumber);
+	return comm_send(conn, 0, "void", 1, -1,NULL, NULL, "[vTunerClearPresetChannel %d]", ChannelNumber);
 }
 
 
@@ -3136,7 +3138,7 @@ int df_AdvancedSearch(df_connection *conn, char* EntityName, char* SearchString,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[AdvancedSearch %d \"%s\" \"%s\" %d %d \"%s\" \"%s\" %d %d %d]", search_num, EntityName, SearchString, SearchType, Match, EntityName2, SearchString2, SearchType2, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[AdvancedSearch %d \"%s\" \"%s\" %d %d \"%s\" \"%s\" %d %d %d]", search_num, EntityName, SearchString, SearchType, Match, EntityName2, SearchString2, SearchType2, RemoteImagePath, ImageSize);
 
 }
 int df_BulkCDLookup(df_connection *conn, int AllAlbums, int Interval, int IgnoreProviderUsed, char* AlbumKey, void (*callback)(int, df_bulklookuprow*, void*), void *context) {
@@ -3145,7 +3147,7 @@ int df_BulkCDLookup(df_connection *conn, int AllAlbums, int Interval, int Ignore
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[BulkCDLookup %d %d %d %d \"%s\"]", search_num, AllAlbums, Interval, IgnoreProviderUsed, AlbumKey);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[BulkCDLookup %d %d %d %d \"%s\"]", search_num, AllAlbums, Interval, IgnoreProviderUsed, AlbumKey);
 
 }
 int df_CDLookupGetQueue(df_connection *conn, void (*callback)(int, df_type4row*, void*), void *context) {
@@ -3154,7 +3156,7 @@ int df_CDLookupGetQueue(df_connection *conn, void (*callback)(int, df_type4row*,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[CDLookupGetQueue %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[CDLookupGetQueue %d]", search_num);
 
 }
 int df_ComplexSearchGetAlbums(df_connection *conn, char* SearchParameter, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3163,7 +3165,7 @@ int df_ComplexSearchGetAlbums(df_connection *conn, char* SearchParameter, char* 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[ComplexSearchGetAlbums %d \"%s\" \"%s\" \"%s\"]", search_num, SearchParameter, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[ComplexSearchGetAlbums %d \"%s\" \"%s\" \"%s\"]", search_num, SearchParameter, SortColumn, SortOrder);
 
 }
 int df_ComplexSearchGetArtists(df_connection *conn, char* SearchParameter, void (*callback)(int, df_artistrow*, void*), void *context) {
@@ -3172,7 +3174,7 @@ int df_ComplexSearchGetArtists(df_connection *conn, char* SearchParameter, void 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[ComplexSearchGetArtists %d \"%s\"]", search_num, SearchParameter);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[ComplexSearchGetArtists %d \"%s\"]", search_num, SearchParameter);
 
 }
 int df_ComplexSearchGetContributors(df_connection *conn, int Type, char* SearchParameter, void (*callback)(int, df_extcontributorrow*, void*), void *context) {
@@ -3181,7 +3183,7 @@ int df_ComplexSearchGetContributors(df_connection *conn, int Type, char* SearchP
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[ComplexSearchGetContributors %d %d \"%s\"]", search_num, Type, SearchParameter);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[ComplexSearchGetContributors %d %d \"%s\"]", search_num, Type, SearchParameter);
 
 }
 int df_ComplexSearchGetTracks(df_connection *conn, char* SearchParameter, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -3190,7 +3192,7 @@ int df_ComplexSearchGetTracks(df_connection *conn, char* SearchParameter, void (
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[ComplexSearchGetTracks %d \"%s\"]", search_num, SearchParameter);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[ComplexSearchGetTracks %d \"%s\"]", search_num, SearchParameter);
 
 }
 int df_GetAdvancedStatus(df_connection *conn, void (*callback)(int, df_keyvaluerow*, void*), void *context) {
@@ -3199,7 +3201,7 @@ int df_GetAdvancedStatus(df_connection *conn, void (*callback)(int, df_keyvaluer
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAdvancedStatus %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAdvancedStatus %d]", search_num);
 
 }
 int df_GetAlbumDetails(df_connection *conn, char* Address, void (*callback)(int, df_albumdetailrow*, void*), void *context) {
@@ -3208,7 +3210,7 @@ int df_GetAlbumDetails(df_connection *conn, char* Address, void (*callback)(int,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumDetails %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumDetails %d \"%s\"]", search_num, Address);
 
 }
 int df_GetAlbums(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3217,7 +3219,7 @@ int df_GetAlbums(df_connection *conn, char* SortColumn, char* SortOrder, void (*
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbums %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbums %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForArtists(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3226,7 +3228,7 @@ int df_GetAlbumsForArtists(df_connection *conn, char* Address, char* SortColumn,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForArtists %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForArtists %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForArtistsForDevice(df_connection *conn, char* Address, char* DeviceAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3235,7 +3237,7 @@ int df_GetAlbumsForArtistsForDevice(df_connection *conn, char* Address, char* De
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForArtistsForDevice %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, DeviceAddress, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForArtistsForDevice %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, DeviceAddress, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForArtistsForServer(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3244,7 +3246,7 @@ int df_GetAlbumsForArtistsForServer(df_connection *conn, char* Address, char* So
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForArtistsForServer %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForArtistsForServer %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForArtistsForShare(df_connection *conn, char* Address, char* ShareAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3253,7 +3255,7 @@ int df_GetAlbumsForArtistsForShare(df_connection *conn, char* Address, char* Sha
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForArtistsForShare %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, ShareAddress, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForArtistsForShare %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, ShareAddress, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForArtistsInGenre(df_connection *conn, char* Address, char* GenreAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3262,7 +3264,7 @@ int df_GetAlbumsForArtistsInGenre(df_connection *conn, char* Address, char* Genr
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForArtistsInGenre %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, GenreAddress, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForArtistsInGenre %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, GenreAddress, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForArtistsInSubGenre(df_connection *conn, char* Address, char* SubGenreAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3271,7 +3273,7 @@ int df_GetAlbumsForArtistsInSubGenre(df_connection *conn, char* Address, char* S
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForArtistsInSubGenre %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, SubGenreAddress, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForArtistsInSubGenre %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, SubGenreAddress, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForDeletion(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3280,7 +3282,7 @@ int df_GetAlbumsForDeletion(df_connection *conn, char* SortColumn, char* SortOrd
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForDeletion %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForDeletion %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3289,7 +3291,7 @@ int df_GetAlbumsForDevice(df_connection *conn, char* Address, char* SortColumn, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForDevice %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForDevice %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForPlaylist(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3298,7 +3300,7 @@ int df_GetAlbumsForPlaylist(df_connection *conn, char* Address, char* SortColumn
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForPlaylist %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForPlaylist %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForServer(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3307,7 +3309,7 @@ int df_GetAlbumsForServer(df_connection *conn, char* SortColumn, char* SortOrder
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForServer %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForServer %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3316,7 +3318,7 @@ int df_GetAlbumsForShare(df_connection *conn, char* Address, char* SortColumn, c
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForShare %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForShare %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForStore(df_connection *conn, char* StoreKey, int IncludeDeleted, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3325,7 +3327,7 @@ int df_GetAlbumsForStore(df_connection *conn, char* StoreKey, int IncludeDeleted
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsForStore %d \"%s\" %d \"%s\" \"%s\"]", search_num, StoreKey, IncludeDeleted, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsForStore %d \"%s\" %d \"%s\" \"%s\"]", search_num, StoreKey, IncludeDeleted, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsOtherInfo(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context) {
@@ -3334,7 +3336,7 @@ int df_GetAlbumsOtherInfo(df_connection *conn, char* Address, char* SortColumn, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsOtherInfo %d \"%s\" \"%s\" \"%s\" %d %d]", search_num, Address, SortColumn, SortOrder, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsOtherInfo %d \"%s\" \"%s\" \"%s\" %d %d]", search_num, Address, SortColumn, SortOrder, RemoteImagePath, ImageSize);
 
 }
 int df_GetAlbumsOtherInfoAll(df_connection *conn, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context) {
@@ -3343,7 +3345,7 @@ int df_GetAlbumsOtherInfoAll(df_connection *conn, char* SortColumn, char* SortOr
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsOtherInfoAll %d \"%s\" \"%s\" %d %d]", search_num, SortColumn, SortOrder, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsOtherInfoAll %d \"%s\" \"%s\" %d %d]", search_num, SortColumn, SortOrder, RemoteImagePath, ImageSize);
 
 }
 int df_GetAlbumsOtherInfoForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context) {
@@ -3352,7 +3354,7 @@ int df_GetAlbumsOtherInfoForDevice(df_connection *conn, char* Address, char* Sor
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsOtherInfoForDevice %d \"%s\" \"%s\" \"%s\" %d %d]", search_num, Address, SortColumn, SortOrder, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsOtherInfoForDevice %d \"%s\" \"%s\" \"%s\" %d %d]", search_num, Address, SortColumn, SortOrder, RemoteImagePath, ImageSize);
 
 }
 int df_GetAlbumsOtherInfoForServer(df_connection *conn, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context) {
@@ -3361,7 +3363,7 @@ int df_GetAlbumsOtherInfoForServer(df_connection *conn, char* SortColumn, char* 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsOtherInfoForServer %d \"%s\" \"%s\" %d %d]", search_num, SortColumn, SortOrder, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsOtherInfoForServer %d \"%s\" \"%s\" %d %d]", search_num, SortColumn, SortOrder, RemoteImagePath, ImageSize);
 
 }
 int df_GetAlbumsOtherInfoForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context) {
@@ -3370,7 +3372,7 @@ int df_GetAlbumsOtherInfoForShare(df_connection *conn, char* Address, char* Sort
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsOtherInfoForShare %d \"%s\" \"%s\" \"%s\" %d %d]", search_num, Address, SortColumn, SortOrder, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsOtherInfoForShare %d \"%s\" \"%s\" \"%s\" %d %d]", search_num, Address, SortColumn, SortOrder, RemoteImagePath, ImageSize);
 
 }
 int df_GetAlbumsSearchAlbumArtist(df_connection *conn, char* SearchString, char* SortColumn, char* SortOrder, int SearchType, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3379,7 +3381,7 @@ int df_GetAlbumsSearchAlbumArtist(df_connection *conn, char* SearchString, char*
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsSearchAlbumArtist %d \"%s\" \"%s\" \"%s\" %d]", search_num, SearchString, SortColumn, SortOrder, SearchType);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsSearchAlbumArtist %d \"%s\" \"%s\" \"%s\" %d]", search_num, SearchString, SortColumn, SortOrder, SearchType);
 
 }
 int df_GetAlbumsWithAlbumLookupMessages(df_connection *conn, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3388,7 +3390,7 @@ int df_GetAlbumsWithAlbumLookupMessages(df_connection *conn, void (*callback)(in
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlbumsWithAlbumLookupMessages %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumsWithAlbumLookupMessages %d]", search_num);
 
 }
 int df_GetAlertDetails(df_connection *conn, char* Address, void (*callback)(int, df_alertdetailrow*, void*), void *context) {
@@ -3397,7 +3399,7 @@ int df_GetAlertDetails(df_connection *conn, char* Address, void (*callback)(int,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAlertDetails %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlertDetails %d \"%s\"]", search_num, Address);
 
 }
 int df_GetArtistDetails(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context) {
@@ -3406,7 +3408,7 @@ int df_GetArtistDetails(df_connection *conn, char* Address, void (*callback)(int
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetArtistDetails %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetArtistDetails %d \"%s\"]", search_num, Address);
 
 }
 int df_GetArtists(df_connection *conn, int Allocated, void (*callback)(int, df_artistrow*, void*), void *context) {
@@ -3415,7 +3417,7 @@ int df_GetArtists(df_connection *conn, int Allocated, void (*callback)(int, df_a
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetArtists %d %d]", search_num, Allocated);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetArtists %d %d]", search_num, Allocated);
 
 }
 int df_GetArtistsForDevice(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context) {
@@ -3424,7 +3426,7 @@ int df_GetArtistsForDevice(df_connection *conn, char* Address, void (*callback)(
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetArtistsForDevice %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetArtistsForDevice %d \"%s\"]", search_num, Address);
 
 }
 int df_GetArtistsForServer(df_connection *conn, void (*callback)(int, df_artistrow*, void*), void *context) {
@@ -3433,7 +3435,7 @@ int df_GetArtistsForServer(df_connection *conn, void (*callback)(int, df_artistr
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetArtistsForServer %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetArtistsForServer %d]", search_num);
 
 }
 int df_GetArtistsForShare(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context) {
@@ -3442,7 +3444,7 @@ int df_GetArtistsForShare(df_connection *conn, char* Address, void (*callback)(i
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetArtistsForShare %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetArtistsForShare %d \"%s\"]", search_num, Address);
 
 }
 int df_GetArtistsInGenre(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context) {
@@ -3451,7 +3453,7 @@ int df_GetArtistsInGenre(df_connection *conn, char* Address, void (*callback)(in
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetArtistsInGenre %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetArtistsInGenre %d \"%s\"]", search_num, Address);
 
 }
 int df_GetArtistsInSubGenre(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context) {
@@ -3460,7 +3462,7 @@ int df_GetArtistsInSubGenre(df_connection *conn, char* Address, void (*callback)
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetArtistsInSubGenre %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetArtistsInSubGenre %d \"%s\"]", search_num, Address);
 
 }
 int df_GetAvailableValues(df_connection *conn, char* Address, void (*callback)(int, df_keyvaluerow*, void*), void *context) {
@@ -3469,7 +3471,7 @@ int df_GetAvailableValues(df_connection *conn, char* Address, void (*callback)(i
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetAvailableValues %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAvailableValues %d \"%s\"]", search_num, Address);
 
 }
 int df_GetBackupJobDetail(df_connection *conn, char* Address, void (*callback)(int, df_backupjobrow*, void*), void *context) {
@@ -3478,7 +3480,7 @@ int df_GetBackupJobDetail(df_connection *conn, char* Address, void (*callback)(i
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetBackupJobDetail %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetBackupJobDetail %d \"%s\"]", search_num, Address);
 
 }
 int df_GetBackupJobs(df_connection *conn, void (*callback)(int, df_backupjobrow*, void*), void *context) {
@@ -3487,7 +3489,7 @@ int df_GetBackupJobs(df_connection *conn, void (*callback)(int, df_backupjobrow*
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetBackupJobs %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetBackupJobs %d]", search_num);
 
 }
 int df_GetBackupLogDetail(df_connection *conn, char* Address, void (*callback)(int, df_backuplogdetailrow*, void*), void *context) {
@@ -3496,7 +3498,7 @@ int df_GetBackupLogDetail(df_connection *conn, char* Address, void (*callback)(i
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetBackupLogDetail %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetBackupLogDetail %d \"%s\"]", search_num, Address);
 
 }
 int df_GetBackupLogs(df_connection *conn, char* Address, void (*callback)(int, df_backuplogrow*, void*), void *context) {
@@ -3505,7 +3507,7 @@ int df_GetBackupLogs(df_connection *conn, char* Address, void (*callback)(int, d
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetBackupLogs %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetBackupLogs %d \"%s\"]", search_num, Address);
 
 }
 int df_GetCDDBGenres(df_connection *conn, void (*callback)(int, df_cddbgenrerow*, void*), void *context) {
@@ -3514,7 +3516,7 @@ int df_GetCDDBGenres(df_connection *conn, void (*callback)(int, df_cddbgenrerow*
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetCDDBGenres %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetCDDBGenres %d]", search_num);
 
 }
 int df_GetComponentVersions(df_connection *conn, int RoomID, void (*callback)(int, df_keyvaluerow*, void*), void *context) {
@@ -3523,7 +3525,7 @@ int df_GetComponentVersions(df_connection *conn, int RoomID, void (*callback)(in
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetComponentVersions %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetComponentVersions %d %d]", search_num, RoomID);
 
 }
 int df_GetCurrentPlayList(df_connection *conn, int RoomID, void (*callback)(int, df_currentplaylistrow*, void*), void *context) {
@@ -3532,7 +3534,7 @@ int df_GetCurrentPlayList(df_connection *conn, int RoomID, void (*callback)(int,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequestroom", 1, pull_rows, (void *)c, "[GetCurrentPlayList %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequestroom", 1, -1, pull_rows, (void *)c, "[GetCurrentPlayList %d %d]", search_num, RoomID);
 
 }
 int df_GetCurrentPlaylistEx(df_connection *conn, int RoomID, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type0row*, void*), void *context) {
@@ -3541,7 +3543,7 @@ int df_GetCurrentPlaylistEx(df_connection *conn, int RoomID, int RemoteImagePath
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequestroom", 1, pull_rows, (void *)c, "[GetCurrentPlaylistEx %d %d %d %d]", search_num, RoomID, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequestroom", 1, -1, pull_rows, (void *)c, "[GetCurrentPlaylistEx %d %d %d %d]", search_num, RoomID, RemoteImagePath, ImageSize);
 
 }
 int df_GetDeviceDetails(df_connection *conn, char* DeviceAddress, void (*callback)(int, df_devicerow*, void*), void *context) {
@@ -3550,7 +3552,7 @@ int df_GetDeviceDetails(df_connection *conn, char* DeviceAddress, void (*callbac
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetDeviceDetails %d \"%s\"]", search_num, DeviceAddress);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetDeviceDetails %d \"%s\"]", search_num, DeviceAddress);
 
 }
 int df_GetDevices(df_connection *conn, int ActiveOnly, void (*callback)(int, df_devicerow*, void*), void *context) {
@@ -3559,7 +3561,7 @@ int df_GetDevices(df_connection *conn, int ActiveOnly, void (*callback)(int, df_
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetDevices %d %d]", search_num, ActiveOnly);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetDevices %d %d]", search_num, ActiveOnly);
 
 }
 int df_GetEncodingQueue(df_connection *conn, int RoomID, void (*callback)(int, df_encodingqueuerow*, void*), void *context) {
@@ -3568,7 +3570,7 @@ int df_GetEncodingQueue(df_connection *conn, int RoomID, void (*callback)(int, d
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetEncodingQueue %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetEncodingQueue %d %d]", search_num, RoomID);
 
 }
 int df_GetEncodingStatus(df_connection *conn, int RoomID, void (*callback)(int, df_encodingstatusrow*, void*), void *context) {
@@ -3577,7 +3579,7 @@ int df_GetEncodingStatus(df_connection *conn, int RoomID, void (*callback)(int, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetEncodingStatus %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetEncodingStatus %d %d]", search_num, RoomID);
 
 }
 int df_GetExtAlbumCredits(df_connection *conn, char* Address, void (*callback)(int, df_extalbumcreditrow*, void*), void *context) {
@@ -3586,7 +3588,7 @@ int df_GetExtAlbumCredits(df_connection *conn, char* Address, void (*callback)(i
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumCredits %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumCredits %d \"%s\"]", search_num, Address);
 
 }
 int df_GetExtAlbumsByContributor(df_connection *conn, char* Address, int Type, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3595,7 +3597,7 @@ int df_GetExtAlbumsByContributor(df_connection *conn, char* Address, int Type, c
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumsByContributor %d \"%s\" %d \"%s\" \"%s\"]", search_num, Address, Type, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumsByContributor %d \"%s\" %d \"%s\" \"%s\"]", search_num, Address, Type, SortColumn, SortOrder);
 
 }
 int df_GetExtAlbumsByContributorForDevice(df_connection *conn, char* Address, char* DeviceAddress, int Type, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3604,7 +3606,7 @@ int df_GetExtAlbumsByContributorForDevice(df_connection *conn, char* Address, ch
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumsByContributorForDevice %d \"%s\" \"%s\" %d \"%s\" \"%s\"]", search_num, Address, DeviceAddress, Type, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumsByContributorForDevice %d \"%s\" \"%s\" %d \"%s\" \"%s\"]", search_num, Address, DeviceAddress, Type, SortColumn, SortOrder);
 
 }
 int df_GetExtAlbumsByContributorForServer(df_connection *conn, char* Address, int Type, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3613,7 +3615,7 @@ int df_GetExtAlbumsByContributorForServer(df_connection *conn, char* Address, in
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumsByContributorForServer %d \"%s\" %d \"%s\" \"%s\"]", search_num, Address, Type, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumsByContributorForServer %d \"%s\" %d \"%s\" \"%s\"]", search_num, Address, Type, SortColumn, SortOrder);
 
 }
 int df_GetExtAlbumsByContributorForShare(df_connection *conn, char* Address, char* ShareAddress, int Type, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3622,7 +3624,7 @@ int df_GetExtAlbumsByContributorForShare(df_connection *conn, char* Address, cha
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumsByContributorForShare %d \"%s\" \"%s\" %d \"%s\" \"%s\"]", search_num, Address, ShareAddress, Type, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumsByContributorForShare %d \"%s\" \"%s\" %d \"%s\" \"%s\"]", search_num, Address, ShareAddress, Type, SortColumn, SortOrder);
 
 }
 int df_GetExtAlbumsByCredit(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3631,7 +3633,7 @@ int df_GetExtAlbumsByCredit(df_connection *conn, char* Address, char* SortColumn
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumsByCredit %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumsByCredit %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetExtAlbumsByWork(df_connection *conn, char* Work, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3640,7 +3642,7 @@ int df_GetExtAlbumsByWork(df_connection *conn, char* Work, char* SortColumn, cha
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumsByWork %d \"%s\" \"%s\" \"%s\"]", search_num, Work, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumsByWork %d \"%s\" \"%s\" \"%s\"]", search_num, Work, SortColumn, SortOrder);
 
 }
 int df_GetExtAlbumsInfo(df_connection *conn, char* Address, void (*callback)(int, df_extalbuminforow*, void*), void *context) {
@@ -3649,7 +3651,7 @@ int df_GetExtAlbumsInfo(df_connection *conn, char* Address, void (*callback)(int
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumsInfo %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumsInfo %d \"%s\"]", search_num, Address);
 
 }
 int df_GetExtAlbumsSearchPeople(df_connection *conn, char* SearchString, int SearchType, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3658,7 +3660,7 @@ int df_GetExtAlbumsSearchPeople(df_connection *conn, char* SearchString, int Sea
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtAlbumsSearchPeople %d \"%s\" %d \"%s\" \"%s\"]", search_num, SearchString, SearchType, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtAlbumsSearchPeople %d \"%s\" %d \"%s\" \"%s\"]", search_num, SearchString, SearchType, SortColumn, SortOrder);
 
 }
 int df_GetExtContributorDetails(df_connection *conn, char* Address, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context) {
@@ -3667,7 +3669,7 @@ int df_GetExtContributorDetails(df_connection *conn, char* Address, int Type, vo
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtContributorDetails %d \"%s\" %d]", search_num, Address, Type);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtContributorDetails %d \"%s\" %d]", search_num, Address, Type);
 
 }
 int df_GetExtContributors(df_connection *conn, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context) {
@@ -3676,7 +3678,7 @@ int df_GetExtContributors(df_connection *conn, int Type, void (*callback)(int, d
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtContributors %d %d]", search_num, Type);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtContributors %d %d]", search_num, Type);
 
 }
 int df_GetExtContributorsForAlbum(df_connection *conn, char* Address, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context) {
@@ -3685,7 +3687,7 @@ int df_GetExtContributorsForAlbum(df_connection *conn, char* Address, int Type, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtContributorsForAlbum %d \"%s\" %d]", search_num, Address, Type);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtContributorsForAlbum %d \"%s\" %d]", search_num, Address, Type);
 
 }
 int df_GetExtContributorsForDevice(df_connection *conn, char* Address, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context) {
@@ -3694,7 +3696,7 @@ int df_GetExtContributorsForDevice(df_connection *conn, char* Address, int Type,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtContributorsForDevice %d \"%s\" %d]", search_num, Address, Type);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtContributorsForDevice %d \"%s\" %d]", search_num, Address, Type);
 
 }
 int df_GetExtContributorsForServer(df_connection *conn, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context) {
@@ -3703,7 +3705,7 @@ int df_GetExtContributorsForServer(df_connection *conn, int Type, void (*callbac
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtContributorsForServer %d %d]", search_num, Type);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtContributorsForServer %d %d]", search_num, Type);
 
 }
 int df_GetExtContributorsForShare(df_connection *conn, char* Address, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context) {
@@ -3712,7 +3714,7 @@ int df_GetExtContributorsForShare(df_connection *conn, char* Address, int Type, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtContributorsForShare %d \"%s\" %d]", search_num, Address, Type);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtContributorsForShare %d \"%s\" %d]", search_num, Address, Type);
 
 }
 int df_GetExtTrackContributors(df_connection *conn, char* Address, int Type, void (*callback)(int, df_exttrackcontribrow*, void*), void *context) {
@@ -3721,7 +3723,7 @@ int df_GetExtTrackContributors(df_connection *conn, char* Address, int Type, voi
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtTrackContributors %d \"%s\" %d]", search_num, Address, Type);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtTrackContributors %d \"%s\" %d]", search_num, Address, Type);
 
 }
 int df_GetExtTracksByContributor(df_connection *conn, char* Address, int Type, char* Album, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -3730,7 +3732,7 @@ int df_GetExtTracksByContributor(df_connection *conn, char* Address, int Type, c
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtTracksByContributor %d \"%s\" %d \"%s\"]", search_num, Address, Type, Album);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtTracksByContributor %d \"%s\" %d \"%s\"]", search_num, Address, Type, Album);
 
 }
 int df_GetExtTracksByContributorForDevice(df_connection *conn, char* Address, char* DeviceAddress, int Type, char* Album, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -3739,7 +3741,7 @@ int df_GetExtTracksByContributorForDevice(df_connection *conn, char* Address, ch
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtTracksByContributorForDevice %d \"%s\" \"%s\" %d \"%s\"]", search_num, Address, DeviceAddress, Type, Album);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtTracksByContributorForDevice %d \"%s\" \"%s\" %d \"%s\"]", search_num, Address, DeviceAddress, Type, Album);
 
 }
 int df_GetExtTracksByContributorForServer(df_connection *conn, char* Address, int Type, char* Album, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -3748,7 +3750,7 @@ int df_GetExtTracksByContributorForServer(df_connection *conn, char* Address, in
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtTracksByContributorForServer %d \"%s\" %d \"%s\"]", search_num, Address, Type, Album);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtTracksByContributorForServer %d \"%s\" %d \"%s\"]", search_num, Address, Type, Album);
 
 }
 int df_GetExtTracksByContributorForShare(df_connection *conn, char* Address, char* ShareAddress, int Type, char* Album, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -3757,7 +3759,7 @@ int df_GetExtTracksByContributorForShare(df_connection *conn, char* Address, cha
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtTracksByContributorForShare %d \"%s\" \"%s\" %d \"%s\"]", search_num, Address, ShareAddress, Type, Album);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtTracksByContributorForShare %d \"%s\" \"%s\" %d \"%s\"]", search_num, Address, ShareAddress, Type, Album);
 
 }
 int df_GetExtTracksByWork(df_connection *conn, char* Work, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -3766,7 +3768,7 @@ int df_GetExtTracksByWork(df_connection *conn, char* Work, void (*callback)(int,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtTracksByWork %d \"%s\"]", search_num, Work);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtTracksByWork %d \"%s\"]", search_num, Work);
 
 }
 int df_GetExtTracksInfo(df_connection *conn, char* Address, void (*callback)(int, df_exttrackinforow*, void*), void *context) {
@@ -3775,7 +3777,7 @@ int df_GetExtTracksInfo(df_connection *conn, char* Address, void (*callback)(int
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtTracksInfo %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtTracksInfo %d \"%s\"]", search_num, Address);
 
 }
 int df_GetExtWorks(df_connection *conn, void (*callback)(int, df_extworksrow*, void*), void *context) {
@@ -3784,7 +3786,7 @@ int df_GetExtWorks(df_connection *conn, void (*callback)(int, df_extworksrow*, v
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExtWorks %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExtWorks %d]", search_num);
 
 }
 int df_GetExternalStorages(df_connection *conn, int AvailableOnly, void (*callback)(int, df_externalstoragerow*, void*), void *context) {
@@ -3793,7 +3795,7 @@ int df_GetExternalStorages(df_connection *conn, int AvailableOnly, void (*callba
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetExternalStorages %d %d]", search_num, AvailableOnly);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetExternalStorages %d %d]", search_num, AvailableOnly);
 
 }
 int df_GetGenres(df_connection *conn, int Allocated, char* SortColumn, char* SortOrder, void (*callback)(int, df_genrerow*, void*), void *context) {
@@ -3802,7 +3804,7 @@ int df_GetGenres(df_connection *conn, int Allocated, char* SortColumn, char* Sor
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetGenres %d %d \"%s\" \"%s\"]", search_num, Allocated, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetGenres %d %d \"%s\" \"%s\"]", search_num, Allocated, SortColumn, SortOrder);
 
 }
 int df_GetGenresSubGenres(df_connection *conn, int Allocated, char* SortColumn, char* SortOrder, void (*callback)(int, df_genressubgenresrow*, void*), void *context) {
@@ -3811,7 +3813,7 @@ int df_GetGenresSubGenres(df_connection *conn, int Allocated, char* SortColumn, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetGenresSubGenres %d %d \"%s\" \"%s\"]", search_num, Allocated, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetGenresSubGenres %d %d \"%s\" \"%s\"]", search_num, Allocated, SortColumn, SortOrder);
 
 }
 int df_GetLatestPlayedAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3820,7 +3822,7 @@ int df_GetLatestPlayedAlbums(df_connection *conn, int TopCount, char* SortColumn
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetLatestPlayedAlbums %d %d \"%s\" \"%s\"]", search_num, TopCount, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetLatestPlayedAlbums %d %d \"%s\" \"%s\"]", search_num, TopCount, SortColumn, SortOrder);
 
 }
 int df_GetLinkedRoomDetail(df_connection *conn, char* RoomKey, void (*callback)(int, df_linkedroomdetailrow*, void*), void *context) {
@@ -3829,7 +3831,7 @@ int df_GetLinkedRoomDetail(df_connection *conn, char* RoomKey, void (*callback)(
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetLinkedRoomDetail %d \"%s\"]", search_num, RoomKey);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetLinkedRoomDetail %d \"%s\"]", search_num, RoomKey);
 
 }
 int df_GetLinkedRooms(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context) {
@@ -3838,7 +3840,7 @@ int df_GetLinkedRooms(df_connection *conn, int LocalOnly, void (*callback)(int, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetLinkedRooms %d %d]", search_num, LocalOnly);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetLinkedRooms %d %d]", search_num, LocalOnly);
 
 }
 int df_GetNetworkActiveAdapters(df_connection *conn, int IncludeWireless, void (*callback)(int, df_networkadaptorrow*, void*), void *context) {
@@ -3847,7 +3849,7 @@ int df_GetNetworkActiveAdapters(df_connection *conn, int IncludeWireless, void (
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetNetworkActiveAdapters %d %d]", search_num, IncludeWireless);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetNetworkActiveAdapters %d %d]", search_num, IncludeWireless);
 
 }
 int df_GetNewestAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3856,7 +3858,7 @@ int df_GetNewestAlbums(df_connection *conn, int TopCount, char* SortColumn, char
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetNewestAlbums %d %d \"%s\" \"%s\"]", search_num, TopCount, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetNewestAlbums %d %d \"%s\" \"%s\"]", search_num, TopCount, SortColumn, SortOrder);
 
 }
 int df_GetNonLinkedRooms(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context) {
@@ -3865,7 +3867,7 @@ int df_GetNonLinkedRooms(df_connection *conn, int LocalOnly, void (*callback)(in
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetNonLinkedRooms %d %d]", search_num, LocalOnly);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetNonLinkedRooms %d %d]", search_num, LocalOnly);
 
 }
 int df_GetOutputChannels(df_connection *conn, int RoomID, char* HostName, void (*callback)(int, df_outputchannelrow*, void*), void *context) {
@@ -3874,7 +3876,7 @@ int df_GetOutputChannels(df_connection *conn, int RoomID, char* HostName, void (
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetOutputChannels %d %d \"%s\"]", search_num, RoomID, HostName);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetOutputChannels %d %d \"%s\"]", search_num, RoomID, HostName);
 
 }
 int df_GetOutputDevices(df_connection *conn, int RoomID, char* HostName, int AsioOutputs, void (*callback)(int, df_outputdevicerow*, void*), void *context) {
@@ -3883,7 +3885,7 @@ int df_GetOutputDevices(df_connection *conn, int RoomID, char* HostName, int Asi
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetOutputDevices %d %d \"%s\" %d]", search_num, RoomID, HostName, AsioOutputs);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetOutputDevices %d %d \"%s\" %d]", search_num, RoomID, HostName, AsioOutputs);
 
 }
 int df_GetPlayListsByLetter(df_connection *conn, char* SearchLetter, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3892,7 +3894,7 @@ int df_GetPlayListsByLetter(df_connection *conn, char* SearchLetter, char* SortC
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetPlayListsByLetter %d \"%s\" \"%s\" \"%s\"]", search_num, SearchLetter, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetPlayListsByLetter %d \"%s\" \"%s\" \"%s\"]", search_num, SearchLetter, SortColumn, SortOrder);
 
 }
 int df_GetPlayerInstances(df_connection *conn, int RoomID, void (*callback)(int, df_playerinstancerow*, void*), void *context) {
@@ -3901,7 +3903,7 @@ int df_GetPlayerInstances(df_connection *conn, int RoomID, void (*callback)(int,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetPlayerInstances %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetPlayerInstances %d %d]", search_num, RoomID);
 
 }
 int df_GetPlaylistsForGenre(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3910,7 +3912,7 @@ int df_GetPlaylistsForGenre(df_connection *conn, char* Address, char* SortColumn
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetPlaylistsForGenre %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetPlaylistsForGenre %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetPlaylistsForSubGenre(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3919,7 +3921,7 @@ int df_GetPlaylistsForSubGenre(df_connection *conn, char* Address, char* SortCol
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetPlaylistsForSubGenre %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetPlaylistsForSubGenre %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetPlaylistsForSubGenreForDevice(df_connection *conn, char* Address, char* DeviceAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3928,7 +3930,7 @@ int df_GetPlaylistsForSubGenreForDevice(df_connection *conn, char* Address, char
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetPlaylistsForSubGenreForDevice %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, DeviceAddress, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetPlaylistsForSubGenreForDevice %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, DeviceAddress, SortColumn, SortOrder);
 
 }
 int df_GetPlaylistsForSubGenreForServer(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3937,7 +3939,7 @@ int df_GetPlaylistsForSubGenreForServer(df_connection *conn, char* Address, char
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetPlaylistsForSubGenreForServer %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetPlaylistsForSubGenreForServer %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetPlaylistsForSubGenreForShare(df_connection *conn, char* Address, char* ShareAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -3946,7 +3948,7 @@ int df_GetPlaylistsForSubGenreForShare(df_connection *conn, char* Address, char*
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetPlaylistsForSubGenreForShare %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, ShareAddress, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetPlaylistsForSubGenreForShare %d \"%s\" \"%s\" \"%s\" \"%s\"]", search_num, Address, ShareAddress, SortColumn, SortOrder);
 
 }
 int df_GetRipEncSettings(df_connection *conn, int RoomID, void (*callback)(int, df_settingsrow*, void*), void *context) {
@@ -3955,7 +3957,7 @@ int df_GetRipEncSettings(df_connection *conn, int RoomID, void (*callback)(int, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetRipEncSettings %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetRipEncSettings %d %d]", search_num, RoomID);
 
 }
 int df_GetRipEncSettingsEx(df_connection *conn, int RoomID, void (*callback)(int, df_settingsexrow*, void*), void *context) {
@@ -3964,7 +3966,7 @@ int df_GetRipEncSettingsEx(df_connection *conn, int RoomID, void (*callback)(int
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetRipEncSettingsEx %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetRipEncSettingsEx %d %d]", search_num, RoomID);
 
 }
 int df_GetRippingAlerts(df_connection *conn, void (*callback)(int, df_rippingalertrow*, void*), void *context) {
@@ -3973,7 +3975,7 @@ int df_GetRippingAlerts(df_connection *conn, void (*callback)(int, df_rippingale
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetRippingAlerts %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetRippingAlerts %d]", search_num);
 
 }
 int df_GetRippingStatus(df_connection *conn, int RoomID, void (*callback)(int, df_type1row*, void*), void *context) {
@@ -3982,7 +3984,7 @@ int df_GetRippingStatus(df_connection *conn, int RoomID, void (*callback)(int, d
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetRippingStatus %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetRippingStatus %d %d]", search_num, RoomID);
 
 }
 int df_GetRooms(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context) {
@@ -3991,7 +3993,7 @@ int df_GetRooms(df_connection *conn, int LocalOnly, void (*callback)(int, df_roo
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetRooms %d %d]", search_num, LocalOnly);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetRooms %d %d]", search_num, LocalOnly);
 
 }
 int df_GetRoomsWithPlayBack(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context) {
@@ -4000,7 +4002,7 @@ int df_GetRoomsWithPlayBack(df_connection *conn, int LocalOnly, void (*callback)
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetRoomsWithPlayBack %d %d]", search_num, LocalOnly);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetRoomsWithPlayBack %d %d]", search_num, LocalOnly);
 
 }
 int df_GetRoomsWithRipping(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context) {
@@ -4009,7 +4011,7 @@ int df_GetRoomsWithRipping(df_connection *conn, int LocalOnly, void (*callback)(
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetRoomsWithRipping %d %d]", search_num, LocalOnly);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetRoomsWithRipping %d %d]", search_num, LocalOnly);
 
 }
 int df_GetSettings(df_connection *conn, int RoomID, void (*callback)(int, df_settingsrow*, void*), void *context) {
@@ -4018,7 +4020,7 @@ int df_GetSettings(df_connection *conn, int RoomID, void (*callback)(int, df_set
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetSettings %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetSettings %d %d]", search_num, RoomID);
 
 }
 int df_GetSettingsEx(df_connection *conn, int RoomID, void (*callback)(int, df_settingsexrow*, void*), void *context) {
@@ -4027,7 +4029,7 @@ int df_GetSettingsEx(df_connection *conn, int RoomID, void (*callback)(int, df_s
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetSettingsEx %d %d]", search_num, RoomID);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetSettingsEx %d %d]", search_num, RoomID);
 
 }
 int df_GetStatusMessages(df_connection *conn, df_date MessageDate, char* Category, int Tag, void (*callback)(int, df_statusmessagerow*, void*), void *context) {
@@ -4038,7 +4040,7 @@ int df_GetStatusMessages(df_connection *conn, df_date MessageDate, char* Categor
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
 	MessageDate_string = dfdate_to_string(MessageDate);
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetStatusMessages %d \"%s\" \"%s\" %d]", search_num, MessageDate_string, Category, Tag);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetStatusMessages %d \"%s\" \"%s\" %d]", search_num, MessageDate_string, Category, Tag);
 	free(MessageDate_string);
 
 }
@@ -4048,7 +4050,7 @@ int df_GetStoreDetail(df_connection *conn, char* MusicStoreKey, void (*callback)
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetStoreDetail %d \"%s\"]", search_num, MusicStoreKey);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetStoreDetail %d \"%s\"]", search_num, MusicStoreKey);
 
 }
 int df_GetStores(df_connection *conn, int IncludeReadOnly, int MusicStoreType, void (*callback)(int, df_storerow*, void*), void *context) {
@@ -4057,7 +4059,7 @@ int df_GetStores(df_connection *conn, int IncludeReadOnly, int MusicStoreType, v
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetStores %d %d %d]", search_num, IncludeReadOnly, MusicStoreType);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetStores %d %d %d]", search_num, IncludeReadOnly, MusicStoreType);
 
 }
 int df_GetSubGenresForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_subgenrerow*, void*), void *context) {
@@ -4066,7 +4068,7 @@ int df_GetSubGenresForDevice(df_connection *conn, char* Address, char* SortColum
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetSubGenresForDevice %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetSubGenresForDevice %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetSubGenresForGenre(df_connection *conn, char* Address, int Allocated, char* SortColumn, char* SortOrder, void (*callback)(int, df_subgenrerow*, void*), void *context) {
@@ -4075,7 +4077,7 @@ int df_GetSubGenresForGenre(df_connection *conn, char* Address, int Allocated, c
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetSubGenresForGenre %d \"%s\" %d \"%s\" \"%s\"]", search_num, Address, Allocated, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetSubGenresForGenre %d \"%s\" %d \"%s\" \"%s\"]", search_num, Address, Allocated, SortColumn, SortOrder);
 
 }
 int df_GetSubGenresForServer(df_connection *conn, int Allocated, int UserDefined, char* SortColumn, char* SortOrder, void (*callback)(int, df_subgenrerow*, void*), void *context) {
@@ -4084,7 +4086,7 @@ int df_GetSubGenresForServer(df_connection *conn, int Allocated, int UserDefined
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetSubGenresForServer %d %d %d \"%s\" \"%s\"]", search_num, Allocated, UserDefined, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetSubGenresForServer %d %d %d \"%s\" \"%s\"]", search_num, Allocated, UserDefined, SortColumn, SortOrder);
 
 }
 int df_GetSubGenresForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_subgenrerow*, void*), void *context) {
@@ -4093,7 +4095,7 @@ int df_GetSubGenresForShare(df_connection *conn, char* Address, char* SortColumn
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetSubGenresForShare %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetSubGenresForShare %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetSystemDrives(df_connection *conn, void (*callback)(int, df_driverow*, void*), void *context) {
@@ -4102,7 +4104,7 @@ int df_GetSystemDrives(df_connection *conn, void (*callback)(int, df_driverow*, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetSystemDrives %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetSystemDrives %d]", search_num);
 
 }
 int df_GetTopPlayedAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -4111,7 +4113,7 @@ int df_GetTopPlayedAlbums(df_connection *conn, int TopCount, char* SortColumn, c
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTopPlayedAlbums %d %d \"%s\" \"%s\"]", search_num, TopCount, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTopPlayedAlbums %d %d \"%s\" \"%s\"]", search_num, TopCount, SortColumn, SortOrder);
 
 }
 int df_GetTrackRange(df_connection *conn, int StartRow, int RowCount, char* Filter, char* Address, int Storage, void (*callback)(int, df_trackrangerow*, void*), void *context) {
@@ -4120,7 +4122,7 @@ int df_GetTrackRange(df_connection *conn, int StartRow, int RowCount, char* Filt
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTrackRange %d %d %d \"%s\" \"%s\" %d]", search_num, StartRow, RowCount, Filter, Address, Storage);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTrackRange %d %d %d \"%s\" \"%s\" %d]", search_num, StartRow, RowCount, Filter, Address, Storage);
 
 }
 int df_GetTracksAll(df_connection *conn, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4129,7 +4131,7 @@ int df_GetTracksAll(df_connection *conn, void (*callback)(int, df_trackrow*, voi
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksAll %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksAll %d]", search_num);
 
 }
 int df_GetTracksForAlbumInUPL(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4138,7 +4140,7 @@ int df_GetTracksForAlbumInUPL(df_connection *conn, char* Address, void (*callbac
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForAlbumInUPL %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForAlbumInUPL %d \"%s\"]", search_num, Address);
 
 }
 int df_GetTracksForArtist(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4147,7 +4149,7 @@ int df_GetTracksForArtist(df_connection *conn, char* Address, void (*callback)(i
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForArtist %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForArtist %d \"%s\"]", search_num, Address);
 
 }
 int df_GetTracksForArtistForDevice(df_connection *conn, char* Address, char* DeviceAddress, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4156,7 +4158,7 @@ int df_GetTracksForArtistForDevice(df_connection *conn, char* Address, char* Dev
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForArtistForDevice %d \"%s\" \"%s\"]", search_num, Address, DeviceAddress);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForArtistForDevice %d \"%s\" \"%s\"]", search_num, Address, DeviceAddress);
 
 }
 int df_GetTracksForArtistForServer(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4165,7 +4167,7 @@ int df_GetTracksForArtistForServer(df_connection *conn, char* Address, void (*ca
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForArtistForServer %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForArtistForServer %d \"%s\"]", search_num, Address);
 
 }
 int df_GetTracksForArtistForShare(df_connection *conn, char* Address, char* ShareAddress, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4174,7 +4176,7 @@ int df_GetTracksForArtistForShare(df_connection *conn, char* Address, char* Shar
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForArtistForShare %d \"%s\" \"%s\"]", search_num, Address, ShareAddress);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForArtistForShare %d \"%s\" \"%s\"]", search_num, Address, ShareAddress);
 
 }
 int df_GetTracksForDeletion(df_connection *conn, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type3row*, void*), void *context) {
@@ -4183,7 +4185,7 @@ int df_GetTracksForDeletion(df_connection *conn, int RemoteImagePath, int ImageS
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForDeletion %d %d %d]", search_num, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForDeletion %d %d %d]", search_num, RemoteImagePath, ImageSize);
 
 }
 int df_GetTracksForDevice(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4192,7 +4194,7 @@ int df_GetTracksForDevice(df_connection *conn, char* Address, void (*callback)(i
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForDevice %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForDevice %d \"%s\"]", search_num, Address);
 
 }
 int df_GetTracksForGenre(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4201,7 +4203,7 @@ int df_GetTracksForGenre(df_connection *conn, char* Address, void (*callback)(in
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForGenre %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForGenre %d \"%s\"]", search_num, Address);
 
 }
 int df_GetTracksForNamedEntity(df_connection *conn, char* EntityName, char* EntityValue, int ExactMatch, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4210,7 +4212,7 @@ int df_GetTracksForNamedEntity(df_connection *conn, char* EntityName, char* Enti
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForNamedEntity %d \"%s\" \"%s\" %d]", search_num, EntityName, EntityValue, ExactMatch);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForNamedEntity %d \"%s\" \"%s\" %d]", search_num, EntityName, EntityValue, ExactMatch);
 
 }
 int df_GetTracksForPlaylist(df_connection *conn, char* Address, int ShowHidden, void (*callback)(int, df_tracksforplaylistrow*, void*), void *context) {
@@ -4219,7 +4221,7 @@ int df_GetTracksForPlaylist(df_connection *conn, char* Address, int ShowHidden, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForPlaylist %d \"%s\" %d]", search_num, Address, ShowHidden);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForPlaylist %d \"%s\" %d]", search_num, Address, ShowHidden);
 
 }
 int df_GetTracksForServer(df_connection *conn, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4228,7 +4230,7 @@ int df_GetTracksForServer(df_connection *conn, void (*callback)(int, df_trackrow
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForServer %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForServer %d]", search_num);
 
 }
 int df_GetTracksForShare(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4237,7 +4239,7 @@ int df_GetTracksForShare(df_connection *conn, char* Address, void (*callback)(in
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForShare %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForShare %d \"%s\"]", search_num, Address);
 
 }
 int df_GetTracksForSubGenre(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4246,7 +4248,7 @@ int df_GetTracksForSubGenre(df_connection *conn, char* Address, void (*callback)
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForSubGenre %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForSubGenre %d \"%s\"]", search_num, Address);
 
 }
 int df_GetTracksForSubGenreForDevice(df_connection *conn, char* Address, char* DeviceAddress, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4255,7 +4257,7 @@ int df_GetTracksForSubGenreForDevice(df_connection *conn, char* Address, char* D
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForSubGenreForDevice %d \"%s\" \"%s\"]", search_num, Address, DeviceAddress);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForSubGenreForDevice %d \"%s\" \"%s\"]", search_num, Address, DeviceAddress);
 
 }
 int df_GetTracksForSubGenreForServer(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4264,7 +4266,7 @@ int df_GetTracksForSubGenreForServer(df_connection *conn, char* Address, void (*
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForSubGenreForServer %d \"%s\"]", search_num, Address);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForSubGenreForServer %d \"%s\"]", search_num, Address);
 
 }
 int df_GetTracksForSubGenreForShare(df_connection *conn, char* Address, char* ShareAddress, void (*callback)(int, df_trackrow*, void*), void *context) {
@@ -4273,7 +4275,7 @@ int df_GetTracksForSubGenreForShare(df_connection *conn, char* Address, char* Sh
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksForSubGenreForShare %d \"%s\" \"%s\"]", search_num, Address, ShareAddress);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksForSubGenreForShare %d \"%s\" \"%s\"]", search_num, Address, ShareAddress);
 
 }
 int df_GetTracksOtherInfo(df_connection *conn, char* Address, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type3row*, void*), void *context) {
@@ -4282,7 +4284,7 @@ int df_GetTracksOtherInfo(df_connection *conn, char* Address, int RemoteImagePat
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksOtherInfo %d \"%s\" %d %d]", search_num, Address, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksOtherInfo %d \"%s\" %d %d]", search_num, Address, RemoteImagePath, ImageSize);
 
 }
 int df_GetTracksSearchName(df_connection *conn, char* SearchString, int SearchType, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type3row*, void*), void *context) {
@@ -4291,7 +4293,7 @@ int df_GetTracksSearchName(df_connection *conn, char* SearchString, int SearchTy
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetTracksSearchName %d \"%s\" %d %d %d]", search_num, SearchString, SearchType, RemoteImagePath, ImageSize);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetTracksSearchName %d \"%s\" %d %d %d]", search_num, SearchString, SearchType, RemoteImagePath, ImageSize);
 
 }
 int df_GetUpnpMediaRenderers(df_connection *conn, void (*callback)(int, df_mediarendererrow*, void*), void *context) {
@@ -4300,7 +4302,7 @@ int df_GetUpnpMediaRenderers(df_connection *conn, void (*callback)(int, df_media
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetUpnpMediaRenderers %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetUpnpMediaRenderers %d]", search_num);
 
 }
 int df_GetUserPlaylists(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -4309,7 +4311,7 @@ int df_GetUserPlaylists(df_connection *conn, char* SortColumn, char* SortOrder, 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetUserPlaylists %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetUserPlaylists %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
 
 }
 int df_GetUserPlaylistsForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -4318,7 +4320,7 @@ int df_GetUserPlaylistsForDevice(df_connection *conn, char* Address, char* SortC
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetUserPlaylistsForDevice %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetUserPlaylistsForDevice %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetUserPlaylistsForServer(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -4327,7 +4329,7 @@ int df_GetUserPlaylistsForServer(df_connection *conn, char* SortColumn, char* So
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetUserPlaylistsForServer %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetUserPlaylistsForServer %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
 
 }
 int df_GetUserPlaylistsForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
@@ -4336,7 +4338,7 @@ int df_GetUserPlaylistsForShare(df_connection *conn, char* Address, char* SortCo
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetUserPlaylistsForShare %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetUserPlaylistsForShare %d \"%s\" \"%s\" \"%s\"]", search_num, Address, SortColumn, SortOrder);
 
 }
 int df_GetUserStatus(df_connection *conn, void (*callback)(int, df_keyvaluerow*, void*), void *context) {
@@ -4345,7 +4347,7 @@ int df_GetUserStatus(df_connection *conn, void (*callback)(int, df_keyvaluerow*,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[GetUserStatus %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetUserStatus %d]", search_num);
 
 }
 int df_MoveAlbumGetQueue(df_connection *conn, void (*callback)(int, df_movealbumgetqueuerow*, void*), void *context) {
@@ -4354,7 +4356,7 @@ int df_MoveAlbumGetQueue(df_connection *conn, void (*callback)(int, df_movealbum
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[MoveAlbumGetQueue %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[MoveAlbumGetQueue %d]", search_num);
 
 }
 int df_Status(df_connection *conn, void (*callback)(int, df_statusrow*, void*), void *context) {
@@ -4363,7 +4365,7 @@ int df_Status(df_connection *conn, void (*callback)(int, df_statusrow*, void*), 
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[Status %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[Status %d]", search_num);
 
 }
 int df_UndoUserEdits(df_connection *conn, char* AlbumKeys, void (*callback)(int, df_bulklookuprow*, void*), void *context) {
@@ -4372,7 +4374,7 @@ int df_UndoUserEdits(df_connection *conn, char* AlbumKeys, void (*callback)(int,
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[UndoUserEdits %d \"%s\"]", search_num, AlbumKeys);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[UndoUserEdits %d \"%s\"]", search_num, AlbumKeys);
 
 }
 int df_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBackupUrl, void (*callback)(int, df_vtunernoderow*, void*), void *context) {
@@ -4381,7 +4383,7 @@ int df_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBac
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[vTunerGetChildNodes %d \"%s\" \"%s\"]", search_num, vTunerUrl, vTunerBackupUrl);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[vTunerGetChildNodes %d \"%s\" \"%s\"]", search_num, vTunerUrl, vTunerBackupUrl);
 
 }
 int df_vTunerGetLastPlayed(df_connection *conn, void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
@@ -4390,7 +4392,7 @@ int df_vTunerGetLastPlayed(df_connection *conn, void (*callback)(int, df_vtunerp
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[vTunerGetLastPlayed %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, 20, pull_rows, (void *)c, "[vTunerGetLastPlayed %d]", search_num);
 
 }
 int df_vTunerGetMostPlayed(df_connection *conn, void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
@@ -4399,7 +4401,7 @@ int df_vTunerGetMostPlayed(df_connection *conn, void (*callback)(int, df_vtunerp
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[vTunerGetMostPlayed %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, 20, pull_rows, (void *)c, "[vTunerGetMostPlayed %d]", search_num);
 
 }
 int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, void (*callback)(int, df_vtunernoderow*, void*), void *context) {
@@ -4408,7 +4410,7 @@ int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, void (*c
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[vTunerGetNodeFromPlayedUrl %d \"%s\"]", search_num, URLPlayed);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[vTunerGetNodeFromPlayedUrl %d \"%s\"]", search_num, URLPlayed);
 
 }
 int df_vTunerGetPresetChannels(df_connection *conn, void (*callback)(int, df_vtunerpresetrow*, void*), void *context) {
@@ -4417,7 +4419,7 @@ int df_vTunerGetPresetChannels(df_connection *conn, void (*callback)(int, df_vtu
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[vTunerGetPresetChannels %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[vTunerGetPresetChannels %d]", search_num);
 
 }
 int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, void (*callback)(int, df_vtunernoderow*, void*), void *context) {
@@ -4426,7 +4428,7 @@ int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupTyp
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, pull_rows, (void *)c, "[vTunerLookupById %d \"%s\" %d]", search_num, vTunerId, vTunerLookupType);
+	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[vTunerLookupById %d \"%s\" %d]", search_num, vTunerId, vTunerLookupType);
 
 }
 
@@ -5056,7 +5058,7 @@ static void ComplexSearchGetContributors_handler(out_request *request, out_respo
 }
 
 static void ComplexSearchGetTracks_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -6737,7 +6739,7 @@ static void GetExtTrackContributors_handler(out_request *request, out_response *
 }
 
 static void GetExtTracksByContributor_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -6769,7 +6771,7 @@ static void GetExtTracksByContributor_handler(out_request *request, out_response
 }
 
 static void GetExtTracksByContributorForDevice_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -6801,7 +6803,7 @@ static void GetExtTracksByContributorForDevice_handler(out_request *request, out
 }
 
 static void GetExtTracksByContributorForServer_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -6833,7 +6835,7 @@ static void GetExtTracksByContributorForServer_handler(out_request *request, out
 }
 
 static void GetExtTracksByContributorForShare_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -6865,7 +6867,7 @@ static void GetExtTracksByContributorForShare_handler(out_request *request, out_
 }
 
 static void GetExtTracksByWork_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -7972,7 +7974,7 @@ static void GetTrackRange_handler(out_request *request, out_response *response, 
 }
 
 static void GetTracksAll_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8004,7 +8006,7 @@ static void GetTracksAll_handler(out_request *request, out_response *response, i
 }
 
 static void GetTracksForAlbumInUPL_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8036,7 +8038,7 @@ static void GetTracksForAlbumInUPL_handler(out_request *request, out_response *r
 }
 
 static void GetTracksForArtist_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8068,7 +8070,7 @@ static void GetTracksForArtist_handler(out_request *request, out_response *respo
 }
 
 static void GetTracksForArtistForDevice_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8100,7 +8102,7 @@ static void GetTracksForArtistForDevice_handler(out_request *request, out_respon
 }
 
 static void GetTracksForArtistForServer_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8132,7 +8134,7 @@ static void GetTracksForArtistForServer_handler(out_request *request, out_respon
 }
 
 static void GetTracksForArtistForShare_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8204,7 +8206,7 @@ static void GetTracksForDeletion_handler(out_request *request, out_response *res
 }
 
 static void GetTracksForDevice_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8236,7 +8238,7 @@ static void GetTracksForDevice_handler(out_request *request, out_response *respo
 }
 
 static void GetTracksForGenre_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8268,7 +8270,7 @@ static void GetTracksForGenre_handler(out_request *request, out_response *respon
 }
 
 static void GetTracksForNamedEntity_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8333,7 +8335,7 @@ static void GetTracksForPlaylist_handler(out_request *request, out_response *res
 }
 
 static void GetTracksForServer_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8365,7 +8367,7 @@ static void GetTracksForServer_handler(out_request *request, out_response *respo
 }
 
 static void GetTracksForShare_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8397,7 +8399,7 @@ static void GetTracksForShare_handler(out_request *request, out_response *respon
 }
 
 static void GetTracksForSubGenre_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8429,7 +8431,7 @@ static void GetTracksForSubGenre_handler(out_request *request, out_response *res
 }
 
 static void GetTracksForSubGenreForDevice_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8461,7 +8463,7 @@ static void GetTracksForSubGenreForDevice_handler(out_request *request, out_resp
 }
 
 static void GetTracksForSubGenreForServer_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -8493,7 +8495,7 @@ static void GetTracksForSubGenreForServer_handler(out_request *request, out_resp
 }
 
 static void GetTracksForSubGenreForShare_handler(out_request *request, out_response *response, int num, void* context) {
-	df_trackrow *base, *current, *fresh;
+	df_trackrow *base = 0, *current, *fresh;
 	int i;
 	regex_result *rx;
 	struct call_holder *holder = context;
@@ -12346,7 +12348,7 @@ static void vTunerPlayById_handler(out_request *request, out_response *response,
 
 
 	rx = response->result->result;
-		sscanf(rx->subexps[2].value,"%d",&(tmp));
+		sscanf(rx->subexps[1].value,"%d",&(tmp));
 
 	((void (*)(int, void*))(holder->callback))(tmp, holder->context);
 

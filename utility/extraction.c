@@ -42,7 +42,7 @@ extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t 
 				usleep(NON_BLOCKING_READ_WAIT);
 			} else {
 				// an error has occurred
-				DFERROR("An error occured will trying to read from fd:%d [%d] %s", fd, errno, debugging_get_error_string(errno));
+				DFERROR("An error occured will trying to read from fd:%d [%d] %s", fd, errno, strerror(errno));
 			}
 		}
 		else {

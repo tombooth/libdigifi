@@ -85,7 +85,7 @@ void comm_in_remove(in_settings *settings) {
 
 void* comm_in_thread_start(void *args) {
 	fd_set signals;
-	int signals_max, err;
+	int signals_max;
 	char *signal_buff;
 	struct settings_holder *temp;
 	extraction_result *result;
@@ -96,7 +96,7 @@ void* comm_in_thread_start(void *args) {
 	while (1) {
 		signals_max = update_fd_set(&signals);
 		
-		if ((err = select(signals_max, &signals, NULL, NULL, NULL)) > 0) {
+		if ((select(signals_max, &signals, NULL, NULL, NULL)) > 0) {
 			
 			// check for signal
 			if (FD_ISSET(signal_descriptors[0], &signals)) {
@@ -122,7 +122,7 @@ void* comm_in_thread_start(void *args) {
 				temp = temp->next;
 			}
 		}
-		else { DFERROR("Failed on select with error [%d] %s", errno, debugging_get_error_string(errno)); }
+		else { DFERROR("Failed on select with error [%d] %s", errno, strerror(errno)); }
 		
 		usleep(500);
 		

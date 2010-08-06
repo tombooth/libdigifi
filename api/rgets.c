@@ -23,67 +23,67 @@ int dfrget_albumartist(df_connection *conn, unsigned int room_id,
 					   void (*callback)(int, df_albumartist*, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_ALBUMARTIST].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_ALBUMARTIST].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetAlbumArtist %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetAlbumArtist %u]", room_id);
 }
 
 int dfrget_clearcommands(df_connection *conn, unsigned int room_id) {
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetClearCommands %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetClearCommands %u]", room_id);
 }
 
 int dfrget_detailedtrackinfo(df_connection *conn, unsigned int room_id, 
 							 void (*callback)(int, df_detailedtrack*, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_DETAILTRACKINFO].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_DETAILTRACKINFO].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetDetailedTrackInfo %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetDetailedTrackInfo %u]", room_id);
 }
 
 int dfrget_lastplayererror(df_connection *conn, unsigned int room_id,
 						   void (*callback)(int, char*, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_LASTPLAYERERROR].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_LASTPLAYERERROR].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetLastPlayerError %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetLastPlayerError %u]", room_id);
 }
 
 int dfrget_playerstatus(df_connection *conn, unsigned int room_id, 
 						void (*callback)(int, char*, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_PLAYERSTATUS].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_PLAYERSTATUS].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetPlayerStatus %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetPlayerStatus %u]", room_id);
 }
 
 int dfrget_playingchecksum(df_connection *conn, unsigned int room_id,
 						   void (*callback)(int, char*, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_PLAYINGCHECKSUM].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_PLAYINGCHECKSUM].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetPlayingChecksum %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetPlayingChecksum %u]", room_id);
 }
 
 int dfrget_repeat(df_connection *conn, unsigned int room_id,
 				  void (*callback)(int, int, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_REPEAT].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_REPEAT].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetRepeat %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetRepeat %u]", room_id);
 }
 
 int dfrget_shuffle(df_connection *conn, unsigned int room_id, 
 				   void (*callback)(int, int, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_SHUFFLE].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_SHUFFLE].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetShuffle %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetShuffle %u]", room_id);
 }
 
 int dfrget_trackname(df_connection *conn, unsigned int room_id, 
 					 void (*callback)(int, df_trackname*, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_TRACKNAME].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_TRACKNAME].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetTrackName %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetTrackName %u]", room_id);
 }
 
 int dfrget_trackposition(df_connection *conn, unsigned int room_id, 
 						 void (*callback)(int, df_time*, void*), void *context) {
 	conn->rget_settings.rgets[DFRGET_TRACKPOSITION].callback = (void (*)(void))callback;
 	conn->rget_settings.rgets[DFRGET_TRACKPOSITION].context = context;
-	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetTrackPosition %u]", room_id);
+	return comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetTrackPosition %u]", room_id);
 }
 
 
@@ -92,7 +92,7 @@ void process_incoming_rget(in_settings *settings, char *name, char *command) {
 	regex_t *rx_c;
 	regex_result *rx;
 	df_albumartist *aa;
-	df_detailedtrack *dt;
+	df_detailedtrack *dt = NULL;
 	df_trackname *tn;
 	df_time *t;
 	char *s;
