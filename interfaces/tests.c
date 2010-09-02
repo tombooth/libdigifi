@@ -76,20 +76,20 @@ void main_conn_test(pthread_mutex_t *parent_lock) {
 		if (num_connections > 0) {
 			switch (randomise_int(4)) {
 				case 0:
-					df_GetRooms(test_conns[randomise_int(num_connections)], 0, test_getroom_handler, NULL);
-					df_GetArtists(test_conns[randomise_int(num_connections)], 0, test_getartists_handler, NULL);
+					//df_GetRooms(test_conns[randomise_int(num_connections)], 0, test_getroom_handler, NULL);
+					//df_GetArtists(test_conns[randomise_int(num_connections)], 0, test_getartists_handler, NULL);
 					break;
 				case 1:
-					df_GetRooms(test_conns[randomise_int(num_connections)], 0, test_getroom_handler, NULL);
+					//df_GetRooms(test_conns[randomise_int(num_connections)], 0, test_getroom_handler, NULL);
 					//df_GetAlbums(test_conns[randomise_int(num_connections)], "", "", test_getalbums_handler, NULL);
 					break;
 				case 2:
 					//df_GetAlbums(test_conns[randomise_int(num_connections)], "", "", test_getalbums_handler, NULL);
-					df_GetCurrentPlaylistEx(test_conns[randomise_int(num_connections)], 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
+					//df_GetCurrentPlaylistEx(test_conns[randomise_int(num_connections)], 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
 					break;
 				case 3:
-					df_GetArtists(test_conns[randomise_int(num_connections)], 0, test_getartists_handler, NULL);
-					df_GetCurrentPlaylistEx(test_conns[randomise_int(num_connections)], 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
+					//df_GetArtists(test_conns[randomise_int(num_connections)], 0, test_getartists_handler, NULL);
+					//df_GetCurrentPlaylistEx(test_conns[randomise_int(num_connections)], 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
 					break;
 
 				default:
@@ -146,20 +146,20 @@ void main_func_test(pthread_mutex_t *parent_lock) {
 		// execute some calls
 			switch (randomise_int(4)) {
 				case 0:
-					df_GetRooms(test_conn, 0, test_getroom_handler, NULL);
-					df_GetArtists(test_conn, 0, test_getartists_handler, NULL);
+					//df_GetRooms(test_conn, 0, test_getroom_handler, NULL);
+					//df_GetArtists(test_conn, 0, test_getartists_handler, NULL);
 					break;
 				case 1:
-					df_GetRooms(test_conn, 0, test_getroom_handler, NULL);
+					//df_GetRooms(test_conn, 0, test_getroom_handler, NULL);
 					//df_GetAlbums(test_conn, "", "", test_getalbums_handler, NULL);
 					break;
 				case 2:
 					//df_GetAlbums(test_conn, "", "", test_getalbums_handler, NULL);
-					df_GetCurrentPlaylistEx(test_conn, 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
+					//df_GetCurrentPlaylistEx(test_conn, 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
 					break;
 				case 3:
-					df_GetArtists(test_conn, 0, test_getartists_handler, NULL);
-					df_GetCurrentPlaylistEx(test_conn, 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
+					//df_GetArtists(test_conn, 0, test_getartists_handler, NULL);
+					//df_GetCurrentPlaylistEx(test_conn, 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
 					break;
 					
 				default:

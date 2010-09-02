@@ -96,7 +96,7 @@ connection *comm_connect(char *ipaddress, int connections) {
 	}
 	
 	// comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetRegisterClient \"%d\" \"%s\"]", port, "78.149.19.196"); // REMOTE get_local_ip());
-	comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetRegisterClient \"%d\" \"%s\"]", port, get_local_ip());
+	comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetRegisterClient \"%d\" \"%s\"]", port, get_local_ip());
 	// wait to accept the rget connection
 	while (conn->rget_settings.client_fd < 0) { conn->rget_settings.client_fd = accept(conn->rget_settings.server_fd, NULL, 0); }
 	
@@ -108,7 +108,7 @@ connection *comm_connect(char *ipaddress, int connections) {
 
 
 
-int comm_send(connection *conn, int rget, char *tag, int count, int requested_count, void (*callback)(out_request*, out_response*, int, void*), void *context, char *message, ...) {
+int comm_send(connection *conn, int rget, char *tag, int count, void (*callback)(out_request*, out_response*, int, void*), void *context, char *message, ...) {
 	char *buffer;
 	va_list arg_ptr;
 	out_request *req;
@@ -127,7 +127,6 @@ int comm_send(connection *conn, int rget, char *tag, int count, int requested_co
 	req->send = buffer;
 	req->callback = callback;
 	req->context = context;
-	req->requested_count = requested_count;
 	
 	if (rget) fd_id = 0;
 	else fd_id = pick_quietest_socket(conn);  
@@ -139,7 +138,7 @@ int comm_send(connection *conn, int rget, char *tag, int count, int requested_co
 	return 0;
 }
 
-int comm_send_via_socket(out_socket *socket, char *tag, int count, int requested_count, void (*callback)(out_request*, out_response*, int, void*), void *context, char *message, ...) {
+int comm_send_via_socket(out_socket *socket, char *tag, int count, void (*callback)(out_request*, out_response*, int, void*), void *context, char *message, ...) {
 	char *buffer;
 	va_list arg_ptr;
 	out_request *req;
@@ -155,7 +154,6 @@ int comm_send_via_socket(out_socket *socket, char *tag, int count, int requested
 	req->send = buffer;
 	req->callback = callback;
 	req->context = context;	
-	req->requested_count = requested_count;
 	req->socket = socket;
 	
 	comm_out_push_request(req);

@@ -22,7 +22,7 @@ static int num_connections;
 
 static int check_connection(int id) { if (id >= num_connections || id < 0) { return 0; } else { return 1; } }
 
-
+static void get_search_rows(df_search *s) { df_extract_from(s, 1, -1); df_free_search(s); }
 
 
 void print_ActivateExternalStorage(int input, void *context) {
@@ -5457,7 +5457,7 @@ void call_AdvancedSearch(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x8);
 
-	df_AdvancedSearch(connections[conn_id], x0, x1, x2, x3, x4, x5, x6, x7, x8, print_AdvancedSearch, (void*)parent_lock);}
+	df_AdvancedSearch(connections[conn_id], x0, x1, x2, x3, x4, x5, x6, x7, x8, get_search_rows, print_AdvancedSearch, (void*)parent_lock);}
 
 void call_BackupDrive(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -5506,7 +5506,7 @@ void call_BulkCDLookup(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_BulkCDLookup(connections[conn_id], x0, x1, x2, x3, print_BulkCDLookup, (void*)parent_lock);}
+	df_BulkCDLookup(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_BulkCDLookup, (void*)parent_lock);}
 
 void call_BulkCDLookupEx(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -5554,7 +5554,7 @@ void call_CDLookupGetQueue(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_CDLookupGetQueue(connections[conn_id], print_CDLookupGetQueue, (void*)parent_lock);}
+	df_CDLookupGetQueue(connections[conn_id], get_search_rows, print_CDLookupGetQueue, (void*)parent_lock);}
 
 void call_CDLookupGetStatus(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -5956,7 +5956,7 @@ void call_ComplexSearchGetAlbums(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_ComplexSearchGetAlbums(connections[conn_id], x0, x1, x2, print_ComplexSearchGetAlbums, (void*)parent_lock);}
+	df_ComplexSearchGetAlbums(connections[conn_id], x0, x1, x2, get_search_rows, print_ComplexSearchGetAlbums, (void*)parent_lock);}
 
 void call_ComplexSearchGetArtists(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -5970,7 +5970,7 @@ void call_ComplexSearchGetArtists(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_ComplexSearchGetArtists(connections[conn_id], x0, print_ComplexSearchGetArtists, (void*)parent_lock);}
+	df_ComplexSearchGetArtists(connections[conn_id], x0, get_search_rows, print_ComplexSearchGetArtists, (void*)parent_lock);}
 
 void call_ComplexSearchGetContributors(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -5987,7 +5987,7 @@ void call_ComplexSearchGetContributors(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_ComplexSearchGetContributors(connections[conn_id], x0, x1, print_ComplexSearchGetContributors, (void*)parent_lock);}
+	df_ComplexSearchGetContributors(connections[conn_id], x0, x1, get_search_rows, print_ComplexSearchGetContributors, (void*)parent_lock);}
 
 void call_ComplexSearchGetTracks(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -6001,7 +6001,7 @@ void call_ComplexSearchGetTracks(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_ComplexSearchGetTracks(connections[conn_id], x0, print_ComplexSearchGetTracks, (void*)parent_lock);}
+	df_ComplexSearchGetTracks(connections[conn_id], x0, get_search_rows, print_ComplexSearchGetTracks, (void*)parent_lock);}
 
 void call_CountAlbums(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7041,7 +7041,7 @@ void call_GetAdvancedStatus(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetAdvancedStatus(connections[conn_id], print_GetAdvancedStatus, (void*)parent_lock);}
+	df_GetAdvancedStatus(connections[conn_id], get_search_rows, print_GetAdvancedStatus, (void*)parent_lock);}
 
 void call_GetAlbumArtist(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7070,7 +7070,7 @@ void call_GetAlbumDetails(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetAlbumDetails(connections[conn_id], x0, print_GetAlbumDetails, (void*)parent_lock);}
+	df_GetAlbumDetails(connections[conn_id], x0, get_search_rows, print_GetAlbumDetails, (void*)parent_lock);}
 
 void call_GetAlbums(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7088,8 +7088,7 @@ void call_GetAlbums(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	//df_GetAlbums(connections[conn_id], x0, x1, print_GetAlbums, (void*)parent_lock);
-}
+	df_GetAlbums(connections[conn_id], x0, x1, get_search_rows, print_GetAlbums, (void*)parent_lock);}
 
 void call_GetAlbumsForArtists(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7111,7 +7110,7 @@ void call_GetAlbumsForArtists(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetAlbumsForArtists(connections[conn_id], x0, x1, x2, print_GetAlbumsForArtists, (void*)parent_lock);}
+	df_GetAlbumsForArtists(connections[conn_id], x0, x1, x2, get_search_rows, print_GetAlbumsForArtists, (void*)parent_lock);}
 
 void call_GetAlbumsForArtistsForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7137,7 +7136,7 @@ void call_GetAlbumsForArtistsForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetAlbumsForArtistsForDevice(connections[conn_id], x0, x1, x2, x3, print_GetAlbumsForArtistsForDevice, (void*)parent_lock);}
+	df_GetAlbumsForArtistsForDevice(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetAlbumsForArtistsForDevice, (void*)parent_lock);}
 
 void call_GetAlbumsForArtistsForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7159,7 +7158,7 @@ void call_GetAlbumsForArtistsForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetAlbumsForArtistsForServer(connections[conn_id], x0, x1, x2, print_GetAlbumsForArtistsForServer, (void*)parent_lock);}
+	df_GetAlbumsForArtistsForServer(connections[conn_id], x0, x1, x2, get_search_rows, print_GetAlbumsForArtistsForServer, (void*)parent_lock);}
 
 void call_GetAlbumsForArtistsForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7185,7 +7184,7 @@ void call_GetAlbumsForArtistsForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetAlbumsForArtistsForShare(connections[conn_id], x0, x1, x2, x3, print_GetAlbumsForArtistsForShare, (void*)parent_lock);}
+	df_GetAlbumsForArtistsForShare(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetAlbumsForArtistsForShare, (void*)parent_lock);}
 
 void call_GetAlbumsForArtistsInGenre(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7211,7 +7210,7 @@ void call_GetAlbumsForArtistsInGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetAlbumsForArtistsInGenre(connections[conn_id], x0, x1, x2, x3, print_GetAlbumsForArtistsInGenre, (void*)parent_lock);}
+	df_GetAlbumsForArtistsInGenre(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetAlbumsForArtistsInGenre, (void*)parent_lock);}
 
 void call_GetAlbumsForArtistsInSubGenre(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7237,7 +7236,7 @@ void call_GetAlbumsForArtistsInSubGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetAlbumsForArtistsInSubGenre(connections[conn_id], x0, x1, x2, x3, print_GetAlbumsForArtistsInSubGenre, (void*)parent_lock);}
+	df_GetAlbumsForArtistsInSubGenre(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetAlbumsForArtistsInSubGenre, (void*)parent_lock);}
 
 void call_GetAlbumsForDeletion(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7255,7 +7254,7 @@ void call_GetAlbumsForDeletion(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetAlbumsForDeletion(connections[conn_id], x0, x1, print_GetAlbumsForDeletion, (void*)parent_lock);}
+	df_GetAlbumsForDeletion(connections[conn_id], x0, x1, get_search_rows, print_GetAlbumsForDeletion, (void*)parent_lock);}
 
 void call_GetAlbumsForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7277,7 +7276,7 @@ void call_GetAlbumsForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetAlbumsForDevice(connections[conn_id], x0, x1, x2, print_GetAlbumsForDevice, (void*)parent_lock);}
+	df_GetAlbumsForDevice(connections[conn_id], x0, x1, x2, get_search_rows, print_GetAlbumsForDevice, (void*)parent_lock);}
 
 void call_GetAlbumsForPlaylist(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7299,7 +7298,7 @@ void call_GetAlbumsForPlaylist(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetAlbumsForPlaylist(connections[conn_id], x0, x1, x2, print_GetAlbumsForPlaylist, (void*)parent_lock);}
+	df_GetAlbumsForPlaylist(connections[conn_id], x0, x1, x2, get_search_rows, print_GetAlbumsForPlaylist, (void*)parent_lock);}
 
 void call_GetAlbumsForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7317,7 +7316,7 @@ void call_GetAlbumsForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetAlbumsForServer(connections[conn_id], x0, x1, print_GetAlbumsForServer, (void*)parent_lock);}
+	df_GetAlbumsForServer(connections[conn_id], x0, x1, get_search_rows, print_GetAlbumsForServer, (void*)parent_lock);}
 
 void call_GetAlbumsForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7339,7 +7338,7 @@ void call_GetAlbumsForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetAlbumsForShare(connections[conn_id], x0, x1, x2, print_GetAlbumsForShare, (void*)parent_lock);}
+	df_GetAlbumsForShare(connections[conn_id], x0, x1, x2, get_search_rows, print_GetAlbumsForShare, (void*)parent_lock);}
 
 void call_GetAlbumsForStore(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7364,7 +7363,7 @@ void call_GetAlbumsForStore(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetAlbumsForStore(connections[conn_id], x0, x1, x2, x3, print_GetAlbumsForStore, (void*)parent_lock);}
+	df_GetAlbumsForStore(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetAlbumsForStore, (void*)parent_lock);}
 
 void call_GetAlbumsOtherInfo(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7392,7 +7391,7 @@ void call_GetAlbumsOtherInfo(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x4);
 
-	df_GetAlbumsOtherInfo(connections[conn_id], x0, x1, x2, x3, x4, print_GetAlbumsOtherInfo, (void*)parent_lock);}
+	df_GetAlbumsOtherInfo(connections[conn_id], x0, x1, x2, x3, x4, get_search_rows, print_GetAlbumsOtherInfo, (void*)parent_lock);}
 
 void call_GetAlbumsOtherInfoAll(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7416,7 +7415,7 @@ void call_GetAlbumsOtherInfoAll(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x3);
 
-	df_GetAlbumsOtherInfoAll(connections[conn_id], x0, x1, x2, x3, print_GetAlbumsOtherInfoAll, (void*)parent_lock);}
+	df_GetAlbumsOtherInfoAll(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetAlbumsOtherInfoAll, (void*)parent_lock);}
 
 void call_GetAlbumsOtherInfoForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7444,7 +7443,7 @@ void call_GetAlbumsOtherInfoForDevice(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x4);
 
-	df_GetAlbumsOtherInfoForDevice(connections[conn_id], x0, x1, x2, x3, x4, print_GetAlbumsOtherInfoForDevice, (void*)parent_lock);}
+	df_GetAlbumsOtherInfoForDevice(connections[conn_id], x0, x1, x2, x3, x4, get_search_rows, print_GetAlbumsOtherInfoForDevice, (void*)parent_lock);}
 
 void call_GetAlbumsOtherInfoForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7468,7 +7467,7 @@ void call_GetAlbumsOtherInfoForServer(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x3);
 
-	df_GetAlbumsOtherInfoForServer(connections[conn_id], x0, x1, x2, x3, print_GetAlbumsOtherInfoForServer, (void*)parent_lock);}
+	df_GetAlbumsOtherInfoForServer(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetAlbumsOtherInfoForServer, (void*)parent_lock);}
 
 void call_GetAlbumsOtherInfoForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7496,7 +7495,7 @@ void call_GetAlbumsOtherInfoForShare(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x4);
 
-	df_GetAlbumsOtherInfoForShare(connections[conn_id], x0, x1, x2, x3, x4, print_GetAlbumsOtherInfoForShare, (void*)parent_lock);}
+	df_GetAlbumsOtherInfoForShare(connections[conn_id], x0, x1, x2, x3, x4, get_search_rows, print_GetAlbumsOtherInfoForShare, (void*)parent_lock);}
 
 void call_GetAlbumsSearchAlbumArtist(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7521,7 +7520,7 @@ void call_GetAlbumsSearchAlbumArtist(pthread_mutex_t *parent_lock) {
 	printf("SearchType: ");
 	scanf("%d", &x3);
 
-	df_GetAlbumsSearchAlbumArtist(connections[conn_id], x0, x1, x2, x3, print_GetAlbumsSearchAlbumArtist, (void*)parent_lock);}
+	df_GetAlbumsSearchAlbumArtist(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetAlbumsSearchAlbumArtist, (void*)parent_lock);}
 
 void call_GetAlbumsWithAlbumLookupMessages(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7531,7 +7530,7 @@ void call_GetAlbumsWithAlbumLookupMessages(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetAlbumsWithAlbumLookupMessages(connections[conn_id], print_GetAlbumsWithAlbumLookupMessages, (void*)parent_lock);}
+	df_GetAlbumsWithAlbumLookupMessages(connections[conn_id], get_search_rows, print_GetAlbumsWithAlbumLookupMessages, (void*)parent_lock);}
 
 void call_GetAlertDetails(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7545,7 +7544,7 @@ void call_GetAlertDetails(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetAlertDetails(connections[conn_id], x0, print_GetAlertDetails, (void*)parent_lock);}
+	df_GetAlertDetails(connections[conn_id], x0, get_search_rows, print_GetAlertDetails, (void*)parent_lock);}
 
 void call_GetArtistDetails(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7559,7 +7558,7 @@ void call_GetArtistDetails(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetArtistDetails(connections[conn_id], x0, print_GetArtistDetails, (void*)parent_lock);}
+	df_GetArtistDetails(connections[conn_id], x0, get_search_rows, print_GetArtistDetails, (void*)parent_lock);}
 
 void call_GetArtists(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7572,7 +7571,7 @@ void call_GetArtists(pthread_mutex_t *parent_lock) {
 	printf("Allocated: ");
 	scanf("%d", &x0);
 
-	df_GetArtists(connections[conn_id], x0, print_GetArtists, (void*)parent_lock);}
+	df_GetArtists(connections[conn_id], x0, get_search_rows, print_GetArtists, (void*)parent_lock);}
 
 void call_GetArtistsForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7586,7 +7585,7 @@ void call_GetArtistsForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetArtistsForDevice(connections[conn_id], x0, print_GetArtistsForDevice, (void*)parent_lock);}
+	df_GetArtistsForDevice(connections[conn_id], x0, get_search_rows, print_GetArtistsForDevice, (void*)parent_lock);}
 
 void call_GetArtistsForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7596,7 +7595,7 @@ void call_GetArtistsForServer(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetArtistsForServer(connections[conn_id], print_GetArtistsForServer, (void*)parent_lock);}
+	df_GetArtistsForServer(connections[conn_id], get_search_rows, print_GetArtistsForServer, (void*)parent_lock);}
 
 void call_GetArtistsForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7610,7 +7609,7 @@ void call_GetArtistsForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetArtistsForShare(connections[conn_id], x0, print_GetArtistsForShare, (void*)parent_lock);}
+	df_GetArtistsForShare(connections[conn_id], x0, get_search_rows, print_GetArtistsForShare, (void*)parent_lock);}
 
 void call_GetArtistsInGenre(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7624,7 +7623,7 @@ void call_GetArtistsInGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetArtistsInGenre(connections[conn_id], x0, print_GetArtistsInGenre, (void*)parent_lock);}
+	df_GetArtistsInGenre(connections[conn_id], x0, get_search_rows, print_GetArtistsInGenre, (void*)parent_lock);}
 
 void call_GetArtistsInSubGenre(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7638,7 +7637,7 @@ void call_GetArtistsInSubGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetArtistsInSubGenre(connections[conn_id], x0, print_GetArtistsInSubGenre, (void*)parent_lock);}
+	df_GetArtistsInSubGenre(connections[conn_id], x0, get_search_rows, print_GetArtistsInSubGenre, (void*)parent_lock);}
 
 void call_GetAvailableValues(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7652,7 +7651,7 @@ void call_GetAvailableValues(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetAvailableValues(connections[conn_id], x0, print_GetAvailableValues, (void*)parent_lock);}
+	df_GetAvailableValues(connections[conn_id], x0, get_search_rows, print_GetAvailableValues, (void*)parent_lock);}
 
 void call_GetBackupJobDetail(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7666,7 +7665,7 @@ void call_GetBackupJobDetail(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetBackupJobDetail(connections[conn_id], x0, print_GetBackupJobDetail, (void*)parent_lock);}
+	df_GetBackupJobDetail(connections[conn_id], x0, get_search_rows, print_GetBackupJobDetail, (void*)parent_lock);}
 
 void call_GetBackupJobs(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7676,7 +7675,7 @@ void call_GetBackupJobs(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetBackupJobs(connections[conn_id], print_GetBackupJobs, (void*)parent_lock);}
+	df_GetBackupJobs(connections[conn_id], get_search_rows, print_GetBackupJobs, (void*)parent_lock);}
 
 void call_GetBackupLogDetail(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7690,7 +7689,7 @@ void call_GetBackupLogDetail(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetBackupLogDetail(connections[conn_id], x0, print_GetBackupLogDetail, (void*)parent_lock);}
+	df_GetBackupLogDetail(connections[conn_id], x0, get_search_rows, print_GetBackupLogDetail, (void*)parent_lock);}
 
 void call_GetBackupLogs(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7704,7 +7703,7 @@ void call_GetBackupLogs(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetBackupLogs(connections[conn_id], x0, print_GetBackupLogs, (void*)parent_lock);}
+	df_GetBackupLogs(connections[conn_id], x0, get_search_rows, print_GetBackupLogs, (void*)parent_lock);}
 
 void call_GetBackupStatus(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7726,7 +7725,7 @@ void call_GetCDDBGenres(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetCDDBGenres(connections[conn_id], print_GetCDDBGenres, (void*)parent_lock);}
+	df_GetCDDBGenres(connections[conn_id], get_search_rows, print_GetCDDBGenres, (void*)parent_lock);}
 
 void call_GetComponentVersions(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7739,7 +7738,7 @@ void call_GetComponentVersions(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetComponentVersions(connections[conn_id], x0, print_GetComponentVersions, (void*)parent_lock);}
+	df_GetComponentVersions(connections[conn_id], x0, get_search_rows, print_GetComponentVersions, (void*)parent_lock);}
 
 void call_GetCount(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7776,7 +7775,7 @@ void call_GetCurrentPlayList(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetCurrentPlayList(connections[conn_id], x0, print_GetCurrentPlayList, (void*)parent_lock);}
+	df_GetCurrentPlayList(connections[conn_id], x0, get_search_rows, print_GetCurrentPlayList, (void*)parent_lock);}
 
 void call_GetCurrentPlaylistEx(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7795,7 +7794,7 @@ void call_GetCurrentPlaylistEx(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x2);
 
-	df_GetCurrentPlaylistEx(connections[conn_id], x0, x1, x2, print_GetCurrentPlaylistEx, (void*)parent_lock);}
+	df_GetCurrentPlaylistEx(connections[conn_id], x0, x1, x2, get_search_rows, print_GetCurrentPlaylistEx, (void*)parent_lock);}
 
 void call_GetDeviceDetails(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7809,7 +7808,7 @@ void call_GetDeviceDetails(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetDeviceDetails(connections[conn_id], x0, print_GetDeviceDetails, (void*)parent_lock);}
+	df_GetDeviceDetails(connections[conn_id], x0, get_search_rows, print_GetDeviceDetails, (void*)parent_lock);}
 
 void call_GetDevices(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7822,7 +7821,7 @@ void call_GetDevices(pthread_mutex_t *parent_lock) {
 	printf("ActiveOnly: ");
 	scanf("%d", &x0);
 
-	df_GetDevices(connections[conn_id], x0, print_GetDevices, (void*)parent_lock);}
+	df_GetDevices(connections[conn_id], x0, get_search_rows, print_GetDevices, (void*)parent_lock);}
 
 void call_GetDriveDetail(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7851,7 +7850,7 @@ void call_GetEncodingQueue(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetEncodingQueue(connections[conn_id], x0, print_GetEncodingQueue, (void*)parent_lock);}
+	df_GetEncodingQueue(connections[conn_id], x0, get_search_rows, print_GetEncodingQueue, (void*)parent_lock);}
 
 void call_GetEncodingStatus(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7864,7 +7863,7 @@ void call_GetEncodingStatus(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetEncodingStatus(connections[conn_id], x0, print_GetEncodingStatus, (void*)parent_lock);}
+	df_GetEncodingStatus(connections[conn_id], x0, get_search_rows, print_GetEncodingStatus, (void*)parent_lock);}
 
 void call_GetExtAlbumCredits(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7878,7 +7877,7 @@ void call_GetExtAlbumCredits(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetExtAlbumCredits(connections[conn_id], x0, print_GetExtAlbumCredits, (void*)parent_lock);}
+	df_GetExtAlbumCredits(connections[conn_id], x0, get_search_rows, print_GetExtAlbumCredits, (void*)parent_lock);}
 
 void call_GetExtAlbumsByContributor(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7903,7 +7902,7 @@ void call_GetExtAlbumsByContributor(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetExtAlbumsByContributor(connections[conn_id], x0, x1, x2, x3, print_GetExtAlbumsByContributor, (void*)parent_lock);}
+	df_GetExtAlbumsByContributor(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetExtAlbumsByContributor, (void*)parent_lock);}
 
 void call_GetExtAlbumsByContributorForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7932,7 +7931,7 @@ void call_GetExtAlbumsByContributorForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x4);
 	if (x4[0] == '-') { x4[0] = '\0'; }
 
-	df_GetExtAlbumsByContributorForDevice(connections[conn_id], x0, x1, x2, x3, x4, print_GetExtAlbumsByContributorForDevice, (void*)parent_lock);}
+	df_GetExtAlbumsByContributorForDevice(connections[conn_id], x0, x1, x2, x3, x4, get_search_rows, print_GetExtAlbumsByContributorForDevice, (void*)parent_lock);}
 
 void call_GetExtAlbumsByContributorForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7957,7 +7956,7 @@ void call_GetExtAlbumsByContributorForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetExtAlbumsByContributorForServer(connections[conn_id], x0, x1, x2, x3, print_GetExtAlbumsByContributorForServer, (void*)parent_lock);}
+	df_GetExtAlbumsByContributorForServer(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetExtAlbumsByContributorForServer, (void*)parent_lock);}
 
 void call_GetExtAlbumsByContributorForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -7986,7 +7985,7 @@ void call_GetExtAlbumsByContributorForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x4);
 	if (x4[0] == '-') { x4[0] = '\0'; }
 
-	df_GetExtAlbumsByContributorForShare(connections[conn_id], x0, x1, x2, x3, x4, print_GetExtAlbumsByContributorForShare, (void*)parent_lock);}
+	df_GetExtAlbumsByContributorForShare(connections[conn_id], x0, x1, x2, x3, x4, get_search_rows, print_GetExtAlbumsByContributorForShare, (void*)parent_lock);}
 
 void call_GetExtAlbumsByCredit(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8008,7 +8007,7 @@ void call_GetExtAlbumsByCredit(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetExtAlbumsByCredit(connections[conn_id], x0, x1, x2, print_GetExtAlbumsByCredit, (void*)parent_lock);}
+	df_GetExtAlbumsByCredit(connections[conn_id], x0, x1, x2, get_search_rows, print_GetExtAlbumsByCredit, (void*)parent_lock);}
 
 void call_GetExtAlbumsByWork(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8030,7 +8029,7 @@ void call_GetExtAlbumsByWork(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetExtAlbumsByWork(connections[conn_id], x0, x1, x2, print_GetExtAlbumsByWork, (void*)parent_lock);}
+	df_GetExtAlbumsByWork(connections[conn_id], x0, x1, x2, get_search_rows, print_GetExtAlbumsByWork, (void*)parent_lock);}
 
 void call_GetExtAlbumsInfo(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8044,7 +8043,7 @@ void call_GetExtAlbumsInfo(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetExtAlbumsInfo(connections[conn_id], x0, print_GetExtAlbumsInfo, (void*)parent_lock);}
+	df_GetExtAlbumsInfo(connections[conn_id], x0, get_search_rows, print_GetExtAlbumsInfo, (void*)parent_lock);}
 
 void call_GetExtAlbumsSearchPeople(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8069,7 +8068,7 @@ void call_GetExtAlbumsSearchPeople(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetExtAlbumsSearchPeople(connections[conn_id], x0, x1, x2, x3, print_GetExtAlbumsSearchPeople, (void*)parent_lock);}
+	df_GetExtAlbumsSearchPeople(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetExtAlbumsSearchPeople, (void*)parent_lock);}
 
 void call_GetExtContributorDetails(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8086,7 +8085,7 @@ void call_GetExtContributorDetails(pthread_mutex_t *parent_lock) {
 	printf("Type: ");
 	scanf("%d", &x1);
 
-	df_GetExtContributorDetails(connections[conn_id], x0, x1, print_GetExtContributorDetails, (void*)parent_lock);}
+	df_GetExtContributorDetails(connections[conn_id], x0, x1, get_search_rows, print_GetExtContributorDetails, (void*)parent_lock);}
 
 void call_GetExtContributors(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8099,7 +8098,7 @@ void call_GetExtContributors(pthread_mutex_t *parent_lock) {
 	printf("Type: ");
 	scanf("%d", &x0);
 
-	df_GetExtContributors(connections[conn_id], x0, print_GetExtContributors, (void*)parent_lock);}
+	df_GetExtContributors(connections[conn_id], x0, get_search_rows, print_GetExtContributors, (void*)parent_lock);}
 
 void call_GetExtContributorsForAlbum(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8116,7 +8115,7 @@ void call_GetExtContributorsForAlbum(pthread_mutex_t *parent_lock) {
 	printf("Type: ");
 	scanf("%d", &x1);
 
-	df_GetExtContributorsForAlbum(connections[conn_id], x0, x1, print_GetExtContributorsForAlbum, (void*)parent_lock);}
+	df_GetExtContributorsForAlbum(connections[conn_id], x0, x1, get_search_rows, print_GetExtContributorsForAlbum, (void*)parent_lock);}
 
 void call_GetExtContributorsForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8133,7 +8132,7 @@ void call_GetExtContributorsForDevice(pthread_mutex_t *parent_lock) {
 	printf("Type: ");
 	scanf("%d", &x1);
 
-	df_GetExtContributorsForDevice(connections[conn_id], x0, x1, print_GetExtContributorsForDevice, (void*)parent_lock);}
+	df_GetExtContributorsForDevice(connections[conn_id], x0, x1, get_search_rows, print_GetExtContributorsForDevice, (void*)parent_lock);}
 
 void call_GetExtContributorsForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8146,7 +8145,7 @@ void call_GetExtContributorsForServer(pthread_mutex_t *parent_lock) {
 	printf("Type: ");
 	scanf("%d", &x0);
 
-	df_GetExtContributorsForServer(connections[conn_id], x0, print_GetExtContributorsForServer, (void*)parent_lock);}
+	df_GetExtContributorsForServer(connections[conn_id], x0, get_search_rows, print_GetExtContributorsForServer, (void*)parent_lock);}
 
 void call_GetExtContributorsForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8163,7 +8162,7 @@ void call_GetExtContributorsForShare(pthread_mutex_t *parent_lock) {
 	printf("Type: ");
 	scanf("%d", &x1);
 
-	df_GetExtContributorsForShare(connections[conn_id], x0, x1, print_GetExtContributorsForShare, (void*)parent_lock);}
+	df_GetExtContributorsForShare(connections[conn_id], x0, x1, get_search_rows, print_GetExtContributorsForShare, (void*)parent_lock);}
 
 void call_GetExtCountAlbumsByContributor(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8332,7 +8331,7 @@ void call_GetExtTrackContributors(pthread_mutex_t *parent_lock) {
 	printf("Type: ");
 	scanf("%d", &x1);
 
-	df_GetExtTrackContributors(connections[conn_id], x0, x1, print_GetExtTrackContributors, (void*)parent_lock);}
+	df_GetExtTrackContributors(connections[conn_id], x0, x1, get_search_rows, print_GetExtTrackContributors, (void*)parent_lock);}
 
 void call_GetExtTracksByContributor(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8353,7 +8352,7 @@ void call_GetExtTracksByContributor(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetExtTracksByContributor(connections[conn_id], x0, x1, x2, print_GetExtTracksByContributor, (void*)parent_lock);}
+	df_GetExtTracksByContributor(connections[conn_id], x0, x1, x2, get_search_rows, print_GetExtTracksByContributor, (void*)parent_lock);}
 
 void call_GetExtTracksByContributorForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8378,7 +8377,7 @@ void call_GetExtTracksByContributorForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetExtTracksByContributorForDevice(connections[conn_id], x0, x1, x2, x3, print_GetExtTracksByContributorForDevice, (void*)parent_lock);}
+	df_GetExtTracksByContributorForDevice(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetExtTracksByContributorForDevice, (void*)parent_lock);}
 
 void call_GetExtTracksByContributorForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8399,7 +8398,7 @@ void call_GetExtTracksByContributorForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetExtTracksByContributorForServer(connections[conn_id], x0, x1, x2, print_GetExtTracksByContributorForServer, (void*)parent_lock);}
+	df_GetExtTracksByContributorForServer(connections[conn_id], x0, x1, x2, get_search_rows, print_GetExtTracksByContributorForServer, (void*)parent_lock);}
 
 void call_GetExtTracksByContributorForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8424,7 +8423,7 @@ void call_GetExtTracksByContributorForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetExtTracksByContributorForShare(connections[conn_id], x0, x1, x2, x3, print_GetExtTracksByContributorForShare, (void*)parent_lock);}
+	df_GetExtTracksByContributorForShare(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetExtTracksByContributorForShare, (void*)parent_lock);}
 
 void call_GetExtTracksByWork(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8438,7 +8437,7 @@ void call_GetExtTracksByWork(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetExtTracksByWork(connections[conn_id], x0, print_GetExtTracksByWork, (void*)parent_lock);}
+	df_GetExtTracksByWork(connections[conn_id], x0, get_search_rows, print_GetExtTracksByWork, (void*)parent_lock);}
 
 void call_GetExtTracksInfo(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8452,7 +8451,7 @@ void call_GetExtTracksInfo(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetExtTracksInfo(connections[conn_id], x0, print_GetExtTracksInfo, (void*)parent_lock);}
+	df_GetExtTracksInfo(connections[conn_id], x0, get_search_rows, print_GetExtTracksInfo, (void*)parent_lock);}
 
 void call_GetExtWorks(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8462,7 +8461,7 @@ void call_GetExtWorks(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetExtWorks(connections[conn_id], print_GetExtWorks, (void*)parent_lock);}
+	df_GetExtWorks(connections[conn_id], get_search_rows, print_GetExtWorks, (void*)parent_lock);}
 
 void call_GetExternalStorageDetail(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8491,7 +8490,7 @@ void call_GetExternalStorages(pthread_mutex_t *parent_lock) {
 	printf("AvailableOnly: ");
 	scanf("%d", &x0);
 
-	df_GetExternalStorages(connections[conn_id], x0, print_GetExternalStorages, (void*)parent_lock);}
+	df_GetExternalStorages(connections[conn_id], x0, get_search_rows, print_GetExternalStorages, (void*)parent_lock);}
 
 void call_GetFileSystemDriveDetail(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8544,7 +8543,7 @@ void call_GetGenres(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetGenres(connections[conn_id], x0, x1, x2, print_GetGenres, (void*)parent_lock);}
+	df_GetGenres(connections[conn_id], x0, x1, x2, get_search_rows, print_GetGenres, (void*)parent_lock);}
 
 void call_GetGenresSubGenres(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8565,7 +8564,7 @@ void call_GetGenresSubGenres(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetGenresSubGenres(connections[conn_id], x0, x1, x2, print_GetGenresSubGenres, (void*)parent_lock);}
+	df_GetGenresSubGenres(connections[conn_id], x0, x1, x2, get_search_rows, print_GetGenresSubGenres, (void*)parent_lock);}
 
 void call_GetHostDetails(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8610,7 +8609,7 @@ void call_GetLatestPlayedAlbums(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetLatestPlayedAlbums(connections[conn_id], x0, x1, x2, print_GetLatestPlayedAlbums, (void*)parent_lock);}
+	df_GetLatestPlayedAlbums(connections[conn_id], x0, x1, x2, get_search_rows, print_GetLatestPlayedAlbums, (void*)parent_lock);}
 
 void call_GetLibraryCheckSum(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8639,7 +8638,7 @@ void call_GetLinkedRoomDetail(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetLinkedRoomDetail(connections[conn_id], x0, print_GetLinkedRoomDetail, (void*)parent_lock);}
+	df_GetLinkedRoomDetail(connections[conn_id], x0, get_search_rows, print_GetLinkedRoomDetail, (void*)parent_lock);}
 
 void call_GetLinkedRooms(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8652,7 +8651,7 @@ void call_GetLinkedRooms(pthread_mutex_t *parent_lock) {
 	printf("LocalOnly: ");
 	scanf("%d", &x0);
 
-	df_GetLinkedRooms(connections[conn_id], x0, print_GetLinkedRooms, (void*)parent_lock);}
+	df_GetLinkedRooms(connections[conn_id], x0, get_search_rows, print_GetLinkedRooms, (void*)parent_lock);}
 
 void call_GetNetworkActiveAdapters(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8665,7 +8664,7 @@ void call_GetNetworkActiveAdapters(pthread_mutex_t *parent_lock) {
 	printf("IncludeWireless: ");
 	scanf("%d", &x0);
 
-	df_GetNetworkActiveAdapters(connections[conn_id], x0, print_GetNetworkActiveAdapters, (void*)parent_lock);}
+	df_GetNetworkActiveAdapters(connections[conn_id], x0, get_search_rows, print_GetNetworkActiveAdapters, (void*)parent_lock);}
 
 void call_GetNetworkWorkgroup(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8698,7 +8697,7 @@ void call_GetNewestAlbums(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetNewestAlbums(connections[conn_id], x0, x1, x2, print_GetNewestAlbums, (void*)parent_lock);}
+	df_GetNewestAlbums(connections[conn_id], x0, x1, x2, get_search_rows, print_GetNewestAlbums, (void*)parent_lock);}
 
 void call_GetNonLinkedRooms(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8711,7 +8710,7 @@ void call_GetNonLinkedRooms(pthread_mutex_t *parent_lock) {
 	printf("LocalOnly: ");
 	scanf("%d", &x0);
 
-	df_GetNonLinkedRooms(connections[conn_id], x0, print_GetNonLinkedRooms, (void*)parent_lock);}
+	df_GetNonLinkedRooms(connections[conn_id], x0, get_search_rows, print_GetNonLinkedRooms, (void*)parent_lock);}
 
 void call_GetOperationActivity(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8746,7 +8745,7 @@ void call_GetOutputChannels(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetOutputChannels(connections[conn_id], x0, x1, print_GetOutputChannels, (void*)parent_lock);}
+	df_GetOutputChannels(connections[conn_id], x0, x1, get_search_rows, print_GetOutputChannels, (void*)parent_lock);}
 
 void call_GetOutputDevices(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8766,7 +8765,7 @@ void call_GetOutputDevices(pthread_mutex_t *parent_lock) {
 	printf("AsioOutputs: ");
 	scanf("%d", &x2);
 
-	df_GetOutputDevices(connections[conn_id], x0, x1, x2, print_GetOutputDevices, (void*)parent_lock);}
+	df_GetOutputDevices(connections[conn_id], x0, x1, x2, get_search_rows, print_GetOutputDevices, (void*)parent_lock);}
 
 void call_GetPlayListsByLetter(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8788,7 +8787,7 @@ void call_GetPlayListsByLetter(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetPlayListsByLetter(connections[conn_id], x0, x1, x2, print_GetPlayListsByLetter, (void*)parent_lock);}
+	df_GetPlayListsByLetter(connections[conn_id], x0, x1, x2, get_search_rows, print_GetPlayListsByLetter, (void*)parent_lock);}
 
 void call_GetPlayerInstances(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8801,7 +8800,7 @@ void call_GetPlayerInstances(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetPlayerInstances(connections[conn_id], x0, print_GetPlayerInstances, (void*)parent_lock);}
+	df_GetPlayerInstances(connections[conn_id], x0, get_search_rows, print_GetPlayerInstances, (void*)parent_lock);}
 
 void call_GetPlayerStatus(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8853,7 +8852,7 @@ void call_GetPlaylistsForGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetPlaylistsForGenre(connections[conn_id], x0, x1, x2, print_GetPlaylistsForGenre, (void*)parent_lock);}
+	df_GetPlaylistsForGenre(connections[conn_id], x0, x1, x2, get_search_rows, print_GetPlaylistsForGenre, (void*)parent_lock);}
 
 void call_GetPlaylistsForSubGenre(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8875,7 +8874,7 @@ void call_GetPlaylistsForSubGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetPlaylistsForSubGenre(connections[conn_id], x0, x1, x2, print_GetPlaylistsForSubGenre, (void*)parent_lock);}
+	df_GetPlaylistsForSubGenre(connections[conn_id], x0, x1, x2, get_search_rows, print_GetPlaylistsForSubGenre, (void*)parent_lock);}
 
 void call_GetPlaylistsForSubGenreForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8901,7 +8900,7 @@ void call_GetPlaylistsForSubGenreForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetPlaylistsForSubGenreForDevice(connections[conn_id], x0, x1, x2, x3, print_GetPlaylistsForSubGenreForDevice, (void*)parent_lock);}
+	df_GetPlaylistsForSubGenreForDevice(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetPlaylistsForSubGenreForDevice, (void*)parent_lock);}
 
 void call_GetPlaylistsForSubGenreForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8923,7 +8922,7 @@ void call_GetPlaylistsForSubGenreForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetPlaylistsForSubGenreForServer(connections[conn_id], x0, x1, x2, print_GetPlaylistsForSubGenreForServer, (void*)parent_lock);}
+	df_GetPlaylistsForSubGenreForServer(connections[conn_id], x0, x1, x2, get_search_rows, print_GetPlaylistsForSubGenreForServer, (void*)parent_lock);}
 
 void call_GetPlaylistsForSubGenreForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8949,7 +8948,7 @@ void call_GetPlaylistsForSubGenreForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetPlaylistsForSubGenreForShare(connections[conn_id], x0, x1, x2, x3, print_GetPlaylistsForSubGenreForShare, (void*)parent_lock);}
+	df_GetPlaylistsForSubGenreForShare(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetPlaylistsForSubGenreForShare, (void*)parent_lock);}
 
 void call_GetRepeat(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8977,7 +8976,7 @@ void call_GetRipEncSettings(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetRipEncSettings(connections[conn_id], x0, print_GetRipEncSettings, (void*)parent_lock);}
+	df_GetRipEncSettings(connections[conn_id], x0, get_search_rows, print_GetRipEncSettings, (void*)parent_lock);}
 
 void call_GetRipEncSettingsEx(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -8990,7 +8989,7 @@ void call_GetRipEncSettingsEx(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetRipEncSettingsEx(connections[conn_id], x0, print_GetRipEncSettingsEx, (void*)parent_lock);}
+	df_GetRipEncSettingsEx(connections[conn_id], x0, get_search_rows, print_GetRipEncSettingsEx, (void*)parent_lock);}
 
 void call_GetRippingAlerts(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9000,7 +8999,7 @@ void call_GetRippingAlerts(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetRippingAlerts(connections[conn_id], print_GetRippingAlerts, (void*)parent_lock);}
+	df_GetRippingAlerts(connections[conn_id], get_search_rows, print_GetRippingAlerts, (void*)parent_lock);}
 
 void call_GetRippingStatus(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9013,7 +9012,7 @@ void call_GetRippingStatus(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetRippingStatus(connections[conn_id], x0, print_GetRippingStatus, (void*)parent_lock);}
+	df_GetRippingStatus(connections[conn_id], x0, get_search_rows, print_GetRippingStatus, (void*)parent_lock);}
 
 void call_GetRoomDetail(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9042,7 +9041,7 @@ void call_GetRooms(pthread_mutex_t *parent_lock) {
 	printf("LocalOnly: ");
 	scanf("%d", &x0);
 
-	df_GetRooms(connections[conn_id], x0, print_GetRooms, (void*)parent_lock);}
+	df_GetRooms(connections[conn_id], x0, get_search_rows, print_GetRooms, (void*)parent_lock);}
 
 void call_GetRoomsWithPlayBack(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9055,7 +9054,7 @@ void call_GetRoomsWithPlayBack(pthread_mutex_t *parent_lock) {
 	printf("LocalOnly: ");
 	scanf("%d", &x0);
 
-	df_GetRoomsWithPlayBack(connections[conn_id], x0, print_GetRoomsWithPlayBack, (void*)parent_lock);}
+	df_GetRoomsWithPlayBack(connections[conn_id], x0, get_search_rows, print_GetRoomsWithPlayBack, (void*)parent_lock);}
 
 void call_GetRoomsWithRipping(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9068,7 +9067,7 @@ void call_GetRoomsWithRipping(pthread_mutex_t *parent_lock) {
 	printf("LocalOnly: ");
 	scanf("%d", &x0);
 
-	df_GetRoomsWithRipping(connections[conn_id], x0, print_GetRoomsWithRipping, (void*)parent_lock);}
+	df_GetRoomsWithRipping(connections[conn_id], x0, get_search_rows, print_GetRoomsWithRipping, (void*)parent_lock);}
 
 void call_GetRows(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9126,7 +9125,7 @@ void call_GetSettings(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetSettings(connections[conn_id], x0, print_GetSettings, (void*)parent_lock);}
+	df_GetSettings(connections[conn_id], x0, get_search_rows, print_GetSettings, (void*)parent_lock);}
 
 void call_GetSettingsEx(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9139,7 +9138,7 @@ void call_GetSettingsEx(pthread_mutex_t *parent_lock) {
 	printf("RoomID: ");
 	scanf("%d", &x0);
 
-	df_GetSettingsEx(connections[conn_id], x0, print_GetSettingsEx, (void*)parent_lock);}
+	df_GetSettingsEx(connections[conn_id], x0, get_search_rows, print_GetSettingsEx, (void*)parent_lock);}
 
 void call_GetSetupVal(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9241,7 +9240,7 @@ void call_GetStatusMessages(pthread_mutex_t *parent_lock) {
 	printf("Tag: ");
 	scanf("%d", &x2);
 
-	df_GetStatusMessages(connections[conn_id], x0, x1, x2, print_GetStatusMessages, (void*)parent_lock);}
+	df_GetStatusMessages(connections[conn_id], x0, x1, x2, get_search_rows, print_GetStatusMessages, (void*)parent_lock);}
 
 void call_GetStoreDetail(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9255,7 +9254,7 @@ void call_GetStoreDetail(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetStoreDetail(connections[conn_id], x0, print_GetStoreDetail, (void*)parent_lock);}
+	df_GetStoreDetail(connections[conn_id], x0, get_search_rows, print_GetStoreDetail, (void*)parent_lock);}
 
 void call_GetStores(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9271,7 +9270,7 @@ void call_GetStores(pthread_mutex_t *parent_lock) {
 	printf("MusicStoreType: ");
 	scanf("%d", &x1);
 
-	df_GetStores(connections[conn_id], x0, x1, print_GetStores, (void*)parent_lock);}
+	df_GetStores(connections[conn_id], x0, x1, get_search_rows, print_GetStores, (void*)parent_lock);}
 
 void call_GetSubGenreDetail(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9309,7 +9308,7 @@ void call_GetSubGenresForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetSubGenresForDevice(connections[conn_id], x0, x1, x2, print_GetSubGenresForDevice, (void*)parent_lock);}
+	df_GetSubGenresForDevice(connections[conn_id], x0, x1, x2, get_search_rows, print_GetSubGenresForDevice, (void*)parent_lock);}
 
 void call_GetSubGenresForGenre(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9334,7 +9333,7 @@ void call_GetSubGenresForGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetSubGenresForGenre(connections[conn_id], x0, x1, x2, x3, print_GetSubGenresForGenre, (void*)parent_lock);}
+	df_GetSubGenresForGenre(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetSubGenresForGenre, (void*)parent_lock);}
 
 void call_GetSubGenresForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9358,7 +9357,7 @@ void call_GetSubGenresForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x3);
 	if (x3[0] == '-') { x3[0] = '\0'; }
 
-	df_GetSubGenresForServer(connections[conn_id], x0, x1, x2, x3, print_GetSubGenresForServer, (void*)parent_lock);}
+	df_GetSubGenresForServer(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetSubGenresForServer, (void*)parent_lock);}
 
 void call_GetSubGenresForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9380,7 +9379,7 @@ void call_GetSubGenresForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetSubGenresForShare(connections[conn_id], x0, x1, x2, print_GetSubGenresForShare, (void*)parent_lock);}
+	df_GetSubGenresForShare(connections[conn_id], x0, x1, x2, get_search_rows, print_GetSubGenresForShare, (void*)parent_lock);}
 
 void call_GetSystemDrives(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9390,7 +9389,7 @@ void call_GetSystemDrives(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetSystemDrives(connections[conn_id], print_GetSystemDrives, (void*)parent_lock);}
+	df_GetSystemDrives(connections[conn_id], get_search_rows, print_GetSystemDrives, (void*)parent_lock);}
 
 void call_GetSystemTime(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9423,7 +9422,7 @@ void call_GetTopPlayedAlbums(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetTopPlayedAlbums(connections[conn_id], x0, x1, x2, print_GetTopPlayedAlbums, (void*)parent_lock);}
+	df_GetTopPlayedAlbums(connections[conn_id], x0, x1, x2, get_search_rows, print_GetTopPlayedAlbums, (void*)parent_lock);}
 
 void call_GetTrackCount(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9544,7 +9543,7 @@ void call_GetTrackRange(pthread_mutex_t *parent_lock) {
 	printf("Storage: ");
 	scanf("%d", &x4);
 
-	df_GetTrackRange(connections[conn_id], x0, x1, x2, x3, x4, print_GetTrackRange, (void*)parent_lock);}
+	df_GetTrackRange(connections[conn_id], x0, x1, x2, x3, x4, get_search_rows, print_GetTrackRange, (void*)parent_lock);}
 
 void call_GetTracksAll(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9554,7 +9553,7 @@ void call_GetTracksAll(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetTracksAll(connections[conn_id], print_GetTracksAll, (void*)parent_lock);}
+	df_GetTracksAll(connections[conn_id], get_search_rows, print_GetTracksAll, (void*)parent_lock);}
 
 void call_GetTracksForAlbumInUPL(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9568,7 +9567,7 @@ void call_GetTracksForAlbumInUPL(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetTracksForAlbumInUPL(connections[conn_id], x0, print_GetTracksForAlbumInUPL, (void*)parent_lock);}
+	df_GetTracksForAlbumInUPL(connections[conn_id], x0, get_search_rows, print_GetTracksForAlbumInUPL, (void*)parent_lock);}
 
 void call_GetTracksForArtist(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9582,7 +9581,7 @@ void call_GetTracksForArtist(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetTracksForArtist(connections[conn_id], x0, print_GetTracksForArtist, (void*)parent_lock);}
+	df_GetTracksForArtist(connections[conn_id], x0, get_search_rows, print_GetTracksForArtist, (void*)parent_lock);}
 
 void call_GetTracksForArtistForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9600,7 +9599,7 @@ void call_GetTracksForArtistForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetTracksForArtistForDevice(connections[conn_id], x0, x1, print_GetTracksForArtistForDevice, (void*)parent_lock);}
+	df_GetTracksForArtistForDevice(connections[conn_id], x0, x1, get_search_rows, print_GetTracksForArtistForDevice, (void*)parent_lock);}
 
 void call_GetTracksForArtistForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9614,7 +9613,7 @@ void call_GetTracksForArtistForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetTracksForArtistForServer(connections[conn_id], x0, print_GetTracksForArtistForServer, (void*)parent_lock);}
+	df_GetTracksForArtistForServer(connections[conn_id], x0, get_search_rows, print_GetTracksForArtistForServer, (void*)parent_lock);}
 
 void call_GetTracksForArtistForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9632,7 +9631,7 @@ void call_GetTracksForArtistForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetTracksForArtistForShare(connections[conn_id], x0, x1, print_GetTracksForArtistForShare, (void*)parent_lock);}
+	df_GetTracksForArtistForShare(connections[conn_id], x0, x1, get_search_rows, print_GetTracksForArtistForShare, (void*)parent_lock);}
 
 void call_GetTracksForDeletion(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9648,7 +9647,7 @@ void call_GetTracksForDeletion(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x1);
 
-	df_GetTracksForDeletion(connections[conn_id], x0, x1, print_GetTracksForDeletion, (void*)parent_lock);}
+	df_GetTracksForDeletion(connections[conn_id], x0, x1, get_search_rows, print_GetTracksForDeletion, (void*)parent_lock);}
 
 void call_GetTracksForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9662,7 +9661,7 @@ void call_GetTracksForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetTracksForDevice(connections[conn_id], x0, print_GetTracksForDevice, (void*)parent_lock);}
+	df_GetTracksForDevice(connections[conn_id], x0, get_search_rows, print_GetTracksForDevice, (void*)parent_lock);}
 
 void call_GetTracksForGenre(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9676,7 +9675,7 @@ void call_GetTracksForGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetTracksForGenre(connections[conn_id], x0, print_GetTracksForGenre, (void*)parent_lock);}
+	df_GetTracksForGenre(connections[conn_id], x0, get_search_rows, print_GetTracksForGenre, (void*)parent_lock);}
 
 void call_GetTracksForNamedEntity(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9697,7 +9696,7 @@ void call_GetTracksForNamedEntity(pthread_mutex_t *parent_lock) {
 	printf("ExactMatch: ");
 	scanf("%d", &x2);
 
-	df_GetTracksForNamedEntity(connections[conn_id], x0, x1, x2, print_GetTracksForNamedEntity, (void*)parent_lock);}
+	df_GetTracksForNamedEntity(connections[conn_id], x0, x1, x2, get_search_rows, print_GetTracksForNamedEntity, (void*)parent_lock);}
 
 void call_GetTracksForPlaylist(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9714,7 +9713,7 @@ void call_GetTracksForPlaylist(pthread_mutex_t *parent_lock) {
 	printf("ShowHidden: ");
 	scanf("%d", &x1);
 
-	df_GetTracksForPlaylist(connections[conn_id], x0, x1, print_GetTracksForPlaylist, (void*)parent_lock);}
+	df_GetTracksForPlaylist(connections[conn_id], x0, x1, get_search_rows, print_GetTracksForPlaylist, (void*)parent_lock);}
 
 void call_GetTracksForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9724,7 +9723,7 @@ void call_GetTracksForServer(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetTracksForServer(connections[conn_id], print_GetTracksForServer, (void*)parent_lock);}
+	df_GetTracksForServer(connections[conn_id], get_search_rows, print_GetTracksForServer, (void*)parent_lock);}
 
 void call_GetTracksForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9738,7 +9737,7 @@ void call_GetTracksForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetTracksForShare(connections[conn_id], x0, print_GetTracksForShare, (void*)parent_lock);}
+	df_GetTracksForShare(connections[conn_id], x0, get_search_rows, print_GetTracksForShare, (void*)parent_lock);}
 
 void call_GetTracksForSubGenre(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9752,7 +9751,7 @@ void call_GetTracksForSubGenre(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetTracksForSubGenre(connections[conn_id], x0, print_GetTracksForSubGenre, (void*)parent_lock);}
+	df_GetTracksForSubGenre(connections[conn_id], x0, get_search_rows, print_GetTracksForSubGenre, (void*)parent_lock);}
 
 void call_GetTracksForSubGenreForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9770,7 +9769,7 @@ void call_GetTracksForSubGenreForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetTracksForSubGenreForDevice(connections[conn_id], x0, x1, print_GetTracksForSubGenreForDevice, (void*)parent_lock);}
+	df_GetTracksForSubGenreForDevice(connections[conn_id], x0, x1, get_search_rows, print_GetTracksForSubGenreForDevice, (void*)parent_lock);}
 
 void call_GetTracksForSubGenreForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9784,7 +9783,7 @@ void call_GetTracksForSubGenreForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_GetTracksForSubGenreForServer(connections[conn_id], x0, print_GetTracksForSubGenreForServer, (void*)parent_lock);}
+	df_GetTracksForSubGenreForServer(connections[conn_id], x0, get_search_rows, print_GetTracksForSubGenreForServer, (void*)parent_lock);}
 
 void call_GetTracksForSubGenreForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9802,7 +9801,7 @@ void call_GetTracksForSubGenreForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetTracksForSubGenreForShare(connections[conn_id], x0, x1, print_GetTracksForSubGenreForShare, (void*)parent_lock);}
+	df_GetTracksForSubGenreForShare(connections[conn_id], x0, x1, get_search_rows, print_GetTracksForSubGenreForShare, (void*)parent_lock);}
 
 void call_GetTracksOtherInfo(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9822,7 +9821,7 @@ void call_GetTracksOtherInfo(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x2);
 
-	df_GetTracksOtherInfo(connections[conn_id], x0, x1, x2, print_GetTracksOtherInfo, (void*)parent_lock);}
+	df_GetTracksOtherInfo(connections[conn_id], x0, x1, x2, get_search_rows, print_GetTracksOtherInfo, (void*)parent_lock);}
 
 void call_GetTracksSearchName(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9845,7 +9844,7 @@ void call_GetTracksSearchName(pthread_mutex_t *parent_lock) {
 	printf("ImageSize: ");
 	scanf("%d", &x3);
 
-	df_GetTracksSearchName(connections[conn_id], x0, x1, x2, x3, print_GetTracksSearchName, (void*)parent_lock);}
+	df_GetTracksSearchName(connections[conn_id], x0, x1, x2, x3, get_search_rows, print_GetTracksSearchName, (void*)parent_lock);}
 
 void call_GetUpnpMediaRenderers(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9855,7 +9854,7 @@ void call_GetUpnpMediaRenderers(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetUpnpMediaRenderers(connections[conn_id], print_GetUpnpMediaRenderers, (void*)parent_lock);}
+	df_GetUpnpMediaRenderers(connections[conn_id], get_search_rows, print_GetUpnpMediaRenderers, (void*)parent_lock);}
 
 void call_GetUserPlaylists(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9873,7 +9872,7 @@ void call_GetUserPlaylists(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetUserPlaylists(connections[conn_id], x0, x1, print_GetUserPlaylists, (void*)parent_lock);}
+	df_GetUserPlaylists(connections[conn_id], x0, x1, get_search_rows, print_GetUserPlaylists, (void*)parent_lock);}
 
 void call_GetUserPlaylistsForDevice(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9895,7 +9894,7 @@ void call_GetUserPlaylistsForDevice(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetUserPlaylistsForDevice(connections[conn_id], x0, x1, x2, print_GetUserPlaylistsForDevice, (void*)parent_lock);}
+	df_GetUserPlaylistsForDevice(connections[conn_id], x0, x1, x2, get_search_rows, print_GetUserPlaylistsForDevice, (void*)parent_lock);}
 
 void call_GetUserPlaylistsForServer(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9913,7 +9912,7 @@ void call_GetUserPlaylistsForServer(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetUserPlaylistsForServer(connections[conn_id], x0, x1, print_GetUserPlaylistsForServer, (void*)parent_lock);}
+	df_GetUserPlaylistsForServer(connections[conn_id], x0, x1, get_search_rows, print_GetUserPlaylistsForServer, (void*)parent_lock);}
 
 void call_GetUserPlaylistsForShare(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9935,7 +9934,7 @@ void call_GetUserPlaylistsForShare(pthread_mutex_t *parent_lock) {
 	scanf("%s", x2);
 	if (x2[0] == '-') { x2[0] = '\0'; }
 
-	df_GetUserPlaylistsForShare(connections[conn_id], x0, x1, x2, print_GetUserPlaylistsForShare, (void*)parent_lock);}
+	df_GetUserPlaylistsForShare(connections[conn_id], x0, x1, x2, get_search_rows, print_GetUserPlaylistsForShare, (void*)parent_lock);}
 
 void call_GetUserStatus(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9945,7 +9944,7 @@ void call_GetUserStatus(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_GetUserStatus(connections[conn_id], print_GetUserStatus, (void*)parent_lock);}
+	df_GetUserStatus(connections[conn_id], get_search_rows, print_GetUserStatus, (void*)parent_lock);}
 
 void call_GetVolume(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -10055,7 +10054,7 @@ void call_MoveAlbumGetQueue(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_MoveAlbumGetQueue(connections[conn_id], print_MoveAlbumGetQueue, (void*)parent_lock);}
+	df_MoveAlbumGetQueue(connections[conn_id], get_search_rows, print_MoveAlbumGetQueue, (void*)parent_lock);}
 
 void call_MoveAlbumGetStatus(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11307,7 +11306,7 @@ void call_Status(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_Status(connections[conn_id], print_Status, (void*)parent_lock);}
+	df_Status(connections[conn_id], get_search_rows, print_Status, (void*)parent_lock);}
 
 void call_Stop(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11366,7 +11365,7 @@ void call_UndoUserEdits(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_UndoUserEdits(connections[conn_id], x0, print_UndoUserEdits, (void*)parent_lock);}
+	df_UndoUserEdits(connections[conn_id], x0, get_search_rows, print_UndoUserEdits, (void*)parent_lock);}
 
 void call_UpdateBackupJob(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11821,7 +11820,7 @@ void call_vTunerGetChildNodes(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_vTunerGetChildNodes(connections[conn_id], x0, x1, print_vTunerGetChildNodes, (void*)parent_lock);}
+	df_vTunerGetChildNodes(connections[conn_id], x0, x1, get_search_rows, print_vTunerGetChildNodes, (void*)parent_lock);}
 
 void call_vTunerGetLastPlayed(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11831,7 +11830,7 @@ void call_vTunerGetLastPlayed(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_vTunerGetLastPlayed(connections[conn_id], print_vTunerGetLastPlayed, (void*)parent_lock);}
+	df_vTunerGetLastPlayed(connections[conn_id], get_search_rows, print_vTunerGetLastPlayed, (void*)parent_lock);}
 
 void call_vTunerGetMostPlayed(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11841,7 +11840,7 @@ void call_vTunerGetMostPlayed(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_vTunerGetMostPlayed(connections[conn_id], print_vTunerGetMostPlayed, (void*)parent_lock);}
+	df_vTunerGetMostPlayed(connections[conn_id], get_search_rows, print_vTunerGetMostPlayed, (void*)parent_lock);}
 
 void call_vTunerGetNodeFromPlayedUrl(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11855,7 +11854,7 @@ void call_vTunerGetNodeFromPlayedUrl(pthread_mutex_t *parent_lock) {
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
 
-	df_vTunerGetNodeFromPlayedUrl(connections[conn_id], x0, print_vTunerGetNodeFromPlayedUrl, (void*)parent_lock);}
+	df_vTunerGetNodeFromPlayedUrl(connections[conn_id], x0, get_search_rows, print_vTunerGetNodeFromPlayedUrl, (void*)parent_lock);}
 
 void call_vTunerGetPresetChannels(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11865,7 +11864,7 @@ void call_vTunerGetPresetChannels(pthread_mutex_t *parent_lock) {
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
 
-	df_vTunerGetPresetChannels(connections[conn_id], print_vTunerGetPresetChannels, (void*)parent_lock);}
+	df_vTunerGetPresetChannels(connections[conn_id], get_search_rows, print_vTunerGetPresetChannels, (void*)parent_lock);}
 
 void call_vTunerLookupById(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11882,7 +11881,7 @@ void call_vTunerLookupById(pthread_mutex_t *parent_lock) {
 	printf("vTunerLookupType: ");
 	scanf("%d", &x1);
 
-	df_vTunerLookupById(connections[conn_id], x0, x1, print_vTunerLookupById, (void*)parent_lock);}
+	df_vTunerLookupById(connections[conn_id], x0, x1, get_search_rows, print_vTunerLookupById, (void*)parent_lock);}
 
 void call_vTunerPlayById(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -12024,6 +12023,7 @@ static struct command_option rget_options[10] = { { "trackposition", rget_trackp
 												  { "shuffle", rget_shuffle },
 											      { "trackname", rget_trackname },
 												  { "clear", rget_clear }};
+
 
 static int num_call_options = 374;
 static struct command_option call_options[374] = { { "ActivateExternalStorage", call_ActivateExternalStorage }, 

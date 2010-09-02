@@ -11,6 +11,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+
 typedef enum {
 	DF_STORAGE_UNKNOWN = 0,
 	DF_STORAGE_SERVER = 1,

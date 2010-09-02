@@ -8,15 +8,9 @@
  */
 
 #include "regex_list.h"
-#include <string.h>
-#include "debugging.h"
 
 char* regex_list_get(char *regex_name) {
 	char *pattern;
-	
-	pattern = NULL;
-	
-	DFDEBUG("called for %s", regex_name);
 	
 	if (strcmp(regex_name, "void") == 0) {
 		pattern="\\[(.+)\\]";

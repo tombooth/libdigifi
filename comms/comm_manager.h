@@ -40,8 +40,8 @@ void comm_start(int outgoing_threads, void (*rget_callback)(in_settings*, char*,
 
 connection *comm_connect(char *ipaddress, int connections);
 
-int comm_send(connection *conn, int rget, char *tag, int count, int requested_count, void (*callback)(out_request*, out_response*, int, void*), void *context, char *message, ...);
-int comm_send_via_socket(out_socket *socket, char *tag, int count, int requested_count, void (*callback)(out_request*, out_response*, int, void*), void *context, char *message, ...);
+int comm_send(connection *conn, int rget, char *tag, int count, void (*callback)(out_request*, out_response*, int, void*), void *context, char *message, ...);
+int comm_send_via_socket(out_socket *socket, char *tag, int count, void (*callback)(out_request*, out_response*, int, void*), void *context, char *message, ...);
 
 void comm_disconnect(connection *conn);
 

@@ -26,7 +26,6 @@ typedef struct {
 void df_extract_from(df_search *, int start, int end);
 void df_free_search(df_search *);
 
-
 // Generated functions
 //
 
@@ -1723,7 +1722,7 @@ SearchType2: Type of search: 1=Contains (default), 2=Begins With, 3=Exact Match,
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_AdvancedSearch(df_connection *conn, char* EntityName, char* SearchString, int SearchType, int Match, char* EntityName2, char* SearchString2, int SearchType2, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type3row*, void*), void *context);
+int df_AdvancedSearch(df_connection *conn, char* EntityName, char* SearchString, int SearchType, int Match, char* EntityName2, char* SearchString2, int SearchType2, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type3row*, void*), void *context);
 
 /*!
 Perform a CD lookup for one or more existing albums.
@@ -1732,12 +1731,12 @@ Interval: Lookup interval in days. This is the number of days since the last loo
 IgnoreProviderUsed: If this parameter is true then any lookup provider can be used to locate a match for the album. If this is false then last provider used for a given album will be set as a minimum provider. It basically means that if set to false, then a FreeDB match will not override an AMG match (for example).
 AlbumKey: The absolute or relative addresses of specific Album(s) to use
 */
-int df_BulkCDLookup(df_connection *conn, int AllAlbums, int Interval, int IgnoreProviderUsed, char* AlbumKey, void (*callback)(int, df_bulklookuprow*, void*), void *context);
+int df_BulkCDLookup(df_connection *conn, int AllAlbums, int Interval, int IgnoreProviderUsed, char* AlbumKey, void (*s_callback)(df_search*), void (*callback)(int, df_bulklookuprow*, void*), void *context);
 
 /*!
 Returns the current CD lookup queue
 */
-int df_CDLookupGetQueue(df_connection *conn, void (*callback)(int, df_type4row*, void*), void *context);
+int df_CDLookupGetQueue(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_type4row*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified complex search.
@@ -1745,37 +1744,37 @@ SearchParameter: Psuedo SQL to apply to the search.
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_ComplexSearchGetAlbums(df_connection *conn, char* SearchParameter, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_ComplexSearchGetAlbums(df_connection *conn, char* SearchParameter, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all artists associated with a specified complex search.
 SearchParameter: Psuedo SQL to apply to the search.
 */
-int df_ComplexSearchGetArtists(df_connection *conn, char* SearchParameter, void (*callback)(int, df_artistrow*, void*), void *context);
+int df_ComplexSearchGetArtists(df_connection *conn, char* SearchParameter, void (*s_callback)(df_search*), void (*callback)(int, df_artistrow*, void*), void *context);
 
 /*!
 Lists all contributors associated with a specified complex search.
 Type: Contributor Type
 SearchParameter: Psuedo SQL to apply to the search.
 */
-int df_ComplexSearchGetContributors(df_connection *conn, int Type, char* SearchParameter, void (*callback)(int, df_extcontributorrow*, void*), void *context);
+int df_ComplexSearchGetContributors(df_connection *conn, int Type, char* SearchParameter, void (*s_callback)(df_search*), void (*callback)(int, df_extcontributorrow*, void*), void *context);
 
 /*!
 Lists all tracks associated with a specified complex search.
 SearchParameter: Psuedo SQL to apply to the search.
 */
-int df_ComplexSearchGetTracks(df_connection *conn, char* SearchParameter, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_ComplexSearchGetTracks(df_connection *conn, char* SearchParameter, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List the Advanced Status Display
 */
-int df_GetAdvancedStatus(df_connection *conn, void (*callback)(int, df_keyvaluerow*, void*), void *context);
+int df_GetAdvancedStatus(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_keyvaluerow*, void*), void *context);
 
 /*!
 List the details for a specified album
 Address: The absolute or relative address of an album to search
 */
-int df_GetAlbumDetails(df_connection *conn, char* Address, void (*callback)(int, df_albumdetailrow*, void*), void *context);
+int df_GetAlbumDetails(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_albumdetailrow*, void*), void *context);
 
 /*!
 Lists all albums
@@ -1790,7 +1789,7 @@ Address: Mutliple absolute or relative addresses of artists to search(space sepe
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForArtists(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForArtists(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified set of artists, restricted by a specified portable device
@@ -1799,7 +1798,7 @@ DeviceAddress: Absolute or relative address of a device to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForArtistsForDevice(df_connection *conn, char* Address, char* DeviceAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForArtistsForDevice(df_connection *conn, char* Address, char* DeviceAddress, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified set of artists, restricted by the local server storage
@@ -1807,7 +1806,7 @@ Address: Mutliple absolute or relative addresses of artists to search(space sepe
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForArtistsForServer(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForArtistsForServer(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified set of artists, restricted by a specified network share
@@ -1816,7 +1815,7 @@ ShareAddress: Absolute or relative address of a share to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForArtistsForShare(df_connection *conn, char* Address, char* ShareAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForArtistsForShare(df_connection *conn, char* Address, char* ShareAddress, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified set of artists, restricted by a specified genre
@@ -1825,7 +1824,7 @@ GenreAddress: Absolute or relative address of a genre to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForArtistsInGenre(df_connection *conn, char* Address, char* GenreAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForArtistsInGenre(df_connection *conn, char* Address, char* GenreAddress, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified set of artists, restricted by a specified sub-genre
@@ -1834,14 +1833,14 @@ SubGenreAddress: Multiple absolute or relative addresses of sub-genres to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForArtistsInSubGenre(df_connection *conn, char* Address, char* SubGenreAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForArtistsInSubGenre(df_connection *conn, char* Address, char* SubGenreAddress, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums for Deletion
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForDeletion(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForDeletion(df_connection *conn, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified portable device
@@ -1849,7 +1848,7 @@ Address: Absolute or relative address of device to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums in a playlist
@@ -1857,14 +1856,14 @@ Address: Absolute or relative address of the playlist to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForPlaylist(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForPlaylist(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums stored locally on the server
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForServer(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForServer(df_connection *conn, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified network share
@@ -1872,7 +1871,7 @@ Address: Absolute or relative address of share to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums for a specified music store
@@ -1881,7 +1880,7 @@ IncludeDeleted: Should delete albums be included in the results.
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbumsForStore(df_connection *conn, char* StoreKey, int IncludeDeleted, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsForStore(df_connection *conn, char* StoreKey, int IncludeDeleted, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists additional details for requested albums
@@ -1891,7 +1890,7 @@ SortOrder: The sort order to use in sorting the results (ASC or DESC). If multip
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetAlbumsOtherInfo(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context);
+int df_GetAlbumsOtherInfo(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type2row*, void*), void *context);
 
 /*!
 Lists additional details for all albums
@@ -1900,7 +1899,7 @@ SortOrder: The sort order to use in sorting the results (ASC or DESC). If multip
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetAlbumsOtherInfoAll(df_connection *conn, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context);
+int df_GetAlbumsOtherInfoAll(df_connection *conn, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type2row*, void*), void *context);
 
 /*!
 Lists additional details for all albums
@@ -1910,7 +1909,7 @@ SortOrder: The sort order to use in sorting the results (ASC or DESC). If multip
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetAlbumsOtherInfoForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context);
+int df_GetAlbumsOtherInfoForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type2row*, void*), void *context);
 
 /*!
 Lists additional details for all albums on the local server
@@ -1919,7 +1918,7 @@ SortOrder: The sort order to use in sorting the results (ASC or DESC). If multip
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetAlbumsOtherInfoForServer(df_connection *conn, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context);
+int df_GetAlbumsOtherInfoForServer(df_connection *conn, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type2row*, void*), void *context);
 
 /*!
 Lists additional details for all albums
@@ -1929,7 +1928,7 @@ SortOrder: The sort order to use in sorting the results (ASC or DESC). If multip
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetAlbumsOtherInfoForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type2row*, void*), void *context);
+int df_GetAlbumsOtherInfoForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type2row*, void*), void *context);
 
 /*!
 List all albums containing a specified search string withing eiter the artist or album name
@@ -1938,105 +1937,105 @@ SortColumn: The column name(s) to use when sorting the results. Multiple columns
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 SearchType: Type of search: 1=Contains (default), 2=Starts With, 3=Exact Match, 4=Does Not Contain
 */
-int df_GetAlbumsSearchAlbumArtist(df_connection *conn, char* SearchString, char* SortColumn, char* SortOrder, int SearchType, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsSearchAlbumArtist(df_connection *conn, char* SearchString, char* SortColumn, char* SortOrder, int SearchType, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums which have at least one album lookup message associated them.
 */
-int df_GetAlbumsWithAlbumLookupMessages(df_connection *conn, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbumsWithAlbumLookupMessages(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Get the details of a single alert
 Address: The absolute or relative address of an alert to search
 */
-int df_GetAlertDetails(df_connection *conn, char* Address, void (*callback)(int, df_alertdetailrow*, void*), void *context);
+int df_GetAlertDetails(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_alertdetailrow*, void*), void *context);
 
 /*!
 Return the details of a single artist
 Address: The absolute or relative address of an artist to locate
 */
-int df_GetArtistDetails(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context);
+int df_GetArtistDetails(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_artistrow*, void*), void *context);
 
 /*!
 Lists all artists
 Allocated: Flag controlling whether only allocated artists should be shown(those with albums). Defaults to False.
 */
-int df_GetArtists(df_connection *conn, int Allocated, void (*callback)(int, df_artistrow*, void*), void *context);
+int df_GetArtists(df_connection *conn, int Allocated, void (*s_callback)(df_search*), void (*callback)(int, df_artistrow*, void*), void *context);
 
 /*!
 Lists all artists with albums on a specified portable device
 Address: The absolute or relative address of a device to search
 */
-int df_GetArtistsForDevice(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context);
+int df_GetArtistsForDevice(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_artistrow*, void*), void *context);
 
 /*!
 Lists all artists with albums stored locally on the server
 */
-int df_GetArtistsForServer(df_connection *conn, void (*callback)(int, df_artistrow*, void*), void *context);
+int df_GetArtistsForServer(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_artistrow*, void*), void *context);
 
 /*!
 Lists all artists with albums on a specified network share
 Address: The absolute or relative address of a share to search
 */
-int df_GetArtistsForShare(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context);
+int df_GetArtistsForShare(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_artistrow*, void*), void *context);
 
 /*!
 Lists all artists with albums in a specified genre
 Address: The absolute or relative address of a genre to search
 */
-int df_GetArtistsInGenre(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context);
+int df_GetArtistsInGenre(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_artistrow*, void*), void *context);
 
 /*!
 Lists all artists with albums in a specified sub-genre
 Address: Multiple absolute or relative addresses of sub-genres to search(space separated)
 */
-int df_GetArtistsInSubGenre(df_connection *conn, char* Address, void (*callback)(int, df_artistrow*, void*), void *context);
+int df_GetArtistsInSubGenre(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_artistrow*, void*), void *context);
 
 /*!
 List all available values for a setting
 Address: The Setting name or relative address of a registry value
 */
-int df_GetAvailableValues(df_connection *conn, char* Address, void (*callback)(int, df_keyvaluerow*, void*), void *context);
+int df_GetAvailableValues(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_keyvaluerow*, void*), void *context);
 
 /*!
 Return the details of a single backup job.
 Address: The address (absolute or relative) of the specific backup job.
 */
-int df_GetBackupJobDetail(df_connection *conn, char* Address, void (*callback)(int, df_backupjobrow*, void*), void *context);
+int df_GetBackupJobDetail(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_backupjobrow*, void*), void *context);
 
 /*!
 List all the defined backup jobs.
 */
-int df_GetBackupJobs(df_connection *conn, void (*callback)(int, df_backupjobrow*, void*), void *context);
+int df_GetBackupJobs(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_backupjobrow*, void*), void *context);
 
 /*!
 Return a single log entry.
 Address: The address of the backup log entry.
 */
-int df_GetBackupLogDetail(df_connection *conn, char* Address, void (*callback)(int, df_backuplogdetailrow*, void*), void *context);
+int df_GetBackupLogDetail(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_backuplogdetailrow*, void*), void *context);
 
 /*!
 List all backup log entries, or all entries associated with a given backup job.
 Address: The optional address of the parent backup job. If this is omitted then all log entries will be returned.
 */
-int df_GetBackupLogs(df_connection *conn, char* Address, void (*callback)(int, df_backuplogrow*, void*), void *context);
+int df_GetBackupLogs(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_backuplogrow*, void*), void *context);
 
 /*!
 Lists all CDDB Genres
 */
-int df_GetCDDBGenres(df_connection *conn, void (*callback)(int, df_cddbgenrerow*, void*), void *context);
+int df_GetCDDBGenres(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_cddbgenrerow*, void*), void *context);
 
 /*!
 Lists all system component versions
 RoomID: The room ID to use for this command
 */
-int df_GetComponentVersions(df_connection *conn, int RoomID, void (*callback)(int, df_keyvaluerow*, void*), void *context);
+int df_GetComponentVersions(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_keyvaluerow*, void*), void *context);
 
 /*!
 List tracks in the current playlist
 RoomID: The room ID to use for this command.
 */
-int df_GetCurrentPlayList(df_connection *conn, int RoomID, void (*callback)(int, df_currentplaylistrow*, void*), void *context);
+int df_GetCurrentPlayList(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_currentplaylistrow*, void*), void *context);
 
 /*!
 List tracks in the current playlist
@@ -2044,37 +2043,37 @@ RoomID: The room ID to use for this command.
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetCurrentPlaylistEx(df_connection *conn, int RoomID, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type0row*, void*), void *context);
+int df_GetCurrentPlaylistEx(df_connection *conn, int RoomID, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type0row*, void*), void *context);
 
 /*!
 Return the details of a single external device.
 DeviceAddress: The absolute or relative address of a device to locate.
 */
-int df_GetDeviceDetails(df_connection *conn, char* DeviceAddress, void (*callback)(int, df_devicerow*, void*), void *context);
+int df_GetDeviceDetails(df_connection *conn, char* DeviceAddress, void (*s_callback)(df_search*), void (*callback)(int, df_devicerow*, void*), void *context);
 
 /*!
 List all defined portable devices
 ActiveOnly: If this parameter is true then only docked devices will be returned. If this parameter is false then all devices will be returned. Defaults to false.
 */
-int df_GetDevices(df_connection *conn, int ActiveOnly, void (*callback)(int, df_devicerow*, void*), void *context);
+int df_GetDevices(df_connection *conn, int ActiveOnly, void (*s_callback)(df_search*), void (*callback)(int, df_devicerow*, void*), void *context);
 
 /*!
 List the contents of the encoding queue
 RoomID: The room ID to use for this command.
 */
-int df_GetEncodingQueue(df_connection *conn, int RoomID, void (*callback)(int, df_encodingqueuerow*, void*), void *context);
+int df_GetEncodingQueue(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_encodingqueuerow*, void*), void *context);
 
 /*!
 Get the details of the current encoding status
 RoomID: The room ID to use for this command.
 */
-int df_GetEncodingStatus(df_connection *conn, int RoomID, void (*callback)(int, df_encodingstatusrow*, void*), void *context);
+int df_GetEncodingStatus(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_encodingstatusrow*, void*), void *context);
 
 /*!
 Returns any credits given an album key
 Address: Mutliple absolute or relative addresses of albums to search(space seperated)
 */
-int df_GetExtAlbumCredits(df_connection *conn, char* Address, void (*callback)(int, df_extalbumcreditrow*, void*), void *context);
+int df_GetExtAlbumCredits(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_extalbumcreditrow*, void*), void *context);
 
 /*!
 Returns all albums for a given contributor
@@ -2083,7 +2082,7 @@ Type: Contributor Type
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetExtAlbumsByContributor(df_connection *conn, char* Address, int Type, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetExtAlbumsByContributor(df_connection *conn, char* Address, int Type, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Returns all albums for a given contributor restricted by a specified portable device
@@ -2093,7 +2092,7 @@ Type: Contributor Type
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetExtAlbumsByContributorForDevice(df_connection *conn, char* Address, char* DeviceAddress, int Type, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetExtAlbumsByContributorForDevice(df_connection *conn, char* Address, char* DeviceAddress, int Type, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Returns all albums for a given contributor restricted by the local server
@@ -2102,7 +2101,7 @@ Type: Contributor Type
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetExtAlbumsByContributorForServer(df_connection *conn, char* Address, int Type, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetExtAlbumsByContributorForServer(df_connection *conn, char* Address, int Type, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Returns all albums for a given contributor restricted by a specified network share
@@ -2112,7 +2111,7 @@ Type: Contributor Type
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetExtAlbumsByContributorForShare(df_connection *conn, char* Address, char* ShareAddress, int Type, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetExtAlbumsByContributorForShare(df_connection *conn, char* Address, char* ShareAddress, int Type, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Returns all albums where the given contributor appears as a credit
@@ -2120,7 +2119,7 @@ Address: Absolute or relative address of contributor to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetExtAlbumsByCredit(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetExtAlbumsByCredit(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Returns all albums for a given classical work
@@ -2128,13 +2127,13 @@ Work: Classical work to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetExtAlbumsByWork(df_connection *conn, char* Work, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetExtAlbumsByWork(df_connection *conn, char* Work, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Returns all extra information for given albums
 Address: Mutliple absolute or relative addresses of albums to search(space seperated)
 */
-int df_GetExtAlbumsInfo(df_connection *conn, char* Address, void (*callback)(int, df_extalbuminforow*, void*), void *context);
+int df_GetExtAlbumsInfo(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_extalbuminforow*, void*), void *context);
 
 /*!
 List all albums containing a specified search string within a person's name (artist, conductor, composer or performer)
@@ -2143,54 +2142,54 @@ SearchType: Type of search: 1=Contains (default), 2=Starts With, 3=Exact Match, 
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetExtAlbumsSearchPeople(df_connection *conn, char* SearchString, int SearchType, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetExtAlbumsSearchPeople(df_connection *conn, char* SearchString, int SearchType, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Return a single contributor
 Address: Single absolute or relative address of Contributor to return.
 Type: Contributor Type
 */
-int df_GetExtContributorDetails(df_connection *conn, char* Address, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context);
+int df_GetExtContributorDetails(df_connection *conn, char* Address, int Type, void (*s_callback)(df_search*), void (*callback)(int, df_extcontributorrow*, void*), void *context);
 
 /*!
 Returns all contributors
 Type: Contributor Type
 */
-int df_GetExtContributors(df_connection *conn, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context);
+int df_GetExtContributors(df_connection *conn, int Type, void (*s_callback)(df_search*), void (*callback)(int, df_extcontributorrow*, void*), void *context);
 
 /*!
 Returns all contributors for a given album
 Address: Absolute or relative address of an album to search
 Type: Contributor Type
 */
-int df_GetExtContributorsForAlbum(df_connection *conn, char* Address, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context);
+int df_GetExtContributorsForAlbum(df_connection *conn, char* Address, int Type, void (*s_callback)(df_search*), void (*callback)(int, df_extcontributorrow*, void*), void *context);
 
 /*!
 Returns all contributors for a given portable device
 Address: Absolute or relative address of portable device to search(space seperated)
 Type: Contributor Type
 */
-int df_GetExtContributorsForDevice(df_connection *conn, char* Address, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context);
+int df_GetExtContributorsForDevice(df_connection *conn, char* Address, int Type, void (*s_callback)(df_search*), void (*callback)(int, df_extcontributorrow*, void*), void *context);
 
 /*!
 Returns all contributors stored locally on the server
 Type: Contributor Type
 */
-int df_GetExtContributorsForServer(df_connection *conn, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context);
+int df_GetExtContributorsForServer(df_connection *conn, int Type, void (*s_callback)(df_search*), void (*callback)(int, df_extcontributorrow*, void*), void *context);
 
 /*!
 Returns all contributors for a given network share
 Address: Absolute or relative address of network share to search(space seperated)
 Type: Contributor Type
 */
-int df_GetExtContributorsForShare(df_connection *conn, char* Address, int Type, void (*callback)(int, df_extcontributorrow*, void*), void *context);
+int df_GetExtContributorsForShare(df_connection *conn, char* Address, int Type, void (*s_callback)(df_search*), void (*callback)(int, df_extcontributorrow*, void*), void *context);
 
 /*!
 Returns all contributors for given tracks
 Address: Mutliple absolute or relative addresses of tracks to search(space seperated)
 Type: Contributor Type
 */
-int df_GetExtTrackContributors(df_connection *conn, char* Address, int Type, void (*callback)(int, df_exttrackcontribrow*, void*), void *context);
+int df_GetExtTrackContributors(df_connection *conn, char* Address, int Type, void (*s_callback)(df_search*), void (*callback)(int, df_exttrackcontribrow*, void*), void *context);
 
 /*!
 Returns all tracks for a given contributor
@@ -2198,7 +2197,7 @@ Address: Absolute or relative address of contributor to search
 Type: Contributor Type
 Album: Absolute or relative address of album to filter on
 */
-int df_GetExtTracksByContributor(df_connection *conn, char* Address, int Type, char* Album, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetExtTracksByContributor(df_connection *conn, char* Address, int Type, char* Album, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 Returns all tracks for a given contributor stored on the specified external device.
@@ -2207,7 +2206,7 @@ DeviceAddress: Absolute or relative address of an external device.
 Type: Contributor Type
 Album: Absolute or relative address of album to filter on
 */
-int df_GetExtTracksByContributorForDevice(df_connection *conn, char* Address, char* DeviceAddress, int Type, char* Album, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetExtTracksByContributorForDevice(df_connection *conn, char* Address, char* DeviceAddress, int Type, char* Album, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 Returns all tracks for a given contributor stored on the local server.
@@ -2215,7 +2214,7 @@ Address: Absolute or relative address of contributor to search
 Type: Contributor Type
 Album: Absolute or relative address of album to filter on
 */
-int df_GetExtTracksByContributorForServer(df_connection *conn, char* Address, int Type, char* Album, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetExtTracksByContributorForServer(df_connection *conn, char* Address, int Type, char* Album, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 Returns all tracks for a given contributor stored on the specified external share.
@@ -2224,30 +2223,30 @@ ShareAddress: Absolute or relative address of an external share.
 Type: Contributor Type
 Album: Absolute or relative address of album to filter on
 */
-int df_GetExtTracksByContributorForShare(df_connection *conn, char* Address, char* ShareAddress, int Type, char* Album, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetExtTracksByContributorForShare(df_connection *conn, char* Address, char* ShareAddress, int Type, char* Album, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 Returns all tracks for a given classical work
 Work: Classical work description to search
 */
-int df_GetExtTracksByWork(df_connection *conn, char* Work, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetExtTracksByWork(df_connection *conn, char* Work, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 Lists extra track information given a list of track keys
 Address: Mutliple absolute or relative addresses of tracks to search(space seperated)
 */
-int df_GetExtTracksInfo(df_connection *conn, char* Address, void (*callback)(int, df_exttrackinforow*, void*), void *context);
+int df_GetExtTracksInfo(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_exttrackinforow*, void*), void *context);
 
 /*!
 Lists all classical works
 */
-int df_GetExtWorks(df_connection *conn, void (*callback)(int, df_extworksrow*, void*), void *context);
+int df_GetExtWorks(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_extworksrow*, void*), void *context);
 
 /*!
 List all located network shares (which may, or may not, contain music)
 AvailableOnly: If this parameter is true then only shares which are flagged active and with a state of "Online" will be returned. If this parameter is false then all shares will be returned. Defaults to false.
 */
-int df_GetExternalStorages(df_connection *conn, int AvailableOnly, void (*callback)(int, df_externalstoragerow*, void*), void *context);
+int df_GetExternalStorages(df_connection *conn, int AvailableOnly, void (*s_callback)(df_search*), void (*callback)(int, df_externalstoragerow*, void*), void *context);
 
 /*!
 Lists all genres
@@ -2255,7 +2254,7 @@ Allocated: Flag controlling whether only allocated genres should be returned. De
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetGenres(df_connection *conn, int Allocated, char* SortColumn, char* SortOrder, void (*callback)(int, df_genrerow*, void*), void *context);
+int df_GetGenres(df_connection *conn, int Allocated, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_genrerow*, void*), void *context);
 
 /*!
 Lists all sub-genres defined, together with the parent genre name
@@ -2263,7 +2262,7 @@ Allocated: Flag controlling whether only allocated sub-genres should be shown. D
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetGenresSubGenres(df_connection *conn, int Allocated, char* SortColumn, char* SortOrder, void (*callback)(int, df_genressubgenresrow*, void*), void *context);
+int df_GetGenresSubGenres(df_connection *conn, int Allocated, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_genressubgenresrow*, void*), void *context);
 
 /*!
 Lists the albums played most recently
@@ -2271,25 +2270,25 @@ TopCount: How many of the latest albums are required back in the results
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetLatestPlayedAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetLatestPlayedAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Returns the details of a single linked room and its related child rooms
 RoomKey: The absolute or relative address of the Room details to be displayed
 */
-int df_GetLinkedRoomDetail(df_connection *conn, char* RoomKey, void (*callback)(int, df_linkedroomdetailrow*, void*), void *context);
+int df_GetLinkedRoomDetail(df_connection *conn, char* RoomKey, void (*s_callback)(df_search*), void (*callback)(int, df_linkedroomdetailrow*, void*), void *context);
 
 /*!
 List all defined linked rooms
 LocalOnly: This parameter is not used, and is included for compatibility for the other GetRooms style commands.
 */
-int df_GetLinkedRooms(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context);
+int df_GetLinkedRooms(df_connection *conn, int LocalOnly, void (*s_callback)(df_search*), void (*callback)(int, df_roomrow*, void*), void *context);
 
 /*!
 List all active (connected) network adapters.
 IncludeWireless: If true then wireless adapters will be included in the returned results, otherwise only wired adapters will be returned.
 */
-int df_GetNetworkActiveAdapters(df_connection *conn, int IncludeWireless, void (*callback)(int, df_networkadaptorrow*, void*), void *context);
+int df_GetNetworkActiveAdapters(df_connection *conn, int IncludeWireless, void (*s_callback)(df_search*), void (*callback)(int, df_networkadaptorrow*, void*), void *context);
 
 /*!
 Lists the newest played albums (ie. those that have been ripped most recently)
@@ -2297,20 +2296,20 @@ TopCount: How many of the newest albums are required back in the results
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetNewestAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetNewestAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 List all non-linked rooms
 LocalOnly: If true then only return rooms local to the host running Sophia
 */
-int df_GetNonLinkedRooms(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context);
+int df_GetNonLinkedRooms(df_connection *conn, int LocalOnly, void (*s_callback)(df_search*), void (*callback)(int, df_roomrow*, void*), void *context);
 
 /*!
 Get a list of defined output channels for a given room or host name. Note: An output device, or local output device, is a sound card associated with a given host. An external output device is a standalone output device, such as a UPnP media renderer. An output channel is a Cirin player instance, which is associated with either an output device or an external output device.
 RoomID: The room ID to use for this command. Supply EITHER a RoomID OR a HostName.
 HostName: The host name (or host address) to use for this command. Supply EITHER a RoomID OR a HostName.
 */
-int df_GetOutputChannels(df_connection *conn, int RoomID, char* HostName, void (*callback)(int, df_outputchannelrow*, void*), void *context);
+int df_GetOutputChannels(df_connection *conn, int RoomID, char* HostName, void (*s_callback)(df_search*), void (*callback)(int, df_outputchannelrow*, void*), void *context);
 
 /*!
 Get a list of output devices for a given room or host name.
@@ -2318,7 +2317,7 @@ RoomID: The room ID to use for this command. Supply EITHER a RoomID OR a HostNam
 HostName: The host name (or host address) to use for this command. Supply EITHER a RoomID OR a HostName.
 AsioOutputs: If true then return local Asio outputs, otherwise return local DirectSound outputs.
 */
-int df_GetOutputDevices(df_connection *conn, int RoomID, char* HostName, int AsioOutputs, void (*callback)(int, df_outputdevicerow*, void*), void *context);
+int df_GetOutputDevices(df_connection *conn, int RoomID, char* HostName, int AsioOutputs, void (*s_callback)(df_search*), void (*callback)(int, df_outputdevicerow*, void*), void *context);
 
 /*!
 Lists all the playlists with the Artist beginning with a specified letter
@@ -2326,13 +2325,13 @@ SearchLetter: The first letter of the playlists to search for
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetPlayListsByLetter(df_connection *conn, char* SearchLetter, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetPlayListsByLetter(df_connection *conn, char* SearchLetter, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Get a list of all possible player instances and include device and source line settings for those already configured.
 RoomID: The room ID to use for this command.
 */
-int df_GetPlayerInstances(df_connection *conn, int RoomID, void (*callback)(int, df_playerinstancerow*, void*), void *context);
+int df_GetPlayerInstances(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_playerinstancerow*, void*), void *context);
 
 /*!
 Lists playlists associated with a specified genre
@@ -2340,7 +2339,7 @@ Address: The absolute or relative address of a genre to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetPlaylistsForGenre(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetPlaylistsForGenre(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists playlists associated with a specified sub-genre
@@ -2348,7 +2347,7 @@ Address: The absolute or relative address of a sub-genre to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetPlaylistsForSubGenre(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetPlaylistsForSubGenre(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists user-defined playlists associated with a specified sub-genre restricted by portable device
@@ -2357,7 +2356,7 @@ DeviceAddress: The absolute or relative address of a device
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetPlaylistsForSubGenreForDevice(df_connection *conn, char* Address, char* DeviceAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetPlaylistsForSubGenreForDevice(df_connection *conn, char* Address, char* DeviceAddress, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists user-defined playlists associated with a specified sub-genre restricted to the local server
@@ -2365,7 +2364,7 @@ Address: The absolute or relative address of a sub-genre to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetPlaylistsForSubGenreForServer(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetPlaylistsForSubGenreForServer(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists user-defined playlists associated with a specified sub-genre restricted by network share
@@ -2374,60 +2373,60 @@ ShareAddress: The absolute or relative address of a share
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetPlaylistsForSubGenreForShare(df_connection *conn, char* Address, char* ShareAddress, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetPlaylistsForSubGenreForShare(df_connection *conn, char* Address, char* ShareAddress, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 List all available named ripping/encoding settings
 RoomID: The room ID to use for this command.
 */
-int df_GetRipEncSettings(df_connection *conn, int RoomID, void (*callback)(int, df_settingsrow*, void*), void *context);
+int df_GetRipEncSettings(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_settingsrow*, void*), void *context);
 
 /*!
 List all available named ripping/encoding settings. This is the new form of the command, which returns additional UI caption details.
 RoomID: The room ID to use for this command.
 */
-int df_GetRipEncSettingsEx(df_connection *conn, int RoomID, void (*callback)(int, df_settingsexrow*, void*), void *context);
+int df_GetRipEncSettingsEx(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_settingsexrow*, void*), void *context);
 
 /*!
 List the current ripping alerts
 */
-int df_GetRippingAlerts(df_connection *conn, void (*callback)(int, df_rippingalertrow*, void*), void *context);
+int df_GetRippingAlerts(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_rippingalertrow*, void*), void *context);
 
 /*!
 Get the details of the current ripping status
 RoomID: The room ID to use for this command.
 */
-int df_GetRippingStatus(df_connection *conn, int RoomID, void (*callback)(int, df_type1row*, void*), void *context);
+int df_GetRippingStatus(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_type1row*, void*), void *context);
 
 /*!
 List all defined rooms
 LocalOnly: If true then only return rooms local to the host running Sophia
 */
-int df_GetRooms(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context);
+int df_GetRooms(df_connection *conn, int LocalOnly, void (*s_callback)(df_search*), void (*callback)(int, df_roomrow*, void*), void *context);
 
 /*!
 List all defined rooms with playback capability
 LocalOnly: If true then only return rooms local to the host running Sophia
 */
-int df_GetRoomsWithPlayBack(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context);
+int df_GetRoomsWithPlayBack(df_connection *conn, int LocalOnly, void (*s_callback)(df_search*), void (*callback)(int, df_roomrow*, void*), void *context);
 
 /*!
 List all defined rooms with ripping capability
 LocalOnly: If true then only return rooms local to the host running Sophia
 */
-int df_GetRoomsWithRipping(df_connection *conn, int LocalOnly, void (*callback)(int, df_roomrow*, void*), void *context);
+int df_GetRoomsWithRipping(df_connection *conn, int LocalOnly, void (*s_callback)(df_search*), void (*callback)(int, df_roomrow*, void*), void *context);
 
 /*!
 List all available named system settings
 RoomID: The room ID to use for this command.
 */
-int df_GetSettings(df_connection *conn, int RoomID, void (*callback)(int, df_settingsrow*, void*), void *context);
+int df_GetSettings(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_settingsrow*, void*), void *context);
 
 /*!
 List all available named system settings. This is the new form of the command, which returns additional UI caption details.
 RoomID: The room ID to use for this command.
 */
-int df_GetSettingsEx(df_connection *conn, int RoomID, void (*callback)(int, df_settingsexrow*, void*), void *context);
+int df_GetSettingsEx(df_connection *conn, int RoomID, void (*s_callback)(df_search*), void (*callback)(int, df_settingsexrow*, void*), void *context);
 
 /*!
 Query for system status messages.
@@ -2435,20 +2434,20 @@ MessageDate: The Date of status message to return. The value "0001-01-01" is tre
 Category: The category of status messages to return.
 Tag: The tag value of status messages to return.
 */
-int df_GetStatusMessages(df_connection *conn, df_date MessageDate, char* Category, int Tag, void (*callback)(int, df_statusmessagerow*, void*), void *context);
+int df_GetStatusMessages(df_connection *conn, df_date MessageDate, char* Category, int Tag, void (*s_callback)(df_search*), void (*callback)(int, df_statusmessagerow*, void*), void *context);
 
 /*!
 Lists music stores
 MusicStoreKey: The absolute or relative address of the music store whose values are to be retrieved
 */
-int df_GetStoreDetail(df_connection *conn, char* MusicStoreKey, void (*callback)(int, df_storedetailrow*, void*), void *context);
+int df_GetStoreDetail(df_connection *conn, char* MusicStoreKey, void (*s_callback)(df_search*), void (*callback)(int, df_storedetailrow*, void*), void *context);
 
 /*!
 Lists music stores
 IncludeReadOnly: Should read only music store be included in the result set.
 MusicStoreType: The type of music store to be returned, could be All, Local or Remote
 */
-int df_GetStores(df_connection *conn, int IncludeReadOnly, int MusicStoreType, void (*callback)(int, df_storerow*, void*), void *context);
+int df_GetStores(df_connection *conn, int IncludeReadOnly, int MusicStoreType, void (*s_callback)(df_search*), void (*callback)(int, df_storerow*, void*), void *context);
 
 /*!
 Lists all sub-genres for a specified portable device
@@ -2456,7 +2455,7 @@ Address: The absolute or relative address of a device to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetSubGenresForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_subgenrerow*, void*), void *context);
+int df_GetSubGenresForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_subgenrerow*, void*), void *context);
 
 /*!
 Lists all sub-genres for a specified genre
@@ -2465,7 +2464,7 @@ Allocated: Flag controlling whether only allocated sub-genres should be returned
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetSubGenresForGenre(df_connection *conn, char* Address, int Allocated, char* SortColumn, char* SortOrder, void (*callback)(int, df_subgenrerow*, void*), void *context);
+int df_GetSubGenresForGenre(df_connection *conn, char* Address, int Allocated, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_subgenrerow*, void*), void *context);
 
 /*!
 Lists all sub-genres stored locally on the server
@@ -2474,7 +2473,7 @@ UserDefined: Flag controlling whether additional unallocated userdefined sub-gen
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetSubGenresForServer(df_connection *conn, int Allocated, int UserDefined, char* SortColumn, char* SortOrder, void (*callback)(int, df_subgenrerow*, void*), void *context);
+int df_GetSubGenresForServer(df_connection *conn, int Allocated, int UserDefined, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_subgenrerow*, void*), void *context);
 
 /*!
 Lists all sub-genres for a specified network share
@@ -2482,12 +2481,12 @@ Address: The absolute or relative address of a network share to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetSubGenresForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_subgenrerow*, void*), void *context);
+int df_GetSubGenresForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_subgenrerow*, void*), void *context);
 
 /*!
 List all defined system drives
 */
-int df_GetSystemDrives(df_connection *conn, void (*callback)(int, df_driverow*, void*), void *context);
+int df_GetSystemDrives(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_driverow*, void*), void *context);
 
 /*!
 Lists the top played albums (ie. those that have been played the most number of times)
@@ -2495,7 +2494,7 @@ TopCount: How many of the topmost albums are required back in the results
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetTopPlayedAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetTopPlayedAlbums(df_connection *conn, int TopCount, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Retrieve a set of tracks based on the supplied startRow, rowCount and Filter expression. This is an optimised routine which is designed for fast track range retrieval from; all available tracks, local server, device or share. It was original created to support "All Songs" functionality in the Henrot service.
@@ -2505,63 +2504,63 @@ Filter: A filter expression. Only tracks whose SortName begins with this express
 Address: The absolute or relative address of a device or share (if required). This parameter is mandatory if the storage parameter is 2 or 3.
 Storage: Where is the music stored? 0 = All music, 1 = Local Server, 2 = Network, 3 = Portable.
 */
-int df_GetTrackRange(df_connection *conn, int StartRow, int RowCount, char* Filter, char* Address, int Storage, void (*callback)(int, df_trackrangerow*, void*), void *context);
+int df_GetTrackRange(df_connection *conn, int StartRow, int RowCount, char* Filter, char* Address, int Storage, void (*s_callback)(df_search*), void (*callback)(int, df_trackrangerow*, void*), void *context);
 
 /*!
 List all the tracks on the DigiFi
 */
-int df_GetTracksAll(df_connection *conn, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksAll(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks in a specified album which are part of a user playlist
 Address: The absolute or relative address of an album to search
 */
-int df_GetTracksForAlbumInUPL(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForAlbumInUPL(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified artist
 Address: The absolute or relative address of an artist to locate rows for.
 */
-int df_GetTracksForArtist(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForArtist(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified artist, stored on the specified external device.
 Address: The absolute or relative address of an artist to locate rows for.
 DeviceAddress: The absolute or relative address of an external device.
 */
-int df_GetTracksForArtistForDevice(df_connection *conn, char* Address, char* DeviceAddress, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForArtistForDevice(df_connection *conn, char* Address, char* DeviceAddress, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified artist, stored on the local server.
 Address: The absolute or relative address of an artist to locate rows for.
 */
-int df_GetTracksForArtistForServer(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForArtistForServer(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified artist, stored on the specified external share.
 Address: The absolute or relative address of an artist to locate rows for.
 ShareAddress: The absolute or relative address of an external share.
 */
-int df_GetTracksForArtistForShare(df_connection *conn, char* Address, char* ShareAddress, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForArtistForShare(df_connection *conn, char* Address, char* ShareAddress, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 Lists all tracks for Deletion
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetTracksForDeletion(df_connection *conn, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type3row*, void*), void *context);
+int df_GetTracksForDeletion(df_connection *conn, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type3row*, void*), void *context);
 
 /*!
 List all the tracks for a specified portable device
 Address: The absolute or relative address of a portable device to locate rows for.
 */
-int df_GetTracksForDevice(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForDevice(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified genre
 Address: The absolute or relative address of a genre to locate rows for
 */
-int df_GetTracksForGenre(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForGenre(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for the supplied entity with the specified value.
@@ -2569,51 +2568,51 @@ EntityName: The name of the entity to use for applying the search. Supported ent
 EntityValue: The value to search for.
 ExactMatch: If true then an exact match on entity will be performed, otherwise a partial match will be used.
 */
-int df_GetTracksForNamedEntity(df_connection *conn, char* EntityName, char* EntityValue, int ExactMatch, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForNamedEntity(df_connection *conn, char* EntityName, char* EntityValue, int ExactMatch, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified playlist
 Address: The absolute or relative address of a playlist to search
 ShowHidden: If this is true then hidden tracks associated with the playlist will be returned. Defaults to False.
 */
-int df_GetTracksForPlaylist(df_connection *conn, char* Address, int ShowHidden, void (*callback)(int, df_tracksforplaylistrow*, void*), void *context);
+int df_GetTracksForPlaylist(df_connection *conn, char* Address, int ShowHidden, void (*s_callback)(df_search*), void (*callback)(int, df_tracksforplaylistrow*, void*), void *context);
 
 /*!
 List all the tracks stored locally on the server
 */
-int df_GetTracksForServer(df_connection *conn, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForServer(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified network share
 Address: The absolute or relative address of a network share to locate rows for.
 */
-int df_GetTracksForShare(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForShare(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified sub-genre
 Address: The absolute or relative address of a sub-genre to locate rows for.
 */
-int df_GetTracksForSubGenre(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForSubGenre(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified sub-genre stored on the specified external device.
 Address: The absolute or relative address of a sub-genre to locate rows for.
 DeviceAddress: The absolute or relative address of an external device.
 */
-int df_GetTracksForSubGenreForDevice(df_connection *conn, char* Address, char* DeviceAddress, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForSubGenreForDevice(df_connection *conn, char* Address, char* DeviceAddress, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified sub-genre stored on the local server.
 Address: The absolute or relative address of a sub-genre to locate rows for.
 */
-int df_GetTracksForSubGenreForServer(df_connection *conn, char* Address, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForSubGenreForServer(df_connection *conn, char* Address, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 List all the tracks for a specified sub-genre stored on the specified external share.
 Address: The absolute or relative address of a sub-genre to locate rows for.
 ShareAddress: The absolute or relative address of an external share.
 */
-int df_GetTracksForSubGenreForShare(df_connection *conn, char* Address, char* ShareAddress, void (*callback)(int, df_trackrow*, void*), void *context);
+int df_GetTracksForSubGenreForShare(df_connection *conn, char* Address, char* ShareAddress, void (*s_callback)(df_search*), void (*callback)(int, df_trackrow*, void*), void *context);
 
 /*!
 Lists additional track details
@@ -2621,7 +2620,7 @@ Address: The track(s) absolute or relative address
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetTracksOtherInfo(df_connection *conn, char* Address, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type3row*, void*), void *context);
+int df_GetTracksOtherInfo(df_connection *conn, char* Address, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type3row*, void*), void *context);
 
 /*!
 List tracks containing a specified search string within the track name
@@ -2630,19 +2629,19 @@ SearchType: Type of search: 1=Contains (default), 2=Starts With, 3=Exact Match, 
 RemoteImagePath: If true a URL will be returned that can be used to download the cover art, otherwise a locl path will be retruned
 ImageSize: The size of image required. 1 = small (61x61), 2 = medium (126x126), 3 = large (320x320), 4 = extra large (640x640).
 */
-int df_GetTracksSearchName(df_connection *conn, char* SearchString, int SearchType, int RemoteImagePath, int ImageSize, void (*callback)(int, df_type3row*, void*), void *context);
+int df_GetTracksSearchName(df_connection *conn, char* SearchString, int SearchType, int RemoteImagePath, int ImageSize, void (*s_callback)(df_search*), void (*callback)(int, df_type3row*, void*), void *context);
 
 /*!
 Fetch a list of the UPnP media renderer devices on the local network.
 */
-int df_GetUpnpMediaRenderers(df_connection *conn, void (*callback)(int, df_mediarendererrow*, void*), void *context);
+int df_GetUpnpMediaRenderers(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_mediarendererrow*, void*), void *context);
 
 /*!
 Lists all user playlists
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetUserPlaylists(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetUserPlaylists(df_connection *conn, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists user-defined playlists associated with a specified portable device
@@ -2650,14 +2649,14 @@ Address: The absolute or relative address of a device to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetUserPlaylistsForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetUserPlaylistsForDevice(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists user-defined playlists stored locally on the server
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetUserPlaylistsForServer(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetUserPlaylistsForServer(df_connection *conn, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists user-defined playlists associated with a specified network share
@@ -2665,63 +2664,63 @@ Address: The absolute or relative address of a share to search
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetUserPlaylistsForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetUserPlaylistsForShare(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 List the Users Status Display
 */
-int df_GetUserStatus(df_connection *conn, void (*callback)(int, df_keyvaluerow*, void*), void *context);
+int df_GetUserStatus(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_keyvaluerow*, void*), void *context);
 
 /*!
 rEturns the cuurent move album queue
 */
-int df_MoveAlbumGetQueue(df_connection *conn, void (*callback)(int, df_movealbumgetqueuerow*, void*), void *context);
+int df_MoveAlbumGetQueue(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_movealbumgetqueuerow*, void*), void *context);
 
 /*!
 Return current service status. This is a listing of the currently connected clients
 */
-int df_Status(df_connection *conn, void (*callback)(int, df_statusrow*, void*), void *context);
+int df_Status(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_statusrow*, void*), void *context);
 
 /*!
 Undo's all user edits to an album except for deleted albums and tracks
 AlbumKeys: The absolute or relative addresses of specific Album(s) to use
 */
-int df_UndoUserEdits(df_connection *conn, char* AlbumKeys, void (*callback)(int, df_bulklookuprow*, void*), void *context);
+int df_UndoUserEdits(df_connection *conn, char* AlbumKeys, void (*s_callback)(df_search*), void (*callback)(int, df_bulklookuprow*, void*), void *context);
 
 /*!
 Return all child vTuner nodes using the supplied vTuner URL.
 vTunerUrl: The vTuner URL to use for locating child nodes. If nothing is supplied then the root nodes will be returned.
 vTunerBackupUrl: The vTuner backup URL to use for locating child nodes. If nothing is supplied then the root nodes will be returned.
 */
-int df_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBackupUrl, void (*callback)(int, df_vtunernoderow*, void*), void *context);
+int df_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBackupUrl, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
 
 /*!
 Return all played stations and episodes in descending order by LastPlayed
 */
-int df_vTunerGetLastPlayed(df_connection *conn, void (*callback)(int, df_vtunerplayedrow*, void*), void *context);
+int df_vTunerGetLastPlayed(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context);
 
 /*!
 Return all played stations and episodes in descending order by HitCount
 */
-int df_vTunerGetMostPlayed(df_connection *conn, void (*callback)(int, df_vtunerplayedrow*, void*), void *context);
+int df_vTunerGetMostPlayed(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context);
 
 /*!
 Returns the vTuner Show, Station or Episode that match the Url supplied
 URLPlayed: The URL that was played to use for locating the node.
 */
-int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, void (*callback)(int, df_vtunernoderow*, void*), void *context);
+int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
 
 /*!
 Returns all preset channels and thier associated nodes
 */
-int df_vTunerGetPresetChannels(df_connection *conn, void (*callback)(int, df_vtunerpresetrow*, void*), void *context);
+int df_vTunerGetPresetChannels(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerpresetrow*, void*), void *context);
 
 /*!
 Returns the vTuner Show, Station or Episode that match the id supplied
 vTunerId: The vTuner ID to use for locating child nodes.
 vTunerLookupType: The type of node to search for. For a lookup by ID this can be 3 - Station, 4 - Show or 5 - Episode
 */
-int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, void (*callback)(int, df_vtunernoderow*, void*), void *context);
+int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
 
 
 

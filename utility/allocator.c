@@ -11,12 +11,12 @@
 #include "allocator.h"
 #include <pthread.h>
 
-#define DFROW_MAX_SEARCHNUMBERS		(sizeof(unsigned int) * 8)
+#define DFROW_MAX_SEARCHNUMBERS		(sizeof(unsigned long) * 8)
 
 // variables for allocating which search number to use and a store
 // for the call back
-static unsigned int occupied_numbers = 0;
-static unsigned int search_numbers = 0;
+static unsigned long occupied_numbers = 0;
+static unsigned long search_numbers = 0;
 pthread_mutex_t dfrow_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t dfrow_cond = PTHREAD_COND_INITIALIZER;
 
