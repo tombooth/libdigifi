@@ -25,7 +25,7 @@ char* regex_list_get(char *regex_name) {
 		pattern = "\\[ERR (.+)\\]";
 	}
 	else if (strcmp(regex_name, "findname") == 0) {
-		pattern = "\\[([^[:space:]]+)[[:space:]+]([^]]+)\\]";
+		pattern = "\\[([^[:space:]]+)[[:space:]+](.+)[^\\\\]\\]";
 	}
 	else if (strcmp(regex_name, "rowrequest") == 0) {
 		pattern = "\\[ACK[[:space:]+]([^[:space:]]+)[[:space:]+]([0-9]+)[[:space:]+]\"([0-9]+)\"\\]";

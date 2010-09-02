@@ -18,6 +18,7 @@ void main_conn_test(pthread_mutex_t *parent_lock);
 void main_func_test(pthread_mutex_t *parent_lock);
 void rget_test(pthread_mutex_t *parent_lock);
 void misc_test(pthread_mutex_t *parent_lock);
+void search_test(pthread_mutex_t *parent_lock);
 
 
 

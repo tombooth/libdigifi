@@ -7088,7 +7088,8 @@ void call_GetAlbums(pthread_mutex_t *parent_lock) {
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
 
-	df_GetAlbums(connections[conn_id], x0, x1, print_GetAlbums, (void*)parent_lock);}
+	//df_GetAlbums(connections[conn_id], x0, x1, print_GetAlbums, (void*)parent_lock);
+}
 
 void call_GetAlbumsForArtists(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -12005,11 +12006,12 @@ static struct command_option list_options[3] = { { "connections", list_connectio
 												 { "threads", NULL },
 												 { "regex", NULL }};
 
-static int num_test_options = 4;
-static struct command_option test_options[4] = { { "main", main_conn_test },
+static int num_test_options = 5;
+static struct command_option test_options[5] = { { "main", main_conn_test },
 												 { "func", main_func_test },
 												 { "rget", rget_test },
-												 { "misc", misc_test }};
+												 { "misc", misc_test },
+                         { "search", search_test } };
 
 static int num_rget_options = 10;
 static struct command_option rget_options[10] = { { "trackposition", rget_trackposition }, 

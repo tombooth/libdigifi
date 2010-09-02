@@ -13,6 +13,19 @@
 
 #include "client.h"
 
+typedef struct {
+  out_socket *socket;
+  int id;
+  int count;
+  char *name;
+  
+  void (*callback)(void);
+  void *context;
+} df_search;
+
+void df_extract_from(df_search *, int start, int end);
+void df_free_search(df_search *);
+
 
 // Generated functions
 //
@@ -1769,7 +1782,7 @@ Lists all albums
 SortColumn: The column name(s) to use when sorting the results. Multiple columns can be supplied delimited by a comma.
 SortOrder: The sort order to use in sorting the results (ASC or DESC). If multiple columns supplied for SortColumn then corresponding orders can be supplied delimited by a comma.
 */
-int df_GetAlbums(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context);
+int df_GetAlbums(df_connection *conn, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context);
 
 /*!
 Lists all albums associated with a specified set of artists

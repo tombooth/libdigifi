@@ -81,10 +81,10 @@ void main_conn_test(pthread_mutex_t *parent_lock) {
 					break;
 				case 1:
 					df_GetRooms(test_conns[randomise_int(num_connections)], 0, test_getroom_handler, NULL);
-					df_GetAlbums(test_conns[randomise_int(num_connections)], "", "", test_getalbums_handler, NULL);
+					//df_GetAlbums(test_conns[randomise_int(num_connections)], "", "", test_getalbums_handler, NULL);
 					break;
 				case 2:
-					df_GetAlbums(test_conns[randomise_int(num_connections)], "", "", test_getalbums_handler, NULL);
+					//df_GetAlbums(test_conns[randomise_int(num_connections)], "", "", test_getalbums_handler, NULL);
 					df_GetCurrentPlaylistEx(test_conns[randomise_int(num_connections)], 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
 					break;
 				case 3:
@@ -151,10 +151,10 @@ void main_func_test(pthread_mutex_t *parent_lock) {
 					break;
 				case 1:
 					df_GetRooms(test_conn, 0, test_getroom_handler, NULL);
-					df_GetAlbums(test_conn, "", "", test_getalbums_handler, NULL);
+					//df_GetAlbums(test_conn, "", "", test_getalbums_handler, NULL);
 					break;
 				case 2:
-					df_GetAlbums(test_conn, "", "", test_getalbums_handler, NULL);
+					//df_GetAlbums(test_conn, "", "", test_getalbums_handler, NULL);
 					df_GetCurrentPlaylistEx(test_conn, 1, 1, 1, test_getcurrentplaylistex_handler, NULL);
 					break;
 				case 3:
@@ -228,7 +228,7 @@ void rget_test(pthread_mutex_t *parent_lock) {
 		dfrget_playerstatus(curr_conn, i, test_rget_playerstatus_handler, message);
 		dfrget_playingchecksum(curr_conn, i, test_rget_playingchecksum_handler, message);
 		
-		df_GetAlbums(curr_conn, "", "", test_rget_getalbums_handler, curr_conn);
+		//df_GetAlbums(curr_conn, "", "", test_rget_getalbums_handler, curr_conn);
 		
 		fprintf(stdout, "Sleeping...\n");
 		sleep(randomise_int(30));
@@ -240,6 +240,9 @@ void rget_test(pthread_mutex_t *parent_lock) {
 	}
 	
 }
+
+
+
 
 
 
@@ -274,4 +277,54 @@ void misc_test(pthread_mutex_t *parent_lock) {
 	
 	pthread_mutex_unlock(parent_lock);
 }
+
+
+
+
+
+
+
+
+static void search_getalbums_handler(int rows, df_albumrow *input, void *context) { 
+  df_albumrow *current;
+  
+	printf("Printing GetAlbums return:\n");
+	printf("Total rows: %d\n", rows);
+	current = input;
+  
+	while (current != NULL) {
+		printf("PlaylistKey: %d\n", current->PlaylistKey);
+		printf("Name: \"%s\"\n", current->Name);
+		printf("ArtistKey: %d\n", current->ArtistKey);
+		printf("ArtistName: \"%s\"\n", current->ArtistName);
+		printf("IsAlbum: %d\n", current->IsAlbum);
+		printf("HitCount: %d\n", current->HitCount);
+		printf("ExtendedInfoAvail: %d\n", current->ExtendedInfoAvail);
+		printf("Storage: %d\n", current->Storage);
+    
+		current = current->next;
+	}
+  
+	df_albumrow_free(input);
+	fflush(stdout);
+}
+
+static void search_callback(df_search *search) {
+  df_extract_from(search, 1, 1);
+}
+
+void search_test(pthread_mutex_t *parent_lock) {
+  df_connection *conn;
+	
+	conn = df_connect("192.168.0.242", 2);
+	
+	sleep(3);
+  
+  df_GetAlbums(conn, "", "", search_callback, search_getalbums_handler, NULL);
+  
+  sleep(10);
+	
+	pthread_mutex_unlock(parent_lock);
+}
+
 

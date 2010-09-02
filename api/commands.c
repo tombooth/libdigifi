@@ -23,7 +23,49 @@ struct call_holder {
 	void *context;
 };
 
+struct search_call_holder {
+  struct call_holder call;
+  void (*callback)(df_search*);
+};
+
 static void row_handler(out_request *request, out_response *response, int num, void *context);
+
+void df_extract_from(df_search *search, int start, int count) {
+  struct call_holder *c;
+  
+  if ((search->count < 1) || ((count - start) >= search->count)) { DFERROR("Failed to extract from a search due to bad parameters"); return; }
+  
+  c = (struct call_holder *)malloc(sizeof(struct call_holder));
+  c->callback = search->callback;
+  c->context = search->context;
+  
+  comm_send_via_socket(search->socket, search->name, (count < 0) ? search->count : count, count, row_handler, c, "[GetRows %d %d %d]", search->id, start, count);
+  
+}
+
+void df_free_search(df_search *search) { allocator_return(search->id); free(search); }
+
+static void create_search_struct(out_request *request, out_response *response, int num, void *context) {
+  regex_result *rx;
+  df_search *s = NULL;
+  struct search_call_holder *sch;
+  
+  if (response != NULL) {
+    s = (df_search*) malloc(sizeof(df_search));
+    rx = response->result->result;
+    
+    s->socket = request->socket;
+    sscanf(rx->subexps[2].value,"%d",&(s->id));
+		sscanf(rx->subexps[rx->num_subexps-1].value,"%d",&(s->count));
+		s->name = strdup(rx->subexps[1].value);
+    
+    sch = (struct search_call_holder *)context;
+    s->callback = sch->call.callback;
+    s->context = sch->call.context;
+    
+    sch->callback(s);
+  }
+}
 
 static void pull_rows(out_request *request, out_response *response, int num, void *context) {
 	int search_num = 0;
@@ -3213,13 +3255,13 @@ int df_GetAlbumDetails(df_connection *conn, char* Address, void (*callback)(int,
 	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbumDetails %d \"%s\"]", search_num, Address);
 
 }
-int df_GetAlbums(df_connection *conn, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
+int df_GetAlbums(df_connection *conn, char* SortColumn, char* SortOrder, void (*s_callback)(df_search*), void (*callback)(int, df_albumrow*, void*), void *context) {
 	int search_num;
-	struct call_holder *c;
+	struct search_call_holder *c;
 
 	search_num = allocator_get();
-	c = malloc(sizeof(struct call_holder)); c->context = context; c->callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, -1, pull_rows, (void *)c, "[GetAlbums %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
+	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
+	return comm_send(conn, 0, "rowrequest", 1, -1, create_search_struct, (void *)c, "[GetAlbums %d \"%s\" \"%s\"]", search_num, SortColumn, SortOrder);
 
 }
 int df_GetAlbumsForArtists(df_connection *conn, char* Address, char* SortColumn, char* SortOrder, void (*callback)(int, df_albumrow*, void*), void *context) {
