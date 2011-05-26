@@ -41,7 +41,7 @@ void formatting_add_rule(char *pattern, char *replacement) {
 	DFDEBUG("Adding pattern %s as a rule", pattern);
 	
 	regex = regex_compile(pattern);
-	if (regex == NULL) { DFERROR("Failed to compile: %s", pattern, regex_get_error()); return; }
+	if (regex == NULL) { DFERROR("Failed to compile: %s %s", pattern, regex_get_error()); return; }
 	
 	num_rules++;
 	rules = realloc(rules, sizeof(struct formatting_rule) * num_rules);

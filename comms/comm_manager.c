@@ -9,18 +9,18 @@
 
 #include "comm_manager.h"
 
+#import "sockets.h"
+
+#if defined(__MINGW32__)
+#import "pthread.h"
+#endif
+
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
-#include <sys/socket.h>
-#include <fcntl.h>
-#include <sys/select.h>
-#include <arpa/inet.h>
-#include <ifaddrs.h>
-#include <net/if.h>
-#include <unistd.h>
+// #include <sys/select.h>
 
 #include "debugging.h"
 
@@ -29,7 +29,7 @@ static int connect_to_socket(char *ipadress, int port);
 static int listen_on_socket(int port);
 static int set_non_blocking(int fd);
 static int randomise_port();
-static char* get_local_ip();
+static char* get_local_ip(int sockfd);
 static int pick_quietest_socket(connection *conn);
 
 
@@ -95,8 +95,8 @@ connection *comm_connect(char *ipaddress, int connections) {
 		conn->rget_settings.server_fd = listen_on_socket(port);
 	}
 	
-	// comm_send(conn, 1, "void", 1, -1, NULL, NULL, "[RGetRegisterClient \"%d\" \"%s\"]", port, "78.149.19.196"); // REMOTE get_local_ip());
-	comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetRegisterClient \"%d\" \"%s\"]", port, get_local_ip());
+	// comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetRegisterClient \"%d\" \"%s\"]", port, "10.0.0.12"); // REMOTE get_local_ip());
+	comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetRegisterClient \"%d\" \"%s\"]", port, get_local_ip(conn->sockets[0].fd));
 	// wait to accept the rget connection
 	while (conn->rget_settings.client_fd < 0) { conn->rget_settings.client_fd = accept(conn->rget_settings.server_fd, NULL, 0); }
 	
@@ -186,6 +186,9 @@ void comm_disconnect(connection *conn) {
 	free(conn->label);
 	
 	free(conn);
+	
+	// out_threads = NULL;
+	// in_thread = NULL;
 }
 
 
@@ -291,34 +294,50 @@ static int randomise_port() {
 	return RGET_PORT_BASE + r;
 }
 
-static char* get_local_ip() {
-	struct ifaddrs *ifap, *ifa;
-	char *ret = NULL;
+static char* get_local_ip(int sockfd) {
+	struct sockaddr_in addr;
+	socklen_t socklen = sizeof(addr);
+	if( getsockname(sockfd, (struct sockaddr*)&addr, &socklen) == -1 ) {
+		DFERROR("Failed to get local ip address [%d] %s", errno, strerror(errno));
+		return "0.0.0.0";
+	}
 	
-    if (getifaddrs(&ifap) != 0) {
-		return NULL;
-    }
+	if (addr.sin_family == AF_INET) { // IPv4
+		return inet_ntoa(addr.sin_addr);
+	}
 	
-    // cycle through available interfaces
-    for (ifa = ifap; ifa != NULL; ifa = ifa->ifa_next) {
-        // Skip loopback, point-to-point and down interfaces
-        if( ( ifa->ifa_flags & IFF_LOOPBACK ) || ( !( ifa->ifa_flags & IFF_UP ) ) ) {
-            continue;
-        }
-        if( ifa->ifa_addr->sa_family == AF_INET ) {
-            // We don't want the loopback interface. 
-            if( ((struct sockaddr_in *)(ifa->ifa_addr))->sin_addr.s_addr == htonl( INADDR_LOOPBACK ) ) {
-                continue;
-            }
-			
-			ret = inet_ntoa(((struct sockaddr_in *) ifa->ifa_addr)->sin_addr);
-            break;
-        }
-    }
-    freeifaddrs(ifap);
-	
-    return ret;
+	DFERROR("Failed to get local ip address: not IPV4");
+	return "0.0.0.0";
 }
+
+//static char* get_local_ip() {
+//	struct ifaddrs *ifap, *ifa;
+//	char *ret = NULL;
+//	
+//    if (getifaddrs(&ifap) != 0) {
+//		return NULL;
+//    }
+//	
+//    // cycle through available interfaces
+//    for (ifa = ifap; ifa != NULL; ifa = ifa->ifa_next) {
+//        // Skip loopback, point-to-point and down interfaces
+//        if( ( ifa->ifa_flags & IFF_LOOPBACK ) || ( !( ifa->ifa_flags & IFF_UP ) ) ) {
+//            continue;
+//        }
+//        if( ifa->ifa_addr->sa_family == AF_INET ) {
+//            // We don't want the loopback interface. 
+//            if( ((struct sockaddr_in *)(ifa->ifa_addr))->sin_addr.s_addr == htonl( INADDR_LOOPBACK ) ) {
+//                continue;
+//            }
+//			
+//			ret = inet_ntoa(((struct sockaddr_in *) ifa->ifa_addr)->sin_addr);
+//            break;
+//        }
+//    }
+//    freeifaddrs(ifap);
+//	
+//    return ret;
+//}
 
 static int pick_quietest_socket(connection *conn) {
 	int i = 0, min = 999, id = 0;

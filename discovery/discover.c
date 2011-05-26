@@ -145,7 +145,10 @@ static void dfdiscover_receive(void) {
 		if ((buffered = recvfrom(id, buffer, 100, 0, (struct sockaddr*)remote_socket, &size)) > 0) {
 
 			dfdiscover_addserver(&servers, buffer, buffered, remote_socket);
-				
+
+			// call out to stashed callback
+			client_callback(servers, context_holder);
+
 			continue;
 		}
 		
@@ -158,9 +161,7 @@ static void dfdiscover_receive(void) {
 	close(id);
 	
 	DFDEBUG("Finished discovering servers");
-	
-	// call out to stashed callback
-	client_callback(servers, context_holder);
+	client_callback(NULL, context_holder);  // Inform client that search has finished
 }
 
 

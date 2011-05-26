@@ -23,7 +23,7 @@ typedef struct {
   void *context;
 } df_search;
 
-void df_extract_from(df_search *, int start, int end);
+int df_extract_from(df_search *, int start, int end);
 void df_free_search(df_search *);
 
 // Generated functions

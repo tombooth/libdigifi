@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <sys/select.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "debugging.h"
 

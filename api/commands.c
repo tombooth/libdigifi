@@ -30,17 +30,20 @@ struct search_call_holder {
 
 static void row_handler(out_request *request, out_response *response, int num, void *context);
 
-void df_extract_from(df_search *search, int start, int count) {
+int df_extract_from(df_search *search, int start, int count) {
   struct call_holder *c;
   
-  if ((search->count < 1) || ((count - start) >= search->count)) { DFERROR("Failed to extract from a search due to bad parameters"); return; }
+  if ((search->count != -1) && ((search->count < 1) || (((start-1) + count) > search->count))) { 
+	  printf("Search Count: %d, start: %d, count: %d\n", search->count, start, count);
+	  DFERROR("Failed to extract from a search due to bad parameters"); 
+	  return -1; 
+  }
   
   c = (struct call_holder *)malloc(sizeof(struct call_holder));
   c->callback = search->callback;
   c->context = search->context;
   
-  comm_send_via_socket(search->socket, search->name, (count < 0) ? search->count : count, row_handler, c, "[GetRows %d %d %d]", search->id, start, count);
-  
+  return comm_send_via_socket(search->socket, search->name, (count < 0) ? search->count : count, row_handler, c, "[GetRows %d %d %d]", search->id, start, count);
 }
 
 void df_free_search(df_search *search) { allocator_return(search->id); free(search); }
@@ -12336,10 +12339,10 @@ static void Version_handler(out_request *request, out_response *response, int nu
 
 
 	rx = response->result->result;
-		tmp->Version_Service = formatting_process(rx->subexps[2].value);
-	tmp->Version_Protocol = formatting_process(rx->subexps[3].value);
-	tmp->Version_CommandDef = formatting_process(rx->subexps[4].value);
-	tmp->Version_System = formatting_process(rx->subexps[5].value);
+	tmp->Version_Service = formatting_process(rx->subexps[1].value);
+	tmp->Version_Protocol = formatting_process(rx->subexps[2].value);
+	tmp->Version_CommandDef = formatting_process(rx->subexps[3].value);
+	tmp->Version_System = formatting_process(rx->subexps[4].value);
 
 	((void (*)(df_version*, void*))(holder->callback))(tmp, holder->context);
 

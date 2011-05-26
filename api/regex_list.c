@@ -9,6 +9,8 @@
 
 #include "regex_list.h"
 
+#include "string.h"
+
 char* regex_list_get(char *regex_name) {
 	char *pattern;
 	

@@ -40,9 +40,11 @@ extraction_result* extraction_run(int fd, cbuf *buffer, regex_t *regex, regex_t 
 		if (bytes_read <= 0) {
 			if (errno == EAGAIN) {			// ignore a non-blocking return error as we can expect this occasionally or when somethings screwed up
 				usleep(NON_BLOCKING_READ_WAIT);
+				// DFERROR("Socket Closed?");
 			} else {
 				// an error has occurred
 				DFERROR("An error occured will trying to read from fd:%d [%d] %s", fd, errno, strerror(errno));
+                break;
 			}
 		}
 		else {
@@ -91,8 +93,7 @@ static extraction_result* extraction_check_buffer(cbuf *buffer, regex_t *regex, 
 		
 		temp = cbuf_extract(buffer, rx_result->start, rx_result->length);
 		if (temp != NULL) free(temp);
-	}
-	
+	} 
 	
 	return result;
 }

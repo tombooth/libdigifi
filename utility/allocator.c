@@ -10,6 +10,7 @@
 
 #include "allocator.h"
 #include <pthread.h>
+#include <stdio.h>
 
 #define DFROW_MAX_SEARCHNUMBERS		(sizeof(unsigned long) * 8)
 
