@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet type="text/xsl" href="commands_doc.xslt"?>
+<commands version="1.1.62.219">
+	<!-- xmlns="http://tempuri.org/commands.xsd">  -->
+
+	<!-- Commands required for support for result fetching, formatting and error retrieval -->
+	<command name="GetRows" classname="InternalCommands+GetRowsCommand">
+		<description>Retrieve a number of rows from a previously executed numbered search</description>
+		<returnsrows>True</returnsrows>
+		<createsrows>False</createsrows>
+		<parameter name="SearchNumber">
+			<description>The numbered search to use for this command. An error will be returned if no results exist for this search</description>
+			<type>Number</type>
+			<useinresponse>True</useinresponse>
+			<mandatory>True</mandatory>
+			<issearchnum>True</issearchnum>
+		</parameter>
+		<parameter name="StartRow">
+			<description>The number of the first row returned. Use 1 to start at the beginning of the results</description>
+			<type>Number</type>
+			<useinresponse>False</useinresponse>
+			<mandatory>True</mandatory>
+			<issearchnum>False</issearchnum>
+		</parameter>
+		<parameter name="RowCount">
+			<description>The number of rows to return with this command call. Use -1 to return all rows following the specified start row</description>
+			<type>Number</type>
+			<useinresponse>False</useinresponse>
+			<mandatory>True</mandatory>
+			<issearchnum>False</issearchnum>
+		</parameter>
+		<parameter name="FormatList">
+			<description>The name of the format list to use for formatting results</description>
+			<type>String</type>
+			<useinresponse>False</useinresponse>
+			<mandatory>False</mandatory>
+			<issearchnum>False</issearchnum>
+		</parameter>
+		<responsevalue name="GetRows_Return">
+			<description>The number of rows actually returned.</description>
+			<type>Number</type>
+		</responsevalue>
+	</command>
+
+	<command name="GetCount" classname="InternalCommands+GetCountCommand">
+		<description>Return the number of rows cached from a previously executed numbered search</description>
+		<returnsrows>False</returnsrows>
+		<createsrows>False</createsrows>
+		<parameter name="SearchNumber">
+			<description>The numbered search to use for this command. If no results exist for this search then 0 will be returned</description>
+			<type>Number</type>
+			<useinresponse>True</useinresponse>
+			<mandatory>True</mandatory>
+			<issearchnum>True</issearchnum>
+		</parameter>
+		<responsevalue name="GetCount_Return">
+			<description>The number of rows associated with this search</description>
+			<type>Number</type>
+		</responsevalue>
+	</command>
+
+	<command name="GetArtists"
+		  classname="DigiFi.Services.Sophia.LibraryCommands+GetArtists"
+		  assembly="MusicLibraryCommands.dll">
+		<description>Lists all artists</description>
+		<returnsrows>False</returnsrows>
+		<createsrows>True</createsrows>
+		<parameter name="SearchNumber">
+			<description>The destination search number to place the results (listing) into</description>
+			<type>Number</type>
+			<useinresponse>True</useinresponse>
+			<mandatory>True</mandatory>
+			<issearchnum>True</issearchnum>
+		</parameter>
+		<parameter name="Allocated">
+			<description>Flag controlling whether only allocated artists should be shown(those with albums). Defaults to False.</description>
+			<type>Boolean</type>
+			<useinresponse>False</useinresponse>
+			<mandatory>False</mandatory>
+			<issearchnum>False</issearchnum>
+		</parameter>
+		<responsevalue name="GetArtists_Return">
+			<description>The number of artists in the listing</description>
+			<type>Number</type>
+		</responsevalue>
+		<responseline label="Record">
+			<value name="ArtistKey">
+				<description>Unique identifier of the artist</description>
+				<type>Number</type>
+			</value>
+			<value name="Name">
+				<description>The name of the artist</description>
+				<type>String</type>
+			</value>
+		</responseline>
+	</command>
+
+	<command name="SetVolume" classname="DigiFi.Services.Sophia.SetCommands" assembly="PlaybackCommands.dll">
+		<description>Set the volume level on a specified room</description>
+		<returnsrows>False</returnsrows>
+		<createsrows>False</createsrows>
+		<parameter name="RoomID">
+			<description>The room ID to use for this command.</description>
+			<type>Number</type>
+			<useinresponse>True</useinresponse>
+			<mandatory>True</mandatory>
+			<issearchnum>False</issearchnum>
+		</parameter>
+		<parameter name="Volume">
+			<description>The volume to use for this command.</description>
+			<type>Number</type>
+			<useinresponse>False</useinresponse>
+			<mandatory>True</mandatory>
+			<issearchnum>False</issearchnum>
+		</parameter>
+	</command>
+	<command name="GetVolume" classname="DigiFi.Services.Sophia.PlayStatusCommands+GetVolumeCommand" assembly="PlaybackCommands.dll">
+		<description>Get the player volume level from the selected room.</description>
+		<returnsrows>False</returnsrows>
+		<createsrows>False</createsrows>
+		<parameter name="RoomID">
+			<description>The room ID to use for this command.</description>
+			<type>Number</type>
+			<useinresponse>True</useinresponse>
+			<mandatory>True</mandatory>
+			<issearchnum>False</issearchnum>
+		</parameter>
+		<responsevalue name="Volume">
+			<description>Returns the player volume from the selected room</description>
+			<type>Number</type>
+		</responsevalue>
+	</command>
+</commands>
