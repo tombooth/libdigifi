@@ -25,6 +25,34 @@ static int check_connection(int id) { if (id >= num_connections || id < 0) { ret
 static void get_search_rows(df_search *s) { df_extract_from(s, 1, -1); df_free_search(s); }
 
 
+void print_GetBufferFill(int input, void *context) {
+	printf("Printing GetBufferFill return:\n");
+	printf("BufferFill: %d\n", input);
+	fflush(stdout);
+	pthread_mutex_unlock((pthread_mutex_t*)context);
+}
+
+void print_GetPlayerFeatures(int input, void *context) {
+	printf("Printing GetPlayerFeatures return:\n");
+	printf("PlayerFeatures: %d\n", input);
+	fflush(stdout);
+	pthread_mutex_unlock((pthread_mutex_t*)context);
+}
+
+void print_vTunerDeleteStatistic(int input, void *context) {
+	printf("Printing vTunerDeleteStatistic return:\n");
+	printf("vTunerDeleteStatistic_Return: %d\n", input);
+	fflush(stdout);
+	pthread_mutex_unlock((pthread_mutex_t*)context);
+}
+
+void print_vTunerMovePresetChannel(int input, void *context) {
+	printf("Printing vTunerMovePresetChannel return:\n");
+	printf("vTunerMovePresetChannel_Return: %d\n", input);
+	fflush(stdout);
+	pthread_mutex_unlock((pthread_mutex_t*)context);
+}
+
 void print_ActivateExternalStorage(int input, void *context) {
 	printf("Printing ActivateExternalStorage return:\n");
 	printf("ActivateExternalStorage_Return: %d\n", input);
@@ -3577,6 +3605,7 @@ void print_GetTrackDetailsFromPlayer(df_trackfromplayer* input, void *context) {
 	printf("Artist: \"%s\"\n", input->Artist);
 	printf("Genre: \"%s\"\n", input->Genre);
 	printf("Comment: \"%s\"\n", input->Comment);
+    printf("StreamID: \"%s\"\n", input->StreamID);
 	fflush(stdout);
 	pthread_mutex_unlock((pthread_mutex_t*)context);
 }
@@ -3593,6 +3622,8 @@ void print_GetTrackName(df_trkname* input, void *context) {
 	printf("Name: \"%s\"\n", input->Name);
 	printf("Type: \"%s\"\n", input->Type);
 	printf("Source: %d\n", input->Source);
+    printf("Capabilities: %d\n", input->Capabilities);
+    printf("StreamID: \"%s\"\n", input->StreamID);
 	fflush(stdout);
 	pthread_mutex_unlock((pthread_mutex_t*)context);
 }
@@ -4541,6 +4572,9 @@ void print_QueryAllPlayback(df_queryplayback* input, void *context) {
 	printf("Status: \"%s\"\n", input->Status);
 	printf("Version: \"%s\"\n", input->Version);
 	printf("Volume: %d\n", input->Volume);
+	printf("Source: %d\n", input->Source);
+	printf("Capabilities: %d\n", input->Capabilities);
+	printf("StreamID: \"%s\"\n", input->StreamID);
 	fflush(stdout);
 	pthread_mutex_unlock((pthread_mutex_t*)context);
 }
@@ -4928,6 +4962,7 @@ void print_vTunerGetChildNodes(int rows, df_vtunernoderow *input, void *context)
 		printf("Bandwidth: %d\n", current->Bandwidth);
 		printf("MimeType: \"%s\"\n", current->MimeType);
 		printf("ReliabilityRating: %d\n", current->ReliabilityRating);
+		printf("LogoURL: \"%s\"\n", current->LogoURL);
 
 		current = current->next;
 	}
@@ -4965,6 +5000,7 @@ void print_vTunerGetLastPlayed(int rows, df_vtunerplayedrow *input, void *contex
 		printf("Bandwidth: %d\n", current->Bandwidth);
 		printf("MimeType: \"%s\"\n", current->MimeType);
 		printf("ReliabilityRating: %d\n", current->ReliabilityRating);
+		printf("LogoURL: \"%s\"\n", current->LogoURL);
 
 		current = current->next;
 	}
@@ -5002,6 +5038,7 @@ void print_vTunerGetMostPlayed(int rows, df_vtunerplayedrow *input, void *contex
 		printf("Bandwidth: %d\n", current->Bandwidth);
 		printf("MimeType: \"%s\"\n", current->MimeType);
 		printf("ReliabilityRating: %d\n", current->ReliabilityRating);
+		printf("LogoURL: \"%s\"\n", current->LogoURL);
 
 		current = current->next;
 	}
@@ -5037,6 +5074,7 @@ void print_vTunerGetNodeFromPlayedUrl(int rows, df_vtunernoderow *input, void *c
 		printf("Bandwidth: %d\n", current->Bandwidth);
 		printf("MimeType: \"%s\"\n", current->MimeType);
 		printf("ReliabilityRating: %d\n", current->ReliabilityRating);
+		printf("LogoURL: \"%s\"\n", current->LogoURL);
 
 		current = current->next;
 	}
@@ -5075,6 +5113,7 @@ void print_vTunerGetPresetChannels(int rows, df_vtunerpresetrow *input, void *co
 		printf("Bandwidth: %d\n", current->Bandwidth);
 		printf("MimeType: \"%s\"\n", current->MimeType);
 		printf("ReliabilityRating: %d\n", current->ReliabilityRating);
+		printf("LogoURL: \"%s\"\n", current->LogoURL);
 
 		current = current->next;
 	}
@@ -5110,6 +5149,7 @@ void print_vTunerLookupById(int rows, df_vtunernoderow *input, void *context) {
 		printf("Bandwidth: %d\n", current->Bandwidth);
 		printf("MimeType: \"%s\"\n", current->MimeType);
 		printf("ReliabilityRating: %d\n", current->ReliabilityRating);
+		printf("LogoURL: \"%s\"\n", current->LogoURL);
 
 		current = current->next;
 	}
@@ -5140,6 +5180,62 @@ void print_vTunerSetPresetChannel(int input, void *context) {
 	pthread_mutex_unlock((pthread_mutex_t*)context);
 }
 
+
+void call_GetBufferFill(pthread_mutex_t *parent_lock) {
+   int conn_id, x0;
+
+	printf("Calling GetBufferFill\n");
+
+	printf("Connection: ");
+	scanf("%d", &conn_id); check_connection(conn_id);
+	printf("RoomID: ");
+	scanf("%d", &x0);
+
+   df_GetBufferFill(connections[conn_id], x0, print_GetBufferFill, (void*)parent_lock);
+}
+
+void call_GetPlayerFeatures(pthread_mutex_t *parent_lock) {
+   int conn_id, x0;
+
+	printf("Calling GetPlayerFeatures\n");
+
+	printf("Connection: ");
+	scanf("%d", &conn_id); check_connection(conn_id);
+	printf("RoomID: ");
+	scanf("%d", &x0);
+
+   df_GetPlayerFeatures(connections[conn_id], x0, print_GetPlayerFeatures, (void*)parent_lock);
+}
+
+void call_vTunerDeleteStatistic(pthread_mutex_t *parent_lock) {
+   int conn_id;
+   char *x0;
+
+	printf("Calling vTunerDeleteStatistic\n");
+
+	printf("Connection: ");
+	scanf("%d", &conn_id); check_connection(conn_id);
+   printf("Address: ");
+	scanf("%s", x0);
+	if (x0[0] == '-') { x0[0] = '\0'; }
+
+   df_vTunerDeleteStatistic(connections[conn_id], x0, print_vTunerDeleteStatistic, (void*)parent_lock);
+}
+
+void call_vTunerMovePresetChannel(pthread_mutex_t *parent_lock) {
+   int conn_id, x0, x1;
+
+	printf("Calling vTunerMovePresetChannel\n");
+
+	printf("Connection: ");
+	scanf("%d", &conn_id); check_connection(conn_id);
+	printf("SourceChannelNumber: ");
+	scanf("%d", &x0);
+	printf("DestChannelNumber: ");
+	scanf("%d", &x1);
+
+   df_vTunerMovePresetChannel(connections[conn_id], x0, x1, print_vTunerMovePresetChannel, (void*)parent_lock);
+}
 
 void call_ActivateExternalStorage(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -9095,9 +9191,7 @@ void call_GetSearchOffset(pthread_mutex_t *parent_lock) {
 	int conn_id;
 	char x0[30];
 	char x1[30];
-	int x2;
-
-
+	int x2, x3;
 
 	printf("Calling GetSearchOffset\n");
 
@@ -9111,8 +9205,10 @@ void call_GetSearchOffset(pthread_mutex_t *parent_lock) {
 	if (x1[0] == '-') { x1[0] = '\0'; }
 	printf("SearchType: ");
 	scanf("%d", &x2);
+    printf("StartOffset: ");
+    scanf("%d", &x3);
 
-	df_GetSearchOffset(connections[conn_id], x0, x1, x2, print_GetSearchOffset, (void*)parent_lock);}
+	df_GetSearchOffset(connections[conn_id], x0, x1, x2, x3, print_GetSearchOffset, (void*)parent_lock);}
 
 void call_GetSettings(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -10905,7 +11001,7 @@ void call_RoomIpChanged(pthread_mutex_t *parent_lock) {
 
 void call_SaveCurrentPlayList(pthread_mutex_t *parent_lock) {
 	int conn_id;
-	int x0;
+	int x0, x2;
 	char x1[30];
 
 
@@ -10919,8 +11015,10 @@ void call_SaveCurrentPlayList(pthread_mutex_t *parent_lock) {
 	printf("NewName: ");
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
+	printf("CanSave: ");
+	scanf("%d", &x2);
 
-	df_SaveCurrentPlayList(connections[conn_id], x0, x1, print_SaveCurrentPlayList, (void*)parent_lock);}
+	df_SaveCurrentPlayList(connections[conn_id], x0, x1, x2, print_SaveCurrentPlayList, (void*)parent_lock);}
 
 void call_SavePlayerInstance(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11808,6 +11906,7 @@ void call_vTunerGetChildNodes(pthread_mutex_t *parent_lock) {
 	int conn_id;
 	char x0[30];
 	char x1[30];
+    int x2;
 
 	printf("Calling vTunerGetChildNodes\n");
 
@@ -11819,32 +11918,39 @@ void call_vTunerGetChildNodes(pthread_mutex_t *parent_lock) {
 	printf("vTunerBackupUrl: ");
 	scanf("%s", x1);
 	if (x1[0] == '-') { x1[0] = '\0'; }
+   printf("ReturnOriginalLogoURL: ");
+   scanf("%d", &x2);
 
-	df_vTunerGetChildNodes(connections[conn_id], x0, x1, get_search_rows, print_vTunerGetChildNodes, (void*)parent_lock);}
+	df_vTunerGetChildNodes(connections[conn_id], x0, x1, x2, get_search_rows, print_vTunerGetChildNodes, (void*)parent_lock);}
 
 void call_vTunerGetLastPlayed(pthread_mutex_t *parent_lock) {
-	int conn_id;
+	int conn_id, x0;
 
 	printf("Calling vTunerGetLastPlayed\n");
 
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
+   printf("ReturnOriginalLogoURL");
+   scanf("%d", &x0);
 
-	df_vTunerGetLastPlayed(connections[conn_id], get_search_rows, print_vTunerGetLastPlayed, (void*)parent_lock);}
+	df_vTunerGetLastPlayed(connections[conn_id], x0, get_search_rows, print_vTunerGetLastPlayed, (void*)parent_lock);}
 
 void call_vTunerGetMostPlayed(pthread_mutex_t *parent_lock) {
-	int conn_id;
+	int conn_id, x0;
 
 	printf("Calling vTunerGetMostPlayed\n");
 
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
+   printf("ReturnOriginalLogoURL: ");
+   scanf("%d", &x0);
 
-	df_vTunerGetMostPlayed(connections[conn_id], get_search_rows, print_vTunerGetMostPlayed, (void*)parent_lock);}
+	df_vTunerGetMostPlayed(connections[conn_id], x0, get_search_rows, print_vTunerGetMostPlayed, (void*)parent_lock);}
 
 void call_vTunerGetNodeFromPlayedUrl(pthread_mutex_t *parent_lock) {
 	int conn_id;
 	char x0[30];
+   int x1;
 
 	printf("Calling vTunerGetNodeFromPlayedUrl\n");
 
@@ -11853,23 +11959,27 @@ void call_vTunerGetNodeFromPlayedUrl(pthread_mutex_t *parent_lock) {
 	printf("URLPlayed: ");
 	scanf("%s", x0);
 	if (x0[0] == '-') { x0[0] = '\0'; }
+   printf("ReturnOriginalLogoURL: ");
+   scanf("%d", &x1);
 
-	df_vTunerGetNodeFromPlayedUrl(connections[conn_id], x0, get_search_rows, print_vTunerGetNodeFromPlayedUrl, (void*)parent_lock);}
+	df_vTunerGetNodeFromPlayedUrl(connections[conn_id], x0, x1, get_search_rows, print_vTunerGetNodeFromPlayedUrl, (void*)parent_lock);}
 
 void call_vTunerGetPresetChannels(pthread_mutex_t *parent_lock) {
-	int conn_id;
+	int conn_id, x0;
 
 	printf("Calling vTunerGetPresetChannels\n");
 
 	printf("Connection: ");
 	scanf("%d", &conn_id); check_connection(conn_id);
+   printf("ReturnOriginalLogoURL: ");
+   scanf("%d", &x0);
 
-	df_vTunerGetPresetChannels(connections[conn_id], get_search_rows, print_vTunerGetPresetChannels, (void*)parent_lock);}
+	df_vTunerGetPresetChannels(connections[conn_id], x0, get_search_rows, print_vTunerGetPresetChannels, (void*)parent_lock);}
 
 void call_vTunerLookupById(pthread_mutex_t *parent_lock) {
 	int conn_id;
 	char x0[30];
-	int x1;
+	int x1, x2;
 
 	printf("Calling vTunerLookupById\n");
 
@@ -11880,8 +11990,10 @@ void call_vTunerLookupById(pthread_mutex_t *parent_lock) {
 	if (x0[0] == '-') { x0[0] = '\0'; }
 	printf("vTunerLookupType: ");
 	scanf("%d", &x1);
+	printf("ReturnOriginalLogoURL: ");
+	scanf("%d", &x2);
 
-	df_vTunerLookupById(connections[conn_id], x0, x1, get_search_rows, print_vTunerLookupById, (void*)parent_lock);}
+	df_vTunerLookupById(connections[conn_id], x0, x1, x2, get_search_rows, print_vTunerLookupById, (void*)parent_lock);}
 
 void call_vTunerPlayById(pthread_mutex_t *parent_lock) {
 	int conn_id;
@@ -11979,6 +12091,7 @@ static void rget_playingchecksum(pthread_mutex_t *parent_lock);
 static void rget_repeat(pthread_mutex_t *parent_lock);
 static void rget_shuffle(pthread_mutex_t *parent_lock);
 static void rget_trackname(pthread_mutex_t *parent_lock);
+static void rget_bufferfill(pthread_mutex_t *parent_lock);
 static void rget_clear(pthread_mutex_t *parent_lock);
 
 
@@ -12012,8 +12125,8 @@ static struct command_option test_options[5] = { { "main", main_conn_test },
 												 { "misc", misc_test },
                          { "search", search_test } };
 
-static int num_rget_options = 10;
-static struct command_option rget_options[10] = { { "trackposition", rget_trackposition }, 
+static int num_rget_options = 11;
+static struct command_option rget_options[11] = { { "trackposition", rget_trackposition }, 
 												  { "detailedtrackinfo", rget_detailedtrackinfo }, 
 												  { "albumartist", rget_albumartist }, 
 												  { "lastplayererror", rget_lastplayererror },
@@ -12021,12 +12134,13 @@ static struct command_option rget_options[10] = { { "trackposition", rget_trackp
 												  { "playingchecksum", rget_playingchecksum },
 												  { "repeat", rget_repeat },
 												  { "shuffle", rget_shuffle },
-											      { "trackname", rget_trackname },
+											     { "trackname", rget_trackname },
+                                      { "bufferfill", rget_bufferfill },
 												  { "clear", rget_clear }};
 
 
-static int num_call_options = 374;
-static struct command_option call_options[374] = { { "ActivateExternalStorage", call_ActivateExternalStorage }, 
+static int num_call_options = 378;
+static struct command_option call_options[378] = { { "ActivateExternalStorage", call_ActivateExternalStorage }, 
 { "AddAlbumsToUserPlaylist", call_AddAlbumsToUserPlaylist }, 
 { "AddExternalStorage", call_AddExternalStorage }, 
 { "AddNewBackupJob", call_AddNewBackupJob }, 
@@ -12399,7 +12513,11 @@ static struct command_option call_options[374] = { { "ActivateExternalStorage", 
 { "vTunerPlayById", call_vTunerPlayById }, 
 { "vTunerPlayByIds", call_vTunerPlayByIds }, 
 { "vTunerSetPresetChannel", call_vTunerSetPresetChannel }, 
- { "quit", NULL } };
+{ "GetBufferFill", call_GetBufferFill }, 
+{ "GetPlayerFeatures", call_GetPlayerFeatures }, 
+{ "vTunerDeleteStatistic", call_vTunerDeleteStatistic }, 
+{ "vTunerMovePresetChannel", call_vTunerMovePresetChannel }, 
+{ "quit", NULL } };
 
 
 
@@ -12611,6 +12729,22 @@ static void rget_repeat(pthread_mutex_t *parent_lock) {
 }
 
 
+static void rget_bufferfill_callback(int room, int i, void *context) {
+	printf("%s Buffer Fill: %d\n", (char*)context, i);
+}
+
+static void rget_bufferfill(pthread_mutex_t *parent_lock) {
+	int id, room;
+	printf("Connection: "); scanf("%d", &id); if (!check_connection(id)) { printf("Invalid connection\n"); return; }
+	printf("Room: "); scanf("%d", &room);
+	
+	dfrget_bufferfill(connections[id], room, rget_repeat_callback, connections[id]->label);
+	
+	printf("Recieving BufferFill RGet.\n");
+	pthread_mutex_unlock(parent_lock);
+}
+
+
 
 static void rget_shuffle_callback(int room, int i, void *context) {
 	printf("%s Shuffle: %d\n", (char*)context, i);
@@ -12631,6 +12765,8 @@ static void rget_shuffle(pthread_mutex_t *parent_lock) {
 
 static void rget_trackname_callback(int room, df_trackname *tn, void *context) {
 	printf("%s TrackName: %s\n", (char*)context, tn->name);
+	printf("%s Capabilites: %d\n", (char*)context, tn->capabilities);
+	printf("%s SourceID: %s\n", (char*)context, tn->streamid);
 }
 
 static void rget_trackname(pthread_mutex_t *parent_lock) {

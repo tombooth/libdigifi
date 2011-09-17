@@ -43,6 +43,8 @@ int dfrget_trackname(df_connection *conn, unsigned int room_id,
 int dfrget_trackposition(df_connection *conn, unsigned int room_id, 
 						 void (*callback)(int, df_time*, void*), void *context);
 
+int dfrget_bufferfill(df_connection *conn, unsigned int room_id,
+                   void (*callback)(int, int, void*), void *context);
 
 
 void process_incoming_rget(in_settings *settings, char *name, char *command);

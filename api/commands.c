@@ -117,7 +117,10 @@ static char* dftime_to_string(df_time time) {
 }
 
 
-
+static void GetBufferFill_handler(out_request *request, out_response *repsonse, int num, void* context);
+static void GetPlayerFeatures_handler(out_request *request, out_response *repsonse, int num, void* context);
+static void vTunerDeleteStatistic_handler(out_request *request, out_response *repsonse, int num, void* context);
+static void vTunerMovePresetChannel_handler(out_request *request, out_response *repsonse, int num, void* context);
 
 // Generated prototypes
 static void ActivateExternalStorage_handler(out_request *request, out_response *response, int num, void* context);
@@ -742,6 +745,51 @@ void df_updatedrivedetails_free(df_updatedrivedetails *ptr) {
 
 	free(ptr);
 }
+
+
+
+
+
+
+
+int df_GetBufferFill(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
+	struct call_holder *c;
+
+	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
+
+	return comm_send(conn, 0, "GetBufferFill", 1, GetBufferFill_handler, c, "[GetBufferFill %d]", RoomID);
+}
+
+
+int df_GetPlayerFeatures(df_connection *conn, int RoomID, void (*callback)(int, void*), void *context) {
+	struct call_holder *c;
+
+	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
+
+	return comm_send(conn, 0, "GetPlayerFeatures", 1, GetPlayerFeatures_handler, c, "[GetPlayerFeatures %d]", RoomID);
+}
+
+
+int df_vTunerDeleteStatistic(df_connection *conn, char *Address, void (*callback)(int, void*), void *context) {
+	struct call_holder *c;
+
+	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
+
+	return comm_send(conn, 0, "vTunerDeleteStatistic", 1, vTunerDeleteStatistic_handler, c, "[vTunerDeleteStatistic \"%s\"]", Address);
+}
+
+
+int df_vTunerMovePresetChannel(df_connection *conn, int SourceChannelNumber, int DestChannelNumber, void (*callback)(int, void*), void *context) {
+	struct call_holder *c;
+
+	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
+
+	return comm_send(conn, 0, "vTunerMovePresetChannel", 1, vTunerMovePresetChannel_handler, c, "[vTunerMovePresetChannel %d %d]", SourceChannelNumber, DestChannelNumber);
+}
+
+
+
+
 
 int df_ActivateExternalStorage(df_connection *conn, int StorageKey, int ActiveFlag, int ClearPlaying, void (*callback)(int, void*), void *context) {
 	struct call_holder *c;
@@ -1603,12 +1651,12 @@ int df_GetRows(df_connection *conn, int StartRow, int RowCount, char* FormatList
 	return comm_send(conn, 0, "GetRows", 1, GetRows_handler, c, "[GetRows %d %d \"%s\"]", StartRow, RowCount, FormatList);
 }
 
-int df_GetSearchOffset(df_connection *conn, char* SearchValue, char* SearchColumn, int SearchType, void (*callback)(df_searchoffset*, void*), void *context) {
+int df_GetSearchOffset(df_connection *conn, char* SearchValue, char* SearchColumn, int SearchType, int StartOffset, void (*callback)(df_searchoffset*, void*), void *context) {
 	struct call_holder *c;
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "GetSearchOffset", 1, GetSearchOffset_handler, c, "[GetSearchOffset \"%s\" \"%s\" %d]", SearchValue, SearchColumn, SearchType);
+	return comm_send(conn, 0, "GetSearchOffset", 1, GetSearchOffset_handler, c, "[GetSearchOffset \"%s\" \"%s\" %d %d]", SearchValue, SearchColumn, SearchType, StartOffset);
 }
 
 int df_GetSetupVal(df_connection *conn, void (*callback)(int, void*), void *context) {
@@ -2059,12 +2107,12 @@ int df_RestoreSingleTrack(df_connection *conn, char* AlbumKey, char* TrackKey, v
 	return comm_send(conn, 0, "RestoreSingleTrack", 1, RestoreSingleTrack_handler, c, "[RestoreSingleTrack \"%s\" \"%s\"]", AlbumKey, TrackKey);
 }
 
-int df_SaveCurrentPlayList(df_connection *conn, int RoomID, char* NewName, void (*callback)(int, void*), void *context) {
+int df_SaveCurrentPlayList(df_connection *conn, int RoomID, char* NewName, int CanSave, void (*callback)(int, void*), void *context) {
 	struct call_holder *c;
 
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
-	return comm_send(conn, 0, "SaveCurrentPlayList", 1, SaveCurrentPlayList_handler, c, "[SaveCurrentPlayList %d \"%s\"]", RoomID, NewName);
+	return comm_send(conn, 0, "SaveCurrentPlayList", 1, SaveCurrentPlayList_handler, c, "[SaveCurrentPlayList %d \"%s\" %d]", RoomID, NewName, CanSave);
 }
 
 int df_SavePlayerInstance(df_connection *conn, int RoomID, int Key, int OutputDeviceID, int SourceLineID, void (*callback)(int, void*), void *context) {
@@ -4419,58 +4467,58 @@ int df_UndoUserEdits(df_connection *conn, char* AlbumKeys, void (*s_callback)(df
 	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[UndoUserEdits %d \"%s\"]", search_num, AlbumKeys);
 
 }
-int df_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBackupUrl, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
+int df_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBackupUrl, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetChildNodes %d \"%s\" \"%s\"]", search_num, vTunerUrl, vTunerBackupUrl);
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetChildNodes %d \"%s\" \"%s\" %d]", search_num, vTunerUrl, vTunerBackupUrl, ReturnOriginalLogoURL);
 
 }
-int df_vTunerGetLastPlayed(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
+int df_vTunerGetLastPlayed(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetLastPlayed %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetLastPlayed %d %d]", search_num, ReturnOriginalLogoURL);
 
 }
-int df_vTunerGetMostPlayed(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
+int df_vTunerGetMostPlayed(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetMostPlayed %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetMostPlayed %d %d]", search_num, ReturnOriginalLogoURL);
 
 }
-int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
+int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetNodeFromPlayedUrl %d \"%s\"]", search_num, URLPlayed);
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetNodeFromPlayedUrl %d \"%s\" %d]", search_num, URLPlayed, ReturnOriginalLogoURL);
 
 }
-int df_vTunerGetPresetChannels(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerpresetrow*, void*), void *context) {
+int df_vTunerGetPresetChannels(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerpresetrow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetPresetChannels %d]", search_num);
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetPresetChannels %d %d]", search_num, ReturnOriginalLogoURL);
 
 }
-int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
+int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
 
 	search_num = allocator_get();
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
-	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerLookupById %d \"%s\" %d]", search_num, vTunerId, vTunerLookupType);
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerLookupById %d \"%s\" %d %d]", search_num, vTunerId, vTunerLookupType, ReturnOriginalLogoURL);
 
 }
 
@@ -4918,13 +4966,86 @@ else if (strcmp(request->tag, "vTunerGetPresetChannels") == 0) {
 else if (strcmp(request->tag, "vTunerLookupById") == 0) {
 	vTunerLookupById_handler(request, response, num, context);
 }
+else if (strcmp(request->tag, "GetBufferFill") == 0) {
+	GetBufferFill_handler(request, response, num, context);
+}
+else if (strcmp(request->tag, "GetPlayerFeatures") == 0) {
+	GetPlayerFeatures_handler(request, response, num, context);
+}
+else if (strcmp(request->tag, "vTunerDeleteStatistic") == 0) {
+	vTunerDeleteStatistic_handler(request, response, num, context);
+}
+else if (strcmp(request->tag, "vTunerMovePresetChannel") == 0) {
+	vTunerMovePresetChannel_handler(request, response, num, context);
+}
 
 }
 
 
 
+static void GetBufferFill_handler(out_request *request, out_response *response, int num, void* context) {
+	int tmp;
+	regex_result *rx;
+	struct call_holder *holder = context;
 
 
+	if (response==NULL) { return; }
+
+
+	rx = response->result->result;
+		sscanf(rx->subexps[2].value,"%d",&(tmp));
+
+	((void (*)(int, void*))(holder->callback))(tmp, holder->context);
+
+}
+
+static void GetPlayerFeatures_handler(out_request *request, out_response *response, int num, void* context) {
+	int tmp;
+	regex_result *rx;
+	struct call_holder *holder = context;
+
+
+	if (response==NULL) { return; }
+
+
+	rx = response->result->result;
+		sscanf(rx->subexps[2].value,"%d",&(tmp));
+
+	((void (*)(int, void*))(holder->callback))(tmp, holder->context);
+
+}
+
+static void vTunerDeleteStatistic_handler(out_request *request, out_response *response, int num, void* context) {
+	int tmp;
+	regex_result *rx;
+	struct call_holder *holder = context;
+
+
+	if (response==NULL) { return; }
+
+
+	rx = response->result->result;
+		sscanf(rx->subexps[2].value,"%d",&(tmp));
+
+	((void (*)(int, void*))(holder->callback))(tmp, holder->context);
+
+}
+
+static void vTunerMovePresetChannel_handler(out_request *request, out_response *response, int num, void* context) {
+	int tmp;
+	regex_result *rx;
+	struct call_holder *holder = context;
+
+
+	if (response==NULL) { return; }
+
+
+	rx = response->result->result;
+		sscanf(rx->subexps[2].value,"%d",&(tmp));
+
+	((void (*)(int, void*))(holder->callback))(tmp, holder->context);
+
+}
 
 
 
@@ -8909,6 +9030,7 @@ static void vTunerGetChildNodes_handler(out_request *request, out_response *resp
 		sscanf(rx->subexps[18].value,"%d",&(fresh->Bandwidth));
 		fresh->MimeType = formatting_process(rx->subexps[19].value);
 		sscanf(rx->subexps[20].value,"%d",&(fresh->ReliabilityRating));
+		fresh->LogoURL = formatting_process(rx->subexps[21].value);
 		fresh->next = NULL;
 
 		if (i==0) { base = current = fresh; }
@@ -8952,6 +9074,7 @@ static void vTunerGetLastPlayed_handler(out_request *request, out_response *resp
 		sscanf(rx->subexps[24].value,"%d",&(fresh->Bandwidth));
 		fresh->MimeType = formatting_process(rx->subexps[25].value);
 		sscanf(rx->subexps[26].value,"%d",&(fresh->ReliabilityRating));
+		fresh->LogoURL = formatting_process(rx->subexps[27].value);
 		fresh->next = NULL;
 
 		if (i==0) { base = current = fresh; }
@@ -8995,6 +9118,7 @@ static void vTunerGetMostPlayed_handler(out_request *request, out_response *resp
 		sscanf(rx->subexps[24].value,"%d",&(fresh->Bandwidth));
 		fresh->MimeType = formatting_process(rx->subexps[25].value);
 		sscanf(rx->subexps[26].value,"%d",&(fresh->ReliabilityRating));
+		fresh->LogoURL = formatting_process(rx->subexps[27].value);
 		fresh->next = NULL;
 
 		if (i==0) { base = current = fresh; }
@@ -9032,6 +9156,7 @@ static void vTunerGetNodeFromPlayedUrl_handler(out_request *request, out_respons
 		sscanf(rx->subexps[18].value,"%d",&(fresh->Bandwidth));
 		fresh->MimeType = formatting_process(rx->subexps[19].value);
 		sscanf(rx->subexps[20].value,"%d",&(fresh->ReliabilityRating));
+		fresh->LogoURL = formatting_process(rx->subexps[21].value);
 		fresh->next = NULL;
 
 		if (i==0) { base = current = fresh; }
@@ -9076,6 +9201,7 @@ static void vTunerGetPresetChannels_handler(out_request *request, out_response *
 		sscanf(rx->subexps[25].value,"%d",&(fresh->Bandwidth));
 		fresh->MimeType = formatting_process(rx->subexps[26].value);
 		sscanf(rx->subexps[27].value,"%d",&(fresh->ReliabilityRating));
+		fresh->LogoURL = formatting_process(rx->subexps[28].value);
 		fresh->next = NULL;
 
 		if (i==0) { base = current = fresh; }
@@ -9113,6 +9239,7 @@ static void vTunerLookupById_handler(out_request *request, out_response *respons
 		sscanf(rx->subexps[18].value,"%d",&(fresh->Bandwidth));
 		fresh->MimeType = formatting_process(rx->subexps[19].value);
 		sscanf(rx->subexps[20].value,"%d",&(fresh->ReliabilityRating));
+		fresh->LogoURL = formatting_process(rx->subexps[21].value);
 		fresh->next = NULL;
 
 		if (i==0) { base = current = fresh; }
@@ -11121,6 +11248,7 @@ static void GetTrackDetailsFromPlayer_handler(out_request *request, out_response
 	tmp->Genre = formatting_process(rx->subexps[6].value);
 	tmp->Comment = formatting_process(rx->subexps[7].value);
 	sscanf(rx->subexps[8].value,"%u:%u:%u", &(tmp->Length.hours), &(tmp->Length.minutes), &(tmp->Length.seconds));
+   tmp->StreamID = formatting_process(rx->subexps[9].value);
 
 	((void (*)(df_trackfromplayer*, void*))(holder->callback))(tmp, holder->context);
 
@@ -11159,6 +11287,8 @@ static void GetTrackName_handler(out_request *request, out_response *response, i
 	tmp->Type = formatting_process(rx->subexps[4].value);
 	sscanf(rx->subexps[5].value,"%u:%u:%u", &(tmp->Length.hours), &(tmp->Length.minutes), &(tmp->Length.seconds));
 	sscanf(rx->subexps[6].value,"%d",&(tmp->Source));
+    sscanf(rx->subexps[7].value,"%d",&(tmp->Capabilities));
+    tmp->StreamID = formatting_process(rx->subexps[8].value);
 
 	((void (*)(df_trkname*, void*))(holder->callback))(tmp, holder->context);
 
@@ -11647,6 +11777,9 @@ static void QueryAllPlayback_handler(out_request *request, out_response *respons
 	sscanf(rx->subexps[12].value,"%u:%u:%u", &(tmp->TrackPosition.hours), &(tmp->TrackPosition.minutes), &(tmp->TrackPosition.seconds));
 	tmp->Version = formatting_process(rx->subexps[13].value);
 	sscanf(rx->subexps[14].value,"%d",&(tmp->Volume));
+	sscanf(rx->subexps[15].value,"%d",&(tmp->Source));
+	sscanf(rx->subexps[16].value,"%d",&(tmp->Capabilities));
+	tmp->StreamID = formatting_process(rx->subexps[17].value);
 
 	((void (*)(df_queryplayback*, void*))(holder->callback))(tmp, holder->context);
 

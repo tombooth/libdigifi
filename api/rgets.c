@@ -86,6 +86,13 @@ int dfrget_trackposition(df_connection *conn, unsigned int room_id,
 	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetTrackPosition %u]", room_id);
 }
 
+int dfrget_bufferfill(df_connection *conn, unsigned int room_id,
+						   void (*callback)(int, int, void*), void *context) {
+	conn->rget_settings.rgets[DFRGET_BUFFERFILL].callback = (void (*)(void))callback;
+	conn->rget_settings.rgets[DFRGET_BUFFERFILL].context = context;
+	return comm_send(conn, 1, "void", 1, NULL, NULL, "[RGetBufferFill %u]", room_id);
+}
+
 
 
 void process_incoming_rget(in_settings *settings, char *name, char *command) {
@@ -140,6 +147,9 @@ void process_incoming_rget(in_settings *settings, char *name, char *command) {
 		
 		sscanf(rx->subexps[11].value, "%d", &dt->source);
 		if ((dt->path = strdup(rx->subexps[12].value)) == NULL) {return;}
+
+		sscanf(rx->subexps[13].value, "%d", &dt->capabilities);
+		if ((dt->streamid = formatting_process(rx->subexps[14].value)) == NULL) {return;}
 		
 		((void (*)(int, df_detailedtrack*, void*))(settings->rgets[DFRGET_DETAILTRACKINFO].callback))(room, dt, settings->rgets[DFRGET_DETAILTRACKINFO].context);
 		
@@ -150,6 +160,18 @@ void process_incoming_rget(in_settings *settings, char *name, char *command) {
 		free(dt->genrename);
 		free(dt->path);
 		free(dt);
+	}
+	else if (strcmp(name,"GetBufferFill") == 0) {
+		rx_c = regex_get_compiled("getbufferfill");
+		rx = regex_match(rx_c, command);
+		
+		sscanf(rx->subexps[1].value, "%d", &room);
+      sscanf(rx->subexps[2].value, "%d", &i);
+		
+		((void (*)(int, int, void*))(settings->rgets[DFRGET_BUFFERFILL].callback))(room, i, settings->rgets[DFRGET_BUFFERFILL].context);
+		
+		free(s);
+		
 	}
 	else if (strcmp(name,"GetLastPlayerError") == 0) {
 		rx_c = regex_get_compiled("getlastplayererror");
@@ -220,6 +242,8 @@ void process_incoming_rget(in_settings *settings, char *name, char *command) {
 		if ((tn->name = formatting_process(rx->subexps[2].value)) == NULL) {return;}
 		sscanf(rx->subexps[3].value,"%d",&tn->source);
 		if ((tn->path = formatting_process(rx->subexps[4].value)) == NULL) {return;}
+		sscanf(rx->subexps[5].value,"%d",&tn->capabilities);
+		if ((tn->streamid = formatting_process(rx->subexps[6].value)) == NULL) {return;}
 		
 		((void (*)(int, df_trackname*, void*))(settings->rgets[DFRGET_TRACKNAME].callback))(room, tn, settings->rgets[DFRGET_TRACKNAME].context);
 		

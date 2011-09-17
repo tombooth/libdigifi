@@ -33,7 +33,7 @@ char* regex_list_get(char *regex_name) {
 		pattern = "GetAlbumArtist[[:space:]+]([0-9]+)[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([^\"]*)\"";
 	}
 	else if (strcmp(regex_name, "getdetailedtrackinfo") == 0) {
-		pattern = "GetDetailedTrackInfo[[:space:]+]([0-9]+)[[:space:]+]\"([0-9]*)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]*)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]*)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]*)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+)\"[[:space:]+]\"([^\"]*)\"";
+		pattern = "GetDetailedTrackInfo[[:space:]+]([0-9]+)[[:space:]+]\"([0-9]*)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]*)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]*)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]*)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]+)\"[[:space:]+]\"([^\"]*)\"";
 	}
 	else if (strcmp(regex_name, "getlastplayererror") == 0) {
 		pattern = "GetLastPlayerError[[:space:]+]([0-9]+)[[:space:]+]\"([^\"]*)\"";
@@ -51,12 +51,27 @@ char* regex_list_get(char *regex_name) {
 		pattern = "GetShuffle[[:space:]+]([0-9]+)[[:space:]+]\"([0-1])\"";
 	}
 	else if (strcmp(regex_name, "gettrackname") == 0) {
-		pattern = "GetTrackName[[:space:]+]([0-9]+)[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]+)\"[[:space:]+]\"([^\"]*)";
+		pattern = "GetTrackName[[:space:]+]([0-9]+)[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]+)\"[[:space:]+]\"([^\"]*)\"[[:space:]+]\"([0-9]+)\"[[:space:]+]\"([^\"]*)\"";
 	}
 	else if (strcmp(regex_name, "gettrackposition") == 0) {
 		pattern = "GetTrackPosition[[:space:]+]([0-9]+)[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"";
 	}
-	else if (strcmp(regex_name, "ActivateExternalStorage") == 0) {
+	else if (strcmp(regex_name, "getbufferfill") == 0) {
+		pattern = "GetBufferFill[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)";
+	}
+	else if (strcmp(regex_name, "GetBufferFill") == 0) {
+		pattern = "GetBufferFill[[:space:]+]([0-9]+)";
+	}
+	else if (strcmp(regex_name, "GetPlayerFeature") == 0) {
+		pattern = "GetPlayerFeature[[:space:]+]([0-9]+)";
+	}
+	else if (strcmp(regex_name, "vTunerDeleteStatistic") == 0) {
+		pattern = "vTunerDeleteStatistic[[:space:]+]\"([0-1])\"";
+	}
+	else if (strcmp(regex_name, "vTunerMovePresetChannel") == 0) {
+		pattern = "vTunerMovePresetChannel[[:space:]+]\"([0-1])\"";
+	}
+else if (strcmp(regex_name, "ActivateExternalStorage") == 0) {
 	pattern = "ActivateExternalStorage[[:space:]+](-*[0-9]+)[[:space:]+]\"([0-1])\"";
 }
 else if (strcmp(regex_name, "AddAlbumsToUserPlaylist") == 0) {
@@ -774,13 +789,13 @@ else if (strcmp(regex_name, "GetTrackCount") == 0) {
 	pattern = "GetTrackCount[[:space:]+](-*[0-9]+)[[:space:]+]\"(-*[0-9]*)\"";
 }
 else if (strcmp(regex_name, "GetTrackDetailsFromPlayer") == 0) {
-	pattern = "GetTrackDetailsFromPlayer[[:space:]+](-*[0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"";
+	pattern = "GetTrackDetailsFromPlayer[[:space:]+](-*[0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"";
 }
 else if (strcmp(regex_name, "GetTrackLength") == 0) {
 	pattern = "GetTrackLength[[:space:]+](-*[0-9]+)[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"";
 }
 else if (strcmp(regex_name, "GetTrackName") == 0) {
-	pattern = "GetTrackName[[:space:]+](-*[0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(-*[0-9]*)\"";
+	pattern = "GetTrackName[[:space:]+](-*[0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"";
 }
 else if (strcmp(regex_name, "GetTrackNum") == 0) {
 	pattern = "GetTrackNum[[:space:]+](-*[0-9]+)[[:space:]+]\"(-*[0-9]*)\"";
@@ -963,7 +978,7 @@ else if (strcmp(regex_name, "PurgeImageCache") == 0) {
 	pattern = "PurgeImageCache";
 }
 else if (strcmp(regex_name, "QueryAllPlayback") == 0) {
-	pattern = "QueryAllPlayback[[:space:]+](-*[0-9]+)[[:space:]+]\"([0-1])\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"([0-1])\"[[:space:]+]\"([0-1])\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"";
+	pattern = "QueryAllPlayback[[:space:]+](-*[0-9]+)[[:space:]+]\"([0-1])\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"([0-1])\"[[:space:]+]\"([0-1])\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"";
 }
 else if (strcmp(regex_name, "RandomisePlaylist") == 0) { 
 	pattern = "RandomisePlaylist[[:space:]+](-*[0-9]+)";
@@ -1149,22 +1164,22 @@ else if (strcmp(regex_name, "vTunerClearPresetChannel") == 0) {
 	pattern = "vTunerClearPresetChannel";
 }
 else if (strcmp(regex_name, "vTunerGetChildNodes") == 0) { 
-	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"\\]";
+	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"\\]";
 }
 else if (strcmp(regex_name, "vTunerGetLastPlayed") == 0) { 
-	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"\\]";
+	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"\\]";
 }
 else if (strcmp(regex_name, "vTunerGetMostPlayed") == 0) { 
-	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"\\]";
+	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"\\]";
 }
 else if (strcmp(regex_name, "vTunerGetNodeFromPlayedUrl") == 0) { 
-	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"\\]";
+	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"\\]";
 }
 else if (strcmp(regex_name, "vTunerGetPresetChannels") == 0) { 
-	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"\\]";
+	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"([0-9]+-[0-9]+-[0-9]+)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"\\]";
 }
 else if (strcmp(regex_name, "vTunerLookupById") == 0) { 
-	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"\\]";
+	pattern = "\\[Record[[:space:]+]([0-9]+)[[:space:]+]([0-9]+)[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"\\]";
 }
 else if (strcmp(regex_name, "vTunerPlayById") == 0) {
 	pattern = "vTunerPlayById[[:space:]+]\"(-*[0-9]*)\"";

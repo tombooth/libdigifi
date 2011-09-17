@@ -44,12 +44,16 @@ typedef struct {
 	df_time *length;
 	int source;
 	char *path;
+    int capabilities;
+    char *streamid;
 } df_detailedtrack;
 
 typedef struct {
 	char *name;
 	int source;
 	char *path;
+    int capabilities;
+    char *streamid;
 } df_trackname;
 
 // Get types
@@ -100,6 +104,8 @@ typedef struct {
 	char* Type;
 	df_time Length;
 	int Source;
+    int Capabilities;
+    char *StreamID;
 } df_trkname;
 
 typedef struct {
@@ -190,6 +196,9 @@ typedef struct {
 	df_time TrackPosition;
 	char* Version;
 	int Volume;
+   int Source;
+   int Capabilities;
+   char* StreamID;
 } df_queryplayback;
 
 typedef struct {
@@ -268,6 +277,7 @@ typedef struct {
 	char* Genre;
 	char* Comment;
 	df_time Length;
+    char* StreamID;
 } df_trackfromplayer;
 
 typedef struct {
@@ -538,6 +548,7 @@ struct __df_vtunerpresetrow {
 	int Bandwidth;
 	char* MimeType;
 	int ReliabilityRating;
+   char* LogoURL;
 };
 
 typedef struct __df_vtunerpresetrow df_vtunerpresetrow;
@@ -765,6 +776,7 @@ struct __df_vtunerplayedrow {
 	int Bandwidth;
 	char* MimeType;
 	int ReliabilityRating;
+   char* LogoURL;
 };
 
 typedef struct __df_vtunerplayedrow df_vtunerplayedrow;
@@ -1240,6 +1252,7 @@ struct __df_vtunernoderow {
 	int Bandwidth;
 	char* MimeType;
 	int ReliabilityRating;
+	char* LogoURL;
 };
 
 typedef struct __df_vtunernoderow df_vtunernoderow;

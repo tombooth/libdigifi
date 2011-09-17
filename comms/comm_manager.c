@@ -9,7 +9,11 @@
 
 #include "comm_manager.h"
 
-#import "sockets.h"
+// #import "sockets.h"
+#include <sys/socket.h>
+#include <fcntl.h>
+#include <arpa/inet.h>
+#include <unistd.h>
 
 #if defined(__MINGW32__)
 #import "pthread.h"
@@ -20,7 +24,6 @@
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
-// #include <sys/select.h>
 
 #include "debugging.h"
 

@@ -26,7 +26,8 @@ typedef enum {
 	DFRGET_REPEAT = 5,
 	DFRGET_SHUFFLE = 6,
 	DFRGET_TRACKNAME = 7,
-	DFRGET_TRACKPOSITION = 8
+	DFRGET_TRACKPOSITION = 8,
+   DFRGET_BUFFERFILL = 9
 } in_rget_enum;
 
 typedef struct {
