@@ -800,6 +800,14 @@ SearchType: Type of search: 1=Contains, 2=Starts With (default), 3=Exact Match, 
 int df_GetSearchOffset(df_connection *conn, char* SearchValue, char* SearchColumn, int SearchType, int StartOffset, void (*callback)(df_searchoffset*, void*), void *context);
 
 /*!
+ Retrieve the offset of a row in a previously executed numbered search which matches a criteria
+ SearchValue: The string to search for
+ SearchColumn: The name of the column to match within the search results. An error is returned if the column does not exist in the specified search.
+ SearchType: Type of search: 1=Contains, 2=Starts With (default), 3=Exact Match, 4=Does Not Contain, 5=Range
+ */
+int df_1_5_GetSearchOffset(df_connection *conn, char* SearchValue, char* SearchColumn, int SearchType, void (*callback)(df_searchoffset*, void*), void *context);
+
+/*!
 Return a setup confirmation checksum
 */
 int df_GetSetupVal(df_connection *conn, void (*callback)(int, void*), void *context);
@@ -1192,6 +1200,13 @@ NewName: The name to use for the new playlist.
 CanSave: If this optional parameter is set to true (defaults to false), the command will execute in a test mode and verify if all tracks in the current playlist can be saved to a user playlist. CD tracks, internet episodes and internet stations can't be saved to a user playlist.
 */
 int df_SaveCurrentPlayList(df_connection *conn, int RoomID, char* NewName, int CanSave, void (*callback)(int, void*), void *context);
+
+/*!
+ Save the tracks in the current playlist to a new playlist
+ RoomID: The room ID to use for this command.
+ NewName: The name to use for the new playlist.
+ */
+int df_1_5_SaveCurrentPlayList(df_connection *conn, int RoomID, char* NewName, void (*callback)(int, void*), void *context);
 
 /*!
 Save a player instance on a given room.
@@ -2705,14 +2720,31 @@ vTunerBackupUrl: The vTuner backup URL to use for locating child nodes. If nothi
 int df_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBackupUrl, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
 
 /*!
+ Return all child vTuner nodes using the supplied vTuner URL.
+ vTunerUrl: The vTuner URL to use for locating child nodes. If nothing is supplied then the root nodes will be returned.
+ vTunerBackupUrl: The vTuner backup URL to use for locating child nodes. If nothing is supplied then the root nodes will be returned.
+ */
+int df_1_5_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBackupUrl, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
+
+/*!
 Return all played stations and episodes in descending order by LastPlayed
 */
 int df_vTunerGetLastPlayed(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context);
 
 /*!
+ Return all played stations and episodes in descending order by LastPlayed
+ */
+int df_1_5_vTunerGetLastPlayed(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context);
+
+/*!
 Return all played stations and episodes in descending order by HitCount
 */
 int df_vTunerGetMostPlayed(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context);
+
+/*!
+ Return all played stations and episodes in descending order by HitCount
+ */
+int df_1_5_vTunerGetMostPlayed(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context);
 
 /*!
 Returns the vTuner Show, Station or Episode that match the Url supplied
@@ -2721,9 +2753,20 @@ URLPlayed: The URL that was played to use for locating the node.
 int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
 
 /*!
+ Returns the vTuner Show, Station or Episode that match the Url supplied
+ URLPlayed: The URL that was played to use for locating the node.
+ */
+int df_1_5_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
+
+/*!
 Returns all preset channels and thier associated nodes
 */
 int df_vTunerGetPresetChannels(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerpresetrow*, void*), void *context);
+
+/*!
+ Returns all preset channels and thier associated nodes
+ */
+int df_1_5_vTunerGetPresetChannels(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerpresetrow*, void*), void *context);
 
 /*!
 Returns the vTuner Show, Station or Episode that match the id supplied
@@ -2732,6 +2775,13 @@ vTunerLookupType: The type of node to search for. For a lookup by ID this can be
 ReturnOriginalLogoURL: A url pointing to the entity's logo. Blank if no logo is available.
 */
 int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
+
+/*!
+ Returns the vTuner Show, Station or Episode that match the id supplied
+ vTunerId: The vTuner ID to use for locating child nodes.
+ vTunerLookupType: The type of node to search for. For a lookup by ID this can be 3 - Station, 4 - Show or 5 - Episode
+ */
+int df_1_5_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context);
 
 
 

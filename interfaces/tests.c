@@ -257,23 +257,39 @@ void rget_test(pthread_mutex_t *parent_lock) {
 
 
 void misc_test(pthread_mutex_t *parent_lock) {
-	char *string, *result;
-	df_connection *conn;
-	
-	conn = df_connect("192.168.1.70", 2);
-	
-	sleep(3);
-	
-	df_PlayTrack(conn, 1, 1, "a25225 a25221", NULL, NULL);
-	
-	sleep(3);
-	
-	df_disconnect(conn);
-	
-	/*string = "Simple Things \\[UK\\]";
-	
-	result = formatting_process(string);
-	fprintf(stdout, "Result from formatting of %s was %s\n", string, result);*/
+	regex_t *rx;
+    regex_result *result1, *result2;
+    df_trkname *out1, *out2;
+    
+    rx = regex_compile("GetTrackName[[:space:]+](-*[0-9]+)[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"(.*)\"[[:space:]+]\"([0-9]+:[0-9]+:[0-9]+)\"[[:space:]+]\"(-*[0-9]*)\"(?:[[:space:]+]\"(-*[0-9]*)\"[[:space:]+]\"(.*)\"|)");
+    
+    result1 = regex_match(rx, "GetTrackName 0 \"0\" \"asd\" \"asdf\" \"1:1:1\" \"1\" \"1\" \"asdf\"");
+    printf("num_sub_exps:%d\n", result1->num_subexps);
+    
+    out1 = malloc(sizeof(df_trkname));    
+
+    sscanf(result1->subexps[2].value,"%d",&(out1->TrackKey));
+	out1->Name = formatting_process(result1->subexps[3].value);
+	out1->Type = formatting_process(result1->subexps[4].value);
+	sscanf(result1->subexps[5].value,"%u:%u:%u", &(out1->Length.hours), &(out1->Length.minutes), &(out1->Length.seconds));
+	sscanf(result1->subexps[6].value,"%d",&(out1->Source));
+    sscanf(result1->subexps[7].value,"%d",&(out1->Capabilities));
+    out1->StreamID = formatting_process(result1->subexps[8].value);
+    
+
+    
+    result2 = regex_match(rx, "GetTrackName 0 \"0\" \"asd\" \"asdf\" \"1:1:1\" \"1\"");
+    printf("num_sub_exps:%d\n", result2->num_subexps);
+    
+    out2 = malloc(sizeof(df_trkname));    
+    
+    sscanf(result2->subexps[2].value,"%d",&(out2->TrackKey));
+	out2->Name = formatting_process(result2->subexps[3].value);
+	out2->Type = formatting_process(result2->subexps[4].value);
+	sscanf(result2->subexps[5].value,"%u:%u:%u", &(out2->Length.hours), &(out2->Length.minutes), &(out2->Length.seconds));
+	sscanf(result2->subexps[6].value,"%d",&(out2->Source));
+    sscanf(result2->subexps[7].value,"%d",&(out2->Capabilities));
+    out2->StreamID = formatting_process(result2->subexps[8].value);
 	
 	pthread_mutex_unlock(parent_lock);
 }

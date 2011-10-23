@@ -1659,6 +1659,14 @@ int df_GetSearchOffset(df_connection *conn, char* SearchValue, char* SearchColum
 	return comm_send(conn, 0, "GetSearchOffset", 1, GetSearchOffset_handler, c, "[GetSearchOffset \"%s\" \"%s\" %d %d]", SearchValue, SearchColumn, SearchType, StartOffset);
 }
 
+int df_1_5_GetSearchOffset(df_connection *conn, char* SearchValue, char* SearchColumn, int SearchType, void (*callback)(df_searchoffset*, void*), void *context) {
+	struct call_holder *c;
+    
+	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
+    
+	return comm_send(conn, 0, "GetSearchOffset", 1, GetSearchOffset_handler, c, "[GetSearchOffset \"%s\" \"%s\" %d]", SearchValue, SearchColumn, SearchType);
+}
+
 int df_GetSetupVal(df_connection *conn, void (*callback)(int, void*), void *context) {
 	struct call_holder *c;
 
@@ -2113,6 +2121,14 @@ int df_SaveCurrentPlayList(df_connection *conn, int RoomID, char* NewName, int C
 	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
 
 	return comm_send(conn, 0, "SaveCurrentPlayList", 1, SaveCurrentPlayList_handler, c, "[SaveCurrentPlayList %d \"%s\" %d]", RoomID, NewName, CanSave);
+}
+
+int df_1_5_SaveCurrentPlayList(df_connection *conn, int RoomID, char* NewName, void (*callback)(int, void*), void *context) {
+	struct call_holder *c;
+    
+	c = malloc(sizeof(struct call_holder)); c->callback = (void (*)(void))callback; c->context = context;
+    
+	return comm_send(conn, 0, "SaveCurrentPlayList", 1, SaveCurrentPlayList_handler, c, "[SaveCurrentPlayList %d \"%s\"]", RoomID, NewName);
 }
 
 int df_SavePlayerInstance(df_connection *conn, int RoomID, int Key, int OutputDeviceID, int SourceLineID, void (*callback)(int, void*), void *context) {
@@ -4476,6 +4492,15 @@ int df_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBac
 	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetChildNodes %d \"%s\" \"%s\" %d]", search_num, vTunerUrl, vTunerBackupUrl, ReturnOriginalLogoURL);
 
 }
+int df_1_5_vTunerGetChildNodes(df_connection *conn, char* vTunerUrl, char* vTunerBackupUrl, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
+	int search_num;
+	struct search_call_holder *c;
+    
+	search_num = allocator_get();
+	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetChildNodes %d \"%s\" \"%s\"]", search_num, vTunerUrl, vTunerBackupUrl);
+    
+}
 int df_vTunerGetLastPlayed(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
@@ -4484,6 +4509,15 @@ int df_vTunerGetLastPlayed(df_connection *conn, int ReturnOriginalLogoURL, void 
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
 	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetLastPlayed %d %d]", search_num, ReturnOriginalLogoURL);
 
+}
+int df_1_5_vTunerGetLastPlayed(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
+	int search_num;
+	struct search_call_holder *c;
+    
+	search_num = allocator_get();
+	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetLastPlayed %d]", search_num);
+    
 }
 int df_vTunerGetMostPlayed(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
 	int search_num;
@@ -4494,6 +4528,15 @@ int df_vTunerGetMostPlayed(df_connection *conn, int ReturnOriginalLogoURL, void 
 	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetMostPlayed %d %d]", search_num, ReturnOriginalLogoURL);
 
 }
+int df_1_5_vTunerGetMostPlayed(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerplayedrow*, void*), void *context) {
+	int search_num;
+	struct search_call_holder *c;
+    
+	search_num = allocator_get();
+	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetMostPlayed %d]", search_num);
+    
+}
 int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
@@ -4502,6 +4545,15 @@ int df_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, int Retu
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
 	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetNodeFromPlayedUrl %d \"%s\" %d]", search_num, URLPlayed, ReturnOriginalLogoURL);
 
+}
+int df_1_5_vTunerGetNodeFromPlayedUrl(df_connection *conn, char* URLPlayed, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
+	int search_num;
+	struct search_call_holder *c;
+    
+	search_num = allocator_get();
+	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetNodeFromPlayedUrl %d \"%s\"]", search_num, URLPlayed);
+    
 }
 int df_vTunerGetPresetChannels(df_connection *conn, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerpresetrow*, void*), void *context) {
 	int search_num;
@@ -4512,6 +4564,15 @@ int df_vTunerGetPresetChannels(df_connection *conn, int ReturnOriginalLogoURL, v
 	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetPresetChannels %d %d]", search_num, ReturnOriginalLogoURL);
 
 }
+int df_1_5_vTunerGetPresetChannels(df_connection *conn, void (*s_callback)(df_search*), void (*callback)(int, df_vtunerpresetrow*, void*), void *context) {
+	int search_num;
+	struct search_call_holder *c;
+    
+	search_num = allocator_get();
+	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerGetPresetChannels %d]", search_num);
+    
+}
 int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, int ReturnOriginalLogoURL, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
 	int search_num;
 	struct search_call_holder *c;
@@ -4520,6 +4581,15 @@ int df_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupTyp
 	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
 	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerLookupById %d \"%s\" %d %d]", search_num, vTunerId, vTunerLookupType, ReturnOriginalLogoURL);
 
+}
+int df_1_5_vTunerLookupById(df_connection *conn, char* vTunerId, int vTunerLookupType, void (*s_callback)(df_search*), void (*callback)(int, df_vtunernoderow*, void*), void *context) {
+	int search_num;
+	struct search_call_holder *c;
+    
+	search_num = allocator_get();
+	c = malloc(sizeof(struct search_call_holder)); c->callback = s_callback; c->call.context = context; c->call.callback = (void (*)(void))callback;
+	return comm_send(conn, 0, "rowrequest", 1, create_search_struct, (void *)c, "[vTunerLookupById %d \"%s\" %d]", search_num, vTunerId, vTunerLookupType);
+    
 }
 
 
