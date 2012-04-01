@@ -14,9 +14,9 @@
 #include <string.h>
 #include <sys/socket.h>
 
-#include "queue.h"
-#include "timing.h"
-#include "debugging.h"
+#include "../utility/queue.h"
+#include "../utility/timing.h"
+#include "../utility/debugging.h"
 
 
 struct clear_context {

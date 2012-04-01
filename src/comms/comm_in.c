@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "debugging.h"
+#include "../utility/debugging.h"
 
 static void ping_thread();
 static int update_fd_set(fd_set *descriptors);

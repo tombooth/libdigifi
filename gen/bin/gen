@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+console.log(__dirname);
+var cli = require('cli'),
+    gen = require('../');
+
+
+cli.parse({
+});
+
+
+cli.main(function(args, options) {
+
+   (new gen(args[0], args[1], args[2])).run();
+
+});

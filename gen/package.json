@@ -1,0 +1,24 @@
+
+{ "name"          : "gen",
+  "author"        : {
+    "name"  : "Tom Booth",
+    "email" : "tombooth@gmail.com",
+    "url"   : "http://thomasbooth.co.uk"
+  },
+  "description"   : "",
+  "version"       : "0.0.1",
+  "main" : "./src/gen.js",
+  "bin":          {
+    "gen":     "./bin/gen"
+  },
+  "engines": { "node": "0.6.x" },
+  "dependencies": {
+     "cli": "0.4.x",
+     "underscore": "x.x.x",
+     "xml2js": "x.x.x",
+     "ejs": "x.x.x"
+  },
+  "devDependencies": {
+     "nodeunit": "0.7.x"
+  }
+}

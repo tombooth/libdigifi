@@ -12,9 +12,9 @@
 #define REGEXWRAPPER_H
 
 //#include <regex.h>
-#include "pcreposix.h"
+#include "../../ext/pcre/pcreposix.h"
 #include "rbst.h"
-#include "regex_list.h"
+#include "../api/regex_list.h"
 
 typedef struct {
 	unsigned int start;

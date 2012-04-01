@@ -13,8 +13,8 @@
 
 
 #include <pthread.h>
-#include "charbuffer.h"
-#include "extraction.h"
+#include "../utility/charbuffer.h"
+#include "../utility/extraction.h"
 
 
 typedef enum {

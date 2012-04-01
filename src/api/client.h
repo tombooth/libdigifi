@@ -11,8 +11,8 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "types.h"
-#include "comm_manager.h"
+#include "../api-impl/types.h"
+#include "../comms/comm_manager.h"
 
 typedef connection df_connection;
 

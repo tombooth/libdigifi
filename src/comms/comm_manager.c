@@ -22,7 +22,7 @@
 #include <stdio.h>
 // #include <sys/select.h>
 
-#include "debugging.h"
+#include "../utility/debugging.h"
 
 static void start_threads();
 static int connect_to_socket(char *ipadress, int port);

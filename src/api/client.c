@@ -9,8 +9,8 @@
 
 #include "client.h"
 #include "rgets.h"
-#include "formatting.h"
-#include "debugging.h"
+#include "../utility/formatting.h"
+#include "../utility/debugging.h"
 
 int df_init() {
 	

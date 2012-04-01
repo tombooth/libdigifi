@@ -11,7 +11,7 @@
 #define COMMOUT_H
 
 #include <pthread.h>
-#include "extraction.h"
+#include "../utility/extraction.h"
 
 
 #define COMMAND_TIMEOUT_SECS 60
